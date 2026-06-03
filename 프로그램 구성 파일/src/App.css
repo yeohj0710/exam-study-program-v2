@@ -1177,15 +1177,22 @@ button {
 
   .question-pane {
     padding: 18px;
-    min-height: 220px;
-    height: 30vh;
+    min-height: 420px;
+    height: auto;
     flex: 0 1 auto;
     width: calc(100vw - 28px);
     max-width: calc(100vw - 28px);
+    overflow: visible;
+  }
+
+  .question-content {
+    min-height: 0;
+    justify-content: flex-start;
   }
 
   .question-text {
     font-size: 20px;
+    overflow-wrap: anywhere;
   }
 
   .question-list {
