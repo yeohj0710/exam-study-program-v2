@@ -1,4 +1,5 @@
 .app-shell {
+  position: relative;
   min-height: 100vh;
   height: 100vh;
   overflow: hidden;
@@ -31,6 +32,58 @@
   border-width: 0 1px 0 0;
   padding: 18px 14px;
   overflow-y: auto;
+}
+
+.sidebar-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
+}
+
+.sidebar-head .brand-block {
+  min-width: 0;
+  padding-right: 0;
+}
+
+.sidebar-toggle,
+.deck-tab-toggle {
+  min-height: 38px;
+  border: 1px solid #c7d3cc;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1d2522;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 10px;
+  font-weight: 650;
+}
+
+.sidebar-toggle {
+  margin-top: 1px;
+}
+
+.sidebar-toggle .collapse-icon {
+  transform: rotate(180deg);
+}
+
+.deck-tab-toggle {
+  position: fixed;
+  left: 0;
+  top: 82px;
+  z-index: 20;
+  min-height: 44px;
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+  box-shadow: 0 8px 18px rgba(29, 37, 34, 0.12);
+}
+
+.deck-tab-toggle:hover,
+.sidebar-toggle:hover {
+  border-color: #789186;
 }
 
 .inspector {
@@ -127,6 +180,14 @@
   flex-direction: column;
   gap: 14px;
   overflow: hidden;
+}
+
+.app-shell.has-library:not(.with-decks) .study-surface {
+  padding-left: 60px;
+}
+
+.app-shell.has-library:not(.with-decks).with-inspector .study-surface {
+  padding-left: 60px;
 }
 
 .study-surface.import-mode {
@@ -538,6 +599,13 @@ button {
   font-size: 13px;
 }
 
+.validation-box small {
+  display: block;
+  color: #7a5a1a;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
 .validation-box.ok {
   color: #12633f;
 }
@@ -679,6 +747,15 @@ button {
     max-height: 180px;
   }
 
+  .deck-tab-toggle {
+    top: 74px;
+  }
+
+  .app-shell.has-library:not(.with-decks) .study-surface,
+  .app-shell.has-library:not(.with-decks).with-inspector .study-surface {
+    padding-left: 58px;
+  }
+
   .inspector {
     border-width: 1px 0 0;
   }
@@ -730,7 +807,7 @@ button {
   }
 
   .rating-controls {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .question-pane {

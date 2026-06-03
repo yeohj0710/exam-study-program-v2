@@ -127,6 +127,31 @@ def import_pdf(
 
         if not segments:
             card_id = stable_id(source_id, page_number, "empty")
+            fallback_assets: list[Asset] = []
+            fallback_flags = ["no_extractable_text", "needs_manual_review"]
+            if page_asset:
+                fallback_assets = [
+                    Asset(
+                        id=stable_id(source_id, "fallback-front", page_number),
+                        role="front_image",
+                        path=page_asset.path,
+                        source_path=str(pdf_path),
+                        width=page_asset.width,
+                        height=page_asset.height,
+                        sha1=page_asset.sha1,
+                    ),
+                    page_asset,
+                    Asset(
+                        id=stable_id(source_id, "fallback-crop", page_number),
+                        role="page_crop",
+                        path=page_asset.path,
+                        source_path=str(pdf_path),
+                        width=page_asset.width,
+                        height=page_asset.height,
+                        sha1=page_asset.sha1,
+                    ),
+                ]
+                fallback_flags.extend(["full_page_front_fallback", "full_page_crop_fallback"])
             cards.append(
                 StudyCard(
                     id=card_id,
@@ -141,8 +166,8 @@ def import_pdf(
                     back_text="",
                     raw_text="",
                     confidence=0.12,
-                    review_flags=["no_extractable_text", "needs_manual_review"],
-                    assets=[page_asset] if page_asset else [],
+                    review_flags=fallback_flags,
+                    assets=fallback_assets,
                     tags=["pdf", "fallback"],
                     created_at=0.0,
                     updated_at=0.0,

@@ -64,11 +64,18 @@ type Library = {
 
 type ValidationReport = {
   ok: boolean
+  source_count: number
+  card_count: number
+  asset_count: number
   missing_asset_count: number
   missing_source_count: number
   duplicate_card_count: number
   orphan_review_count: number
   orphan_progress_count: number
+  pdf_cards_missing_front_count: number
+  pdf_cards_missing_crop_count: number
+  legacy_cards_missing_front_count: number
+  legacy_cards_missing_answer_count: number
   issues: Array<{ severity: 'error' | 'warning'; code: string; message: string }>
 }
 
@@ -453,6 +460,7 @@ function App() {
 
   const shellClass = [
     'app-shell',
+    library ? 'has-library' : '',
     library && showDecks ? 'with-decks' : '',
     library && showInspector ? 'with-inspector' : '',
   ]
@@ -461,14 +469,39 @@ function App() {
 
   return (
     <main className={shellClass}>
+      {library && !showDecks && (
+        <button
+          type="button"
+          className="deck-tab-toggle"
+          title="문제셋 펼치기"
+          aria-label="문제셋 펼치기"
+          onClick={() => setShowDecks(true)}
+        >
+          <ChevronRight size={18} />
+          <span>문제셋</span>
+        </button>
+      )}
+
       {library && showDecks && (
         <aside className="sidebar">
-          <div className="brand-block">
-            <div className="brand-mark">암기</div>
-            <div>
-              <h1>시험 자료 암기 프로그램</h1>
-              <p>{library.cards.length.toLocaleString()}개 카드</p>
+          <div className="sidebar-head">
+            <div className="brand-block">
+              <div className="brand-mark">암기</div>
+              <div>
+                <h1>시험 자료 암기 프로그램</h1>
+                <p>{library.cards.length.toLocaleString()}개 카드</p>
+              </div>
             </div>
+            <button
+              type="button"
+              className="sidebar-toggle"
+              title="문제셋 접기"
+              aria-label="문제셋 접기"
+              onClick={() => setShowDecks(false)}
+            >
+              <ChevronRight className="collapse-icon" size={18} />
+              <span>접기</span>
+            </button>
           </div>
 
           <nav className="deck-list" aria-label="문제셋">
@@ -669,6 +702,22 @@ function App() {
             <div className={validation?.ok ? 'validation-box ok' : 'validation-box'}>
               <span>누락 이미지 {validation?.missing_asset_count ?? 0}</span>
               <span>누락 원본 {validation?.missing_source_count ?? 0}</span>
+            </div>
+          </details>
+
+          <details className="inspector-section" open>
+            <summary>
+              <span>PDF 자동 생성</span>
+              <strong>{library.report.pdfs_imported}</strong>
+            </summary>
+            <div className="validation-box">
+              <span>생성 카드 {library.report.cards_created.toLocaleString()}</span>
+              <span>검수 필요 {library.report.low_confidence_cards.toLocaleString()}</span>
+              <span>앞면 crop 누락 {validation?.pdf_cards_missing_front_count ?? 0}</span>
+              <span>원문 crop 누락 {validation?.pdf_cards_missing_crop_count ?? 0}</span>
+              {library.report.warnings.slice(0, 3).map((warning) => (
+                <small key={warning}>{warning}</small>
+              ))}
             </div>
           </details>
 

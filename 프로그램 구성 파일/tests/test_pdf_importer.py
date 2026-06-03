@@ -17,6 +17,14 @@ def make_pdf(path: Path, decor_color: tuple[float, float, float] = (1, 0, 0)) ->
     doc.close()
 
 
+def make_blank_pdf(path: Path) -> None:
+    doc = fitz.open()
+    page = doc.new_page()
+    page.draw_rect(fitz.Rect(72, 72, 240, 180), color=(0, 0, 0), width=1)
+    doc.save(path)
+    doc.close()
+
+
 def test_import_pdf_segments_and_renders_page(tmp_path):
     pdf = tmp_path / "sample.pdf"
     make_pdf(pdf)
@@ -37,6 +45,31 @@ def test_import_pdf_segments_and_renders_page(tmp_path):
         assert (tmp_path / "assets" / asset.path).exists()
     assert "has_front_crop" in cards[0].review_flags
     assert "has_question_crop" in cards[0].review_flags
+
+
+def test_import_pdf_creates_review_card_for_image_only_page(tmp_path):
+    pdf = tmp_path / "scan.pdf"
+    make_blank_pdf(pdf)
+
+    source, cards, warnings = import_pdf(
+        pdf,
+        tmp_path / "assets",
+        subject="스캔자료",
+        deck="scan",
+    )
+
+    assert source.page_count == 1
+    assert warnings == ["scan.pdf page 1: no extractable text"]
+    assert len(cards) == 1
+    assert cards[0].source == "page_fallback"
+    assert cards[0].front_text == "scan page 1"
+    assert "needs_manual_review" in cards[0].review_flags
+    assert "full_page_front_fallback" in cards[0].review_flags
+    assert "full_page_crop_fallback" in cards[0].review_flags
+    roles = [asset.role for asset in cards[0].assets]
+    assert roles == ["front_image", "source_page", "page_crop"]
+    for asset in cards[0].assets:
+        assert (tmp_path / "assets" / asset.path).exists()
 
 
 def test_import_pdf_ids_survive_non_text_source_changes(tmp_path):
