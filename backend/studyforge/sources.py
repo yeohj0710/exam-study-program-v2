@@ -6,14 +6,17 @@ from pathlib import Path
 def infer_subject_from_pdf(path: Path) -> str:
     parts = path.parts
     for index, part in enumerate(parts):
-        if part == "중간고사 정리자료" and index > 0:
+        if part in {"중간고사 정리자료", "중간고사 범위 수업자료"} and index > 0:
             return parts[index - 1]
     return path.parent.parent.name if path.parent.name else path.stem
 
 
 def should_import_midterm_pdf(path: Path, include_lectures: bool = False) -> bool:
     name = path.name
-    if "중간고사 정리자료" not in str(path):
+    path_text = str(path)
+    in_study_folder = "중간고사 정리자료" in path_text
+    in_lecture_folder = "중간고사 범위 수업자료" in path_text
+    if not in_study_folder and not (include_lectures and in_lecture_folder):
         return False
     if "성적" in name:
         return False
