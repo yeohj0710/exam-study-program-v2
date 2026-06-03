@@ -47,6 +47,7 @@ def import_legacy_bank(
             path=str(deck_dir),
             fingerprint=cheap_file_fingerprint(deck_dir),
             page_count=None,
+            imported_at=0.0,
         )
         sources.append(source)
 
@@ -116,6 +117,8 @@ def import_legacy_bank(
                     review_flags=flags,
                     assets=card_assets,
                     tags=["legacy", subject],
+                    created_at=0.0,
+                    updated_at=0.0,
                 )
             )
 

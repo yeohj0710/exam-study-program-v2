@@ -27,7 +27,7 @@ ASSET_ROOT = DATA_ROOT / "assets"
 DIST_ROOT = PROJECT_ROOT / "dist"
 INSTANCE_ID = hashlib.sha1(str(PROJECT_ROOT).encode("utf-8")).hexdigest()[:16]
 
-app = FastAPI(title="StudyForge API", version="0.1.0")
+app = FastAPI(title="Exam Study App API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],

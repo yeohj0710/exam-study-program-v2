@@ -55,8 +55,8 @@ def main() -> None:
     port = find_port()
     url = f"http://127.0.0.1:{port}"
     threading.Thread(target=open_when_ready, args=(url,), daemon=True).start()
-    print(f"StudyForge is running: {url}")
-    print("Keep this window open while using the app. Press Ctrl+C to stop.")
+    print(f"시험 자료 암기 프로그램 실행 중: {url}")
+    print("사용하는 동안 이 창을 닫지 마세요. 종료하려면 Ctrl+C를 누르세요.")
     uvicorn.run(app, host="127.0.0.1", port=port, reload=False)
 
 

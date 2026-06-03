@@ -18,7 +18,7 @@ def build_library(
     copy_legacy_assets: bool = False,
     render_pdf_pages: bool = True,
 ) -> Library:
-    library = Library()
+    library = Library(generated_at=0.0)
     report = ImportReport()
     asset_root.mkdir(parents=True, exist_ok=True)
 

@@ -72,9 +72,57 @@ type ValidationReport = {
   issues: Array<{ severity: 'error' | 'warning'; code: string; message: string }>
 }
 
+type PersistedSession = {
+  selectedDeck: string
+  filterMode: FilterMode
+  order: string[]
+  cursor: number
+  showDecks: boolean
+  showInspector: boolean
+  showQuestionList: boolean
+}
+
 const defaultSourceRoot = 'G:\\내 드라이브\\여형준님\\21 6-1'
 const defaultLegacyRoot =
   'G:\\내 드라이브\\여형준님\\21 6-1\\족보 암기 프로그램\\중간고사'
+const sessionStorageKey = 'exam-memory-app.session.v1'
+
+const filterLabels: Record<FilterMode, string> = {
+  all: '전체',
+  due: '복습',
+  new: '신규',
+  low: '검수',
+  needs_work: '보류',
+}
+
+function isFilterMode(value: unknown): value is FilterMode {
+  return typeof value === 'string' && value in filterLabels
+}
+
+function readSessionState(): Partial<PersistedSession> {
+  if (typeof window === 'undefined') return {}
+  try {
+    const raw = window.localStorage.getItem(sessionStorageKey)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as Partial<PersistedSession>
+    return {
+      selectedDeck: typeof parsed.selectedDeck === 'string' ? parsed.selectedDeck : '',
+      filterMode: isFilterMode(parsed.filterMode) ? parsed.filterMode : 'all',
+      order: Array.isArray(parsed.order) ? parsed.order.filter((item) => typeof item === 'string') : [],
+      cursor: typeof parsed.cursor === 'number' && parsed.cursor >= 0 ? parsed.cursor : 0,
+      showDecks: typeof parsed.showDecks === 'boolean' ? parsed.showDecks : true,
+      showInspector: typeof parsed.showInspector === 'boolean' ? parsed.showInspector : false,
+      showQuestionList: typeof parsed.showQuestionList === 'boolean' ? parsed.showQuestionList : false,
+    }
+  } catch {
+    return {}
+  }
+}
+
+function writeSessionState(state: PersistedSession) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(sessionStorageKey, JSON.stringify(state))
+}
 
 function assetUrl(asset: Asset) {
   if (/^[a-zA-Z]:\\/.test(asset.path)) return `/api/external-asset?path=${encodeURIComponent(asset.path)}`
@@ -88,16 +136,41 @@ function shuffleIds(cards: StudyCard[]) {
     .map((item) => item.card.id)
 }
 
+function labelReviewStatus(status: StudyCard['review_status']) {
+  if (status === 'approved') return '승인됨'
+  if (status === 'needs_work') return '보류'
+  return '미검수'
+}
+
+function labelRating(rating: StudyRating) {
+  if (rating === 'again') return '다시'
+  if (rating === 'hard') return '어려움'
+  if (rating === 'good') return '맞음'
+  if (rating === 'easy') return '쉬움'
+  return '처음'
+}
+
+function selectExistingDeck(library: Library, current: string) {
+  if (current && library.cards.some((card) => card.deck === current)) return current
+  return library.cards[0]?.deck || ''
+}
+
 function App() {
+  const savedSession = useMemo(readSessionState, [])
   const [library, setLibrary] = useState<Library | null>(null)
   const [validation, setValidation] = useState<ValidationReport | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [selectedDeck, setSelectedDeck] = useState('')
-  const [order, setOrder] = useState<string[]>([])
-  const [cursor, setCursor] = useState(0)
+  const [selectedDeck, setSelectedDeck] = useState(savedSession.selectedDeck ?? '')
+  const [order, setOrder] = useState<string[]>(savedSession.order ?? [])
+  const [cursor, setCursor] = useState(savedSession.cursor ?? 0)
   const [showAnswer, setShowAnswer] = useState(false)
-  const [filterMode, setFilterMode] = useState<FilterMode>('all')
+  const [filterMode, setFilterMode] = useState<FilterMode>(savedSession.filterMode ?? 'all')
+  const compactScreen =
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 760px)').matches
+  const [showDecks, setShowDecks] = useState(savedSession.showDecks ?? !compactScreen)
+  const [showInspector, setShowInspector] = useState(savedSession.showInspector ?? false)
+  const [showQuestionList, setShowQuestionList] = useState(savedSession.showQuestionList ?? false)
   const [nowSeconds, setNowSeconds] = useState(0)
   const [sourceRoot, setSourceRoot] = useState(defaultSourceRoot)
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
@@ -111,7 +184,7 @@ function App() {
       if (!response.ok) throw new Error(response.status === 404 ? 'empty' : response.statusText)
       const payload = (await response.json()) as Library
       setLibrary(payload)
-      setSelectedDeck((current) => current || payload.cards[0]?.deck || '')
+      setSelectedDeck((current) => selectExistingDeck(payload, current))
       await loadValidation()
     } catch (caught) {
       if (caught instanceof Error && caught.message !== 'empty') setError(caught.message)
@@ -199,7 +272,6 @@ function App() {
         cards: current.cards.map((item) => (item.id === payload.card.id ? payload.card : item)),
       }
     })
-    setOrder([])
     setShowAnswer(false)
   }
 
@@ -213,7 +285,7 @@ function App() {
       .then((payload) => {
         if (cancelled) return
         setLibrary(payload)
-        setSelectedDeck(payload.cards[0]?.deck || '')
+        setSelectedDeck((current) => selectExistingDeck(payload, current))
         void loadValidation()
       })
       .catch((caught) => {
@@ -281,14 +353,48 @@ function App() {
     const isValidOrder = order.length === sessionCards.length && order.every((id) => cardsById.has(id))
     return isValidOrder ? order : sessionCards.map((card) => card.id)
   }, [cardsById, sessionCards, order])
-  const currentCard = cardsById.get(effectiveOrder[cursor]) ?? sessionCards[0]
+  const orderForPersistence = useMemo(() => {
+    const isValidOrder = order.length === sessionCards.length && order.every((id) => cardsById.has(id))
+    return isValidOrder ? order : []
+  }, [cardsById, sessionCards, order])
+  const orderedCards = useMemo(
+    () => effectiveOrder.map((id) => cardsById.get(id)).filter((card): card is StudyCard => Boolean(card)),
+    [cardsById, effectiveOrder],
+  )
+  const safeCursor = Math.min(cursor, Math.max(sessionCards.length - 1, 0))
+  const currentCard = cardsById.get(effectiveOrder[safeCursor]) ?? sessionCards[0]
   const progressText = sessionCards.length
-    ? `${Math.min(cursor + 1, sessionCards.length)} / ${sessionCards.length}`
+    ? `${safeCursor + 1} / ${sessionCards.length}`
     : '0 / 0'
+
+  useEffect(() => {
+    writeSessionState({
+      selectedDeck,
+      filterMode,
+      order: orderForPersistence,
+      cursor: safeCursor,
+      showDecks,
+      showInspector,
+      showQuestionList,
+    })
+  }, [
+    selectedDeck,
+    filterMode,
+    orderForPersistence,
+    safeCursor,
+    showDecks,
+    showInspector,
+    showQuestionList,
+  ])
 
   function nextCard() {
     if (!sessionCards.length) return
-    setCursor((value) => (value + 1) % sessionCards.length)
+    setCursor((value) => (Math.min(value, sessionCards.length - 1) + 1) % sessionCards.length)
+    setShowAnswer(false)
+  }
+
+  function goToCard(index: number) {
+    setCursor(index)
     setShowAnswer(false)
   }
 
@@ -309,8 +415,11 @@ function App() {
     function onKeyDown(event: KeyboardEvent) {
       if (event.target instanceof HTMLInputElement) return
       if (event.target instanceof HTMLTextAreaElement) return
-      if (event.key.toLowerCase() === 'j') setShowAnswer((value) => !value)
-      if (event.key.toLowerCase() === 'k') nextCard()
+      const key = event.key.toLowerCase()
+      if (key === 'j') setShowAnswer((value) => !value)
+      if (key === 'k') nextCard()
+      if (key === 'l') setShowQuestionList((value) => !value)
+      if (key === 'i') setShowInspector((value) => !value)
       if (showAnswer && currentCard) {
         if (event.key === '1') void saveStudy(currentCard, 'again')
         if (event.key === '2') void saveStudy(currentCard, 'hard')
@@ -337,84 +446,150 @@ function App() {
     )
   }
 
+  const shellClass = [
+    'app-shell',
+    library && showDecks ? 'with-decks' : '',
+    library && showInspector ? 'with-inspector' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <main className="app-shell">
-      <aside className="sidebar">
-        <div className="brand-block">
-          <div className="brand-mark">SF</div>
-          <div>
-            <h1>StudyForge</h1>
-            <p>{library ? `${library.cards.length.toLocaleString()} cards` : 'local library'}</p>
+    <main className={shellClass}>
+      {library && showDecks && (
+        <aside className="sidebar">
+          <div className="brand-block">
+            <div className="brand-mark">암기</div>
+            <div>
+              <h1>시험 자료 암기 프로그램</h1>
+              <p>{library.cards.length.toLocaleString()}개 카드</p>
+            </div>
           </div>
-        </div>
 
-        <nav className="deck-list" aria-label="Decks">
-          {decks.map(([deck, cards]) => (
-            <button
-              key={deck}
-              type="button"
-              className={deck === selectedDeck ? 'deck-button active' : 'deck-button'}
-              onClick={() => {
-                setSelectedDeck(deck)
-                setOrder([])
-                setCursor(0)
-                setShowAnswer(false)
-              }}
-            >
-              <span>{deck}</span>
-              <small>{cards.length}</small>
-            </button>
-          ))}
-        </nav>
-      </aside>
+          <nav className="deck-list" aria-label="문제셋">
+            {decks.map(([deck, cards]) => (
+              <button
+                key={deck}
+                type="button"
+                className={deck === selectedDeck ? 'deck-button active' : 'deck-button'}
+                onClick={() => {
+                  setSelectedDeck(deck)
+                  setOrder([])
+                  setCursor(0)
+                  setShowAnswer(false)
+                }}
+              >
+                <span>{deck}</span>
+                <small>{cards.length}</small>
+              </button>
+            ))}
+          </nav>
+        </aside>
+      )}
 
-      <section className="study-surface">
+      <section className={library ? 'study-surface' : 'study-surface import-mode'}>
         {!library ? (
           <section className="import-panel">
+            <div className="brand-block import-brand">
+              <div className="brand-mark">암기</div>
+              <div>
+                <h1>시험 자료 암기 프로그램</h1>
+                <p>PDF와 기존 캡처 자료를 카드로 변환합니다.</p>
+              </div>
+            </div>
             <div className="panel-heading">
               <FileText size={22} />
-              <h2>자료 가져오기</h2>
+              <h2>처음 설정</h2>
             </div>
             <label>
-              PDF 루트
+              PDF 폴더
               <input value={sourceRoot} onChange={(event) => setSourceRoot(event.target.value)} />
             </label>
             <label>
-              기존 캡처 뱅크
+              기존 캡처 폴더
               <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
             </label>
             <button className="primary-action" type="button" onClick={runImport} disabled={importing}>
               {importing ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
-              <span>{importing ? '가져오는 중' : '가져오기'}</span>
+              <span>{importing ? '가져오는 중' : '자료 가져오기'}</span>
             </button>
             {error && <p className="error-text">{error}</p>}
           </section>
         ) : (
           <>
             <header className="study-header">
-              <div>
-                <p className="eyebrow">{currentCard?.subject ?? 'No deck'}</p>
-                <h2>{selectedDeck || 'Deck'}</h2>
+              <div className="deck-title">
+                <p className="eyebrow">{currentCard?.subject ?? '문제셋 없음'}</p>
+                <h2>{selectedDeck || '문제셋'}</h2>
               </div>
               <div className="session-actions">
+                <button
+                  type="button"
+                  className={showDecks ? 'session-action active' : 'session-action'}
+                  onClick={() => setShowDecks((value) => !value)}
+                  aria-pressed={showDecks}
+                >
+                  문제셋
+                </button>
+                <button
+                  type="button"
+                  className={showQuestionList ? 'session-action active' : 'session-action'}
+                  onClick={() => setShowQuestionList((value) => !value)}
+                  aria-pressed={showQuestionList}
+                >
+                  목록(L)
+                </button>
                 <span className="progress-pill">{progressText}</span>
-                <button type="button" onClick={reshuffle} title="Shuffle">
+                <button type="button" className="session-action" onClick={reshuffle} title="섞기">
                   <Shuffle size={18} />
+                  섞기
+                </button>
+                <button
+                  type="button"
+                  className={showInspector ? 'session-action active' : 'session-action'}
+                  onClick={() => setShowInspector((value) => !value)}
+                  aria-pressed={showInspector}
+                >
+                  검수(I)
                 </button>
               </div>
             </header>
-            <div className="filter-bar" role="tablist" aria-label="Session filter">
-              <FilterButton label="전체" count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
-              <FilterButton label="복습" count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
-              <FilterButton label="신규" count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
-              <FilterButton label="검수" count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
+
+            <div className="filter-bar" role="tablist" aria-label="학습 범위">
+              <FilterButton label={filterLabels.all} count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
+              <FilterButton label={filterLabels.due} count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
+              <FilterButton label={filterLabels.new} count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
+              <FilterButton label={filterLabels.low} count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
               <FilterButton
-                label="보류"
+                label={filterLabels.needs_work}
                 count={deckStats.needs_work}
                 active={filterMode === 'needs_work'}
                 onClick={() => setFilter('needs_work')}
               />
             </div>
+
+            {showQuestionList && (
+              <section className="question-list-panel" aria-label="현재 문제 목록">
+                <div className="question-list-heading">
+                  <strong>{filterLabels[filterMode]} 문제</strong>
+                  <span>{orderedCards.length.toLocaleString()}개</span>
+                </div>
+                <div className="question-list">
+                  {orderedCards.map((card, index) => (
+                    <button
+                      key={card.id}
+                      type="button"
+                      className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
+                      onClick={() => goToCard(index)}
+                    >
+                      <span>{index + 1}</span>
+                      <strong>{card.front_text || card.source_item || card.deck}</strong>
+                      <small>{labelReviewStatus(card.review_status)}</small>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <article className="question-pane">
               {currentCard ? (
@@ -437,143 +612,181 @@ function App() {
                   )}
                 </>
               ) : (
-                <div className="empty-state">선택된 덱에 카드가 없습니다.</div>
+                <div className="card-empty-state">선택된 범위에 카드가 없습니다.</div>
               )}
             </article>
 
             <div className="study-controls">
-              <button type="button" className="primary-action" onClick={() => setShowAnswer((value) => !value)}>
+              <button
+                type="button"
+                className="primary-action"
+                onClick={() => setShowAnswer((value) => !value)}
+                disabled={!currentCard}
+              >
                 <Eye size={18} />
-                <span>{showAnswer ? '숨기기' : '정답'}</span>
+                <span>{showAnswer ? '정답 숨기기(J)' : '정답 보기(J)'}</span>
               </button>
-              <button type="button" className="secondary-action" onClick={nextCard}>
+              <button type="button" className="secondary-action" onClick={nextCard} disabled={!currentCard}>
                 <ChevronRight size={18} />
-                <span>다음</span>
+                <span>다음(K)</span>
               </button>
             </div>
             {showAnswer && currentCard && (
-              <div className="rating-controls" aria-label="Study rating">
-                <button type="button" onClick={() => void saveStudy(currentCard, 'again')}>Again 1</button>
-                <button type="button" onClick={() => void saveStudy(currentCard, 'hard')}>Hard 2</button>
-                <button type="button" onClick={() => void saveStudy(currentCard, 'good')}>Good 3</button>
-                <button type="button" onClick={() => void saveStudy(currentCard, 'easy')}>Easy 4</button>
+              <div className="rating-controls" aria-label="학습 결과">
+                <button type="button" title="틀렸거나 바로 다시 볼 때" onClick={() => void saveStudy(currentCard, 'again')}>
+                  다시(1)
+                </button>
+                <button type="button" title="맞았지만 어려웠을 때" onClick={() => void saveStudy(currentCard, 'hard')}>
+                  어려움(2)
+                </button>
+                <button type="button" title="정상적으로 맞았을 때" onClick={() => void saveStudy(currentCard, 'good')}>
+                  맞음(3)
+                </button>
+                <button type="button" title="쉽게 맞았을 때" onClick={() => void saveStudy(currentCard, 'easy')}>
+                  쉬움(4)
+                </button>
               </div>
             )}
           </>
         )}
       </section>
 
-      <aside className="inspector">
-        <div className="status-row">
-          <Check size={18} />
-          <span>{library?.report.pdfs_imported ?? 0} PDF</span>
-          <span>{library?.report.legacy_decks_imported ?? 0} legacy</span>
-        </div>
-        <div className={validation?.ok ? 'validation-box ok' : 'validation-box'}>
-          <div className="panel-heading">
-            {validation?.ok ? <Check size={18} /> : <AlertTriangle size={18} />}
-            <h2>무결성</h2>
+      {library && showInspector && (
+        <aside className="inspector">
+          <div className="status-row">
+            <Check size={18} />
+            <span>{library.report.pdfs_imported} PDF</span>
+            <span>{library.report.legacy_decks_imported} 기존 자료</span>
           </div>
-          <strong>{validation?.ok ? 'OK' : `${validation?.issues.length ?? 0} issues`}</strong>
-          <span>
-            assets {validation?.missing_asset_count ?? 0} · sources {validation?.missing_source_count ?? 0}
-          </span>
-        </div>
-        <div className="reimport-box">
-          <div className="panel-heading">
-            <RefreshCw size={18} />
-            <h2>자료 갱신</h2>
-          </div>
-          <label>
-            PDF 폴더
-            <input value={sourceRoot} onChange={(event) => setSourceRoot(event.target.value)} />
-          </label>
-          <label>
-            기존 캡처 폴더
-            <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
-          </label>
-          <button className="secondary-action" type="button" onClick={runImport} disabled={importing}>
-            {importing ? <RefreshCw className="spin" size={16} /> : <Play size={16} />}
-            <span>{importing ? '가져오는 중' : '다시 가져오기'}</span>
-          </button>
-        </div>
-        <div className="study-stats">
-          <span>{deckStats.new} new</span>
-          <span>{deckStats.due} due</span>
-          <span>{currentCard?.study_seen_count ?? 0} seen</span>
-        </div>
-        <div className="review-box">
-          <div className="panel-heading">
-            <AlertTriangle size={18} />
-            <h2>검수</h2>
-          </div>
-          <strong>{library?.report.low_confidence_cards ?? 0}</strong>
-          <span>unresolved low confidence</span>
-        </div>
-        {currentCard && (
-          <>
-            <div className="source-box">
-              <div className="panel-heading">
-                <ImageIcon size={18} />
-                <h2>근거</h2>
-              </div>
-              <p>{currentCard.source_page ? `page ${currentCard.source_page}` : currentCard.source_item}</p>
-              <span className={`review-status ${currentCard.review_status}`}>{currentCard.review_status}</span>
-              <span className="review-status">{currentCard.study_last_rating}</span>
-              {currentCard.review_flags.length > 0 && (
-                <ul className="flag-list">
-                  {currentCard.review_flags.slice(0, 4).map((flag) => (
-                    <li key={flag}>{flag}</li>
-                  ))}
-                </ul>
-              )}
-              {showAnswer ? (
-                <ImageStrip assets={[...pageCrops, ...sourcePages].slice(0, 1)} compact />
-              ) : (
-                <p className="locked-note">정답 확인 후 원문 표시</p>
-              )}
+
+          <details className="inspector-section" open>
+            <summary>
+              <span>무결성</span>
+              <strong>{validation?.ok ? 'OK' : `${validation?.issues.length ?? 0}`}</strong>
+            </summary>
+            <div className={validation?.ok ? 'validation-box ok' : 'validation-box'}>
+              <span>누락 이미지 {validation?.missing_asset_count ?? 0}</span>
+              <span>누락 원본 {validation?.missing_source_count ?? 0}</span>
             </div>
-            <form
-              key={currentCard.id}
-              className="review-editor"
-              onSubmit={(event) => {
-                event.preventDefault()
-                void saveReview(currentCard, 'approved', event.currentTarget)
-              }}
-            >
+          </details>
+
+          <details className="inspector-section">
+            <summary>
+              <span>자료 갱신</span>
+              <RefreshCw size={16} />
+            </summary>
+            <div className="reimport-box">
               <label>
-                앞면
-                <textarea name="front_text" defaultValue={currentCard.front_text} rows={4} />
+                PDF 폴더
+                <input value={sourceRoot} onChange={(event) => setSourceRoot(event.target.value)} />
               </label>
               <label>
-                뒷면
-                <textarea name="back_text" defaultValue={currentCard.back_text} rows={5} />
+                기존 캡처 폴더
+                <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
               </label>
-              <label>
-                메모
-                <textarea name="note" defaultValue={currentCard.review_note} rows={3} />
-              </label>
-              <div className="review-actions">
-                <button type="submit" className="primary-action">
+              <button className="secondary-action" type="button" onClick={runImport} disabled={importing}>
+                {importing ? <RefreshCw className="spin" size={16} /> : <Play size={16} />}
+                <span>{importing ? '가져오는 중' : '다시 가져오기'}</span>
+              </button>
+            </div>
+          </details>
+
+          <details className="inspector-section">
+            <summary>
+              <span>학습 현황</span>
+              <strong>{currentCard?.study_seen_count ?? 0}</strong>
+            </summary>
+            <div className="study-stats">
+              <span>{deckStats.new} 신규</span>
+              <span>{deckStats.due} 복습</span>
+              <span>{labelRating(currentCard?.study_last_rating ?? 'new')}</span>
+            </div>
+          </details>
+
+          <details className="inspector-section">
+            <summary>
+              <span>검수</span>
+              <strong>{library.report.low_confidence_cards}</strong>
+            </summary>
+            <div className="review-box">
+              <span>자동 추출 신뢰도가 낮은 카드</span>
+            </div>
+          </details>
+
+          {currentCard && (
+            <>
+              <details className="inspector-section">
+                <summary>
+                  <span>근거</span>
+                  <ImageIcon size={16} />
+                </summary>
+                <div className="source-box">
+                  <p>{currentCard.source_page ? `p.${currentCard.source_page}` : currentCard.source_item}</p>
+                  <span className={`review-status ${currentCard.review_status}`}>{labelReviewStatus(currentCard.review_status)}</span>
+                  <span className="review-status">{labelRating(currentCard.study_last_rating)}</span>
+                  {currentCard.review_flags.length > 0 && (
+                    <ul className="flag-list">
+                      {currentCard.review_flags.slice(0, 4).map((flag) => (
+                        <li key={flag}>{flag}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {showAnswer ? (
+                    <ImageStrip assets={[...pageCrops, ...sourcePages].slice(0, 1)} compact />
+                  ) : (
+                    <p className="locked-note">정답 확인 후 표시</p>
+                  )}
+                </div>
+              </details>
+
+              <details className="inspector-section">
+                <summary>
+                  <span>카드 편집</span>
                   <Check size={16} />
-                  <span>승인 저장</span>
-                </button>
-                <button
-                  type="button"
-                  className="secondary-action"
-                  onClick={(event) => {
-                    const form = event.currentTarget.closest('form')
-                    if (form) void saveReview(currentCard, 'needs_work', form)
+                </summary>
+                <form
+                  key={currentCard.id}
+                  className="review-editor"
+                  onSubmit={(event) => {
+                    event.preventDefault()
+                    void saveReview(currentCard, 'approved', event.currentTarget)
                   }}
                 >
-                  <AlertTriangle size={16} />
-                  <span>보류 저장</span>
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-      </aside>
+                  <label>
+                    앞면
+                    <textarea name="front_text" defaultValue={currentCard.front_text} rows={4} />
+                  </label>
+                  <label>
+                    뒷면
+                    <textarea name="back_text" defaultValue={currentCard.back_text} rows={5} />
+                  </label>
+                  <label>
+                    메모
+                    <textarea name="note" defaultValue={currentCard.review_note} rows={3} />
+                  </label>
+                  <div className="review-actions">
+                    <button type="submit" className="primary-action">
+                      <Check size={16} />
+                      <span>승인 저장</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-action"
+                      onClick={(event) => {
+                        const form = event.currentTarget.closest('form')
+                        if (form) void saveReview(currentCard, 'needs_work', form)
+                      }}
+                    >
+                      <AlertTriangle size={16} />
+                      <span>보류 저장</span>
+                    </button>
+                  </div>
+                </form>
+              </details>
+            </>
+          )}
+        </aside>
+      )}
     </main>
   )
 }

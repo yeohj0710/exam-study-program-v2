@@ -51,3 +51,59 @@ def test_import_pdf_ids_survive_non_text_source_changes(tmp_path):
     assert first_source.fingerprint != second_source.fingerprint
     assert first_source.id == second_source.id
     assert [card.id for card in first_cards] == [card.id for card in second_cards]
+
+
+def test_import_pdf_is_deterministic_for_same_pdf(tmp_path):
+    pdf = tmp_path / "sample.pdf"
+    make_pdf(pdf)
+
+    first_source, first_cards, first_warnings = import_pdf(
+        pdf,
+        tmp_path / "assets-first",
+        subject="의약화학",
+        deck="sample",
+    )
+    second_source, second_cards, second_warnings = import_pdf(
+        pdf,
+        tmp_path / "assets-second",
+        subject="의약화학",
+        deck="sample",
+    )
+
+    def card_signature(card):
+        return {
+            "id": card.id,
+            "subject": card.subject,
+            "deck": card.deck,
+            "source": card.source,
+            "source_document_id": card.source_document_id,
+            "source_page": card.source_page,
+            "source_item": card.source_item,
+            "front_text": card.front_text,
+            "back_text": card.back_text,
+            "raw_text": card.raw_text,
+            "confidence": card.confidence,
+            "review_flags": card.review_flags,
+            "tags": card.tags,
+            "created_at": card.created_at,
+            "updated_at": card.updated_at,
+            "assets": [
+                {
+                    "id": asset.id,
+                    "role": asset.role,
+                    "path": asset.path,
+                    "width": asset.width,
+                    "height": asset.height,
+                    "sha1": asset.sha1,
+                }
+                for asset in card.assets
+            ],
+        }
+
+    assert first_warnings == second_warnings == []
+    assert first_source.id == second_source.id
+    assert first_source.fingerprint == second_source.fingerprint
+    assert first_source.imported_at == second_source.imported_at == 0.0
+    assert [card_signature(card) for card in first_cards] == [
+        card_signature(card) for card in second_cards
+    ]

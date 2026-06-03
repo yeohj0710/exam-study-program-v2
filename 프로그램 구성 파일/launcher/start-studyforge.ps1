@@ -57,7 +57,7 @@ function Get-StudyForgeHealth {
 }
 
 Set-Location $AppDir
-Write-Host "Starting StudyForge."
+Write-Host "Starting exam study app."
 Write-Host "Keep this window open while using the app."
 
 if (-not (Test-Path -LiteralPath $DistIndex)) {
@@ -93,7 +93,7 @@ foreach ($CandidatePort in 8765..8785) {
     $health = Get-StudyForgeHealth $CandidatePort
     if ($health -and $health.instance_id -eq $InstanceId) {
         $Url = "http://127.0.0.1:$CandidatePort"
-        Write-Step "Opening existing StudyForge server"
+        Write-Step "Opening existing app server"
         Start-Process $Url
         Write-Host "Opened $Url"
         Read-Host "Press Enter to close this launcher"
@@ -131,7 +131,7 @@ else {
     Write-Step "Browser auto-open disabled"
 }
 
-Write-Step "Running StudyForge server"
+Write-Step "Running app server"
 Write-Host "The browser will open automatically. Manual URL: $Url"
 Write-Host "Press Ctrl+C in this window to stop the server."
 Invoke-Checked $VenvPython @((Join-Path $AppDir "scripts\run_api.py"), "--port", "$Port")

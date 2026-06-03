@@ -92,6 +92,7 @@ def import_pdf(
         path=str(pdf_path),
         fingerprint=fingerprint,
         page_count=doc.page_count,
+        imported_at=0.0,
     )
 
     cards: list[StudyCard] = []
@@ -121,7 +122,7 @@ def import_pdf(
                 source_path=str(pdf_path),
                 width=width,
                 height=height,
-                sha1=cheap_file_fingerprint(page_target),
+                sha1=file_sha1(page_target),
             )
 
         if not segments:
@@ -143,6 +144,8 @@ def import_pdf(
                     review_flags=["no_extractable_text", "needs_manual_review"],
                     assets=[page_asset] if page_asset else [],
                     tags=["pdf", "fallback"],
+                    created_at=0.0,
+                    updated_at=0.0,
                 )
             )
             continue
@@ -174,7 +177,7 @@ def import_pdf(
                         source_path=str(pdf_path),
                         width=front_width,
                         height=front_height,
-                        sha1=cheap_file_fingerprint(front_target),
+                        sha1=file_sha1(front_target),
                     ),
                 )
                 flags.append("has_front_crop")
@@ -196,7 +199,7 @@ def import_pdf(
                         source_path=str(pdf_path),
                         width=crop_width,
                         height=crop_height,
-                        sha1=cheap_file_fingerprint(crop_target),
+                        sha1=file_sha1(crop_target),
                     ),
                 )
                 flags.append("has_question_crop")
@@ -225,6 +228,8 @@ def import_pdf(
                     review_flags=flags,
                     assets=assets,
                     tags=["pdf", subject],
+                    created_at=0.0,
+                    updated_at=0.0,
                 )
             )
 
