@@ -39,9 +39,10 @@
 
 .sidebar-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .sidebar-head .brand-block {
@@ -66,11 +67,20 @@
 }
 
 .sidebar-toggle {
-  margin-top: 1px;
+  width: 36px;
+  min-width: 36px;
+  padding: 0;
+  margin-top: 0;
+  align-self: start;
 }
 
 .sidebar-toggle .collapse-icon {
   transform: rotate(180deg);
+}
+
+.sidebar-toggle span,
+.sidebar-toggle .shortcut-hint {
+  display: none;
 }
 
 .deck-tab-toggle {
@@ -110,6 +120,10 @@
   align-items: center;
   gap: 12px;
   padding: 4px 6px 14px;
+  min-width: 0;
+}
+
+.brand-block > div {
   min-width: 0;
 }
 
@@ -166,6 +180,8 @@
   line-height: 1.2;
   word-break: keep-all;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-block p,
@@ -174,6 +190,12 @@
   margin: 4px 0 0;
   color: #6b6f76;
   font-size: 13px;
+}
+
+.brand-block p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .deck-list {
@@ -1178,14 +1200,14 @@ button {
   .study-controls {
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto;
+    overflow-x: hidden;
     width: calc(100vw - 28px);
     max-width: calc(100vw - 28px);
   }
 
   .study-controls button {
     min-width: 0;
-    flex: 0 0 172px;
+    flex: 1 1 0;
     padding: 0 9px;
   }
 
@@ -1194,5 +1216,9 @@ button {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .study-controls .shortcut-hint {
+    display: none;
   }
 }
