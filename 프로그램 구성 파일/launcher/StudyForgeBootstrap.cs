@@ -305,10 +305,9 @@ internal sealed class LogoBox : Control
         base.OnPaint(e);
         e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        using (SolidBrush dark = new SolidBrush(Color.FromArgb(32, 33, 35)))
         using (SolidBrush white = new SolidBrush(Color.White))
-        using (Pen check = new Pen(Color.FromArgb(15, 118, 110), 4.2F))
-        using (Font markFont = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Pixel))
+        using (SolidBrush teal = new SolidBrush(Color.FromArgb(15, 118, 110)))
+        using (Font markFont = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Pixel))
         using (StringFormat format = new StringFormat())
         {
             using (System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -320,17 +319,12 @@ internal sealed class LogoBox : Control
                 path.AddArc(rect.Right - radius * 2 - 1, rect.Bottom - radius * 2 - 1, radius * 2, radius * 2, 0, 90);
                 path.AddArc(rect.Left, rect.Bottom - radius * 2 - 1, radius * 2, radius * 2, 90, 90);
                 path.CloseFigure();
-                e.Graphics.FillPath(dark, path);
+                e.Graphics.FillPath(teal, path);
             }
 
             format.Alignment = StringAlignment.Center;
             format.LineAlignment = StringAlignment.Center;
-            e.Graphics.DrawString("SF", markFont, white, new RectangleF(2, 5, 50, 30), format);
-
-            check.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-            check.EndCap = System.Drawing.Drawing2D.LineCap.Round;
-            check.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
-            e.Graphics.DrawLines(check, new[] { new PointF(15, 39), new PointF(23, 46), new PointF(39, 30) });
+            e.Graphics.DrawString("SF", markFont, white, new RectangleF(2, 2, 50, 50), format);
         }
     }
 }

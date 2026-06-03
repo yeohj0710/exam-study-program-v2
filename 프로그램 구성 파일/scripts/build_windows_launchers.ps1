@@ -42,20 +42,17 @@ for size in sizes:
     scale = size / 64
     image = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((0, 0, size - 1, size - 1), radius=max(2, round(12 * scale)), fill=(32, 33, 35, 255))
+    draw.rounded_rectangle((0, 0, size - 1, size - 1), radius=max(2, round(12 * scale)), fill=(15, 118, 110, 255))
     if size <= 24:
         text = "S"
-        text_font = font(max(11, round(30 * scale)))
+        text_font = font(max(12, round(34 * scale)))
         box = draw.textbbox((0, 0), text, font=text_font)
         draw.text(((size - (box[2] - box[0])) / 2, (size - (box[3] - box[1])) / 2 - box[1]), text, fill=(255, 255, 255, 255), font=text_font)
-        draw.rectangle((round(11 * scale), round(47 * scale), round(53 * scale), round(52 * scale)), fill=(15, 118, 110, 255))
     else:
         text = "SF"
-        text_font = font(max(18, round(27 * scale)))
+        text_font = font(max(20, round(31 * scale)))
         box = draw.textbbox((0, 0), text, font=text_font)
-        draw.text(((size - (box[2] - box[0])) / 2, round(8 * scale) - box[1]), text, fill=(255, 255, 255, 255), font=text_font)
-        width = max(2, round(5 * scale))
-        draw.line([(round(18 * scale), round(45 * scale)), (round(27 * scale), round(53 * scale)), (round(47 * scale), round(34 * scale))], fill=(15, 118, 110, 255), width=width, joint="curve")
+        draw.text(((size - (box[2] - box[0])) / 2, (size - (box[3] - box[1])) / 2 - box[1]), text, fill=(255, 255, 255, 255), font=text_font)
     images.append(image)
 
 images[-1].save(icon_path, sizes=[(s, s) for s in sizes])
