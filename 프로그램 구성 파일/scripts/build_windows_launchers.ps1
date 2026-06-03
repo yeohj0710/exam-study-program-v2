@@ -18,44 +18,58 @@ if (-not (Test-Path -LiteralPath $Csc)) {
     throw "C# compiler not found: $Csc"
 }
 
-Add-Type -AssemblyName System.Drawing
-$bitmap = New-Object System.Drawing.Bitmap 64, 64
-$graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-$graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-$graphics.Clear([System.Drawing.Color]::Transparent)
-$dark = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(32, 33, 35))
-$white = New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::White)
-$tealPen = New-Object System.Drawing.Pen ([System.Drawing.Color]::FromArgb(15, 118, 110)), 5
-$tealPen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
-$tealPen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
-$tealPen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
-$graphics.FillRectangle($dark, 0, 0, 64, 64)
-$card = [System.Drawing.PointF[]]@(
-    [System.Drawing.PointF]::new(18, 15),
-    [System.Drawing.PointF]::new(39, 15),
-    [System.Drawing.PointF]::new(47, 23),
-    [System.Drawing.PointF]::new(47, 47),
-    [System.Drawing.PointF]::new(18, 47)
-)
-$graphics.FillPolygon($white, $card)
-$graphics.DrawLines($tealPen, [System.Drawing.PointF[]]@(
-    [System.Drawing.PointF]::new(24, 33),
-    [System.Drawing.PointF]::new(30, 39),
-    [System.Drawing.PointF]::new(43, 25)
-))
-$icon = [System.Drawing.Icon]::FromHandle($bitmap.GetHicon())
-$stream = [System.IO.File]::Create($IconPath)
+$IconGenerator = @'
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFont
+import os
+
+icon_path = Path(os.environ["STUDYFORGE_ICON_PATH"])
+sizes = [16, 24, 32, 48, 64, 128, 256]
+
+def font(size):
+    candidates = [
+        r"C:\Windows\Fonts\seguisb.ttf",
+        r"C:\Windows\Fonts\segoeuib.ttf",
+        r"C:\Windows\Fonts\arialbd.ttf",
+    ]
+    for candidate in candidates:
+        if Path(candidate).exists():
+            return ImageFont.truetype(candidate, size)
+    return ImageFont.load_default()
+
+images = []
+for size in sizes:
+    scale = size / 64
+    image = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle((0, 0, size - 1, size - 1), radius=max(2, round(12 * scale)), fill=(32, 33, 35, 255))
+    if size <= 24:
+        text = "S"
+        text_font = font(max(11, round(30 * scale)))
+        box = draw.textbbox((0, 0), text, font=text_font)
+        draw.text(((size - (box[2] - box[0])) / 2, (size - (box[3] - box[1])) / 2 - box[1]), text, fill=(255, 255, 255, 255), font=text_font)
+        draw.rectangle((round(11 * scale), round(47 * scale), round(53 * scale), round(52 * scale)), fill=(15, 118, 110, 255))
+    else:
+        text = "SF"
+        text_font = font(max(18, round(27 * scale)))
+        box = draw.textbbox((0, 0), text, font=text_font)
+        draw.text(((size - (box[2] - box[0])) / 2, round(8 * scale) - box[1]), text, fill=(255, 255, 255, 255), font=text_font)
+        width = max(2, round(5 * scale))
+        draw.line([(round(18 * scale), round(45 * scale)), (round(27 * scale), round(53 * scale)), (round(47 * scale), round(34 * scale))], fill=(15, 118, 110, 255), width=width, joint="curve")
+    images.append(image)
+
+images[-1].save(icon_path, sizes=[(s, s) for s in sizes])
+'@
+
+$env:STUDYFORGE_ICON_PATH = $IconPath
 try {
-    $icon.Save($stream)
+    $IconGenerator | & (Join-Path $AppDir ".venv\Scripts\python.exe") -
+    if ($LASTEXITCODE -ne 0) {
+        throw "Icon generation failed"
+    }
 }
 finally {
-    $stream.Dispose()
-    $icon.Dispose()
-    $graphics.Dispose()
-    $bitmap.Dispose()
-    $dark.Dispose()
-    $white.Dispose()
-    $tealPen.Dispose()
+    Remove-Item Env:\STUDYFORGE_ICON_PATH -ErrorAction SilentlyContinue
 }
 
 if (Test-Path -LiteralPath $CoreExe) {
