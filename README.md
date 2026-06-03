@@ -11,6 +11,7 @@ The repository is intentionally separate from `exam-study-program`. Source mater
 - `tests`: Python regression tests for segmentation and import behavior.
 - `data/`: runtime library and assets, ignored by Git.
 - `data/reviews.json`: local review/edit overlay, ignored by Git and preserved across re-imports.
+- `data/progress.json`: local study progress overlay, ignored by Git and preserved across re-imports.
 
 ## Setup
 
@@ -76,3 +77,10 @@ npm run build
 - Use `승인 저장` after checking or editing a card. Approved low-confidence cards no longer count as unresolved.
 - Use `보류 저장` when a card needs later manual cleanup.
 - Edits are stored as an overlay in `data/reviews.json`, not inside the imported source library. Running import again keeps the review overlay for cards whose deterministic IDs remain the same.
+
+## Study Workflow
+
+- Use the deck filter bar to switch between all cards, due reviews, new cards, low-confidence cards, and held cards.
+- Press `J` to show or hide the answer and `K` to move to the next card.
+- After checking an answer, rate it with `Again`, `Hard`, `Good`, or `Easy` (`1`-`4` shortcuts). Ratings are stored in `data/progress.json`.
+- Study progress is an overlay rather than imported data, so re-importing regenerated cards keeps progress for cards whose deterministic IDs remain stable.

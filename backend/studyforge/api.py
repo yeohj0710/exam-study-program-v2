@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from .importer import build_library
 from .models import ReviewStatus, library_to_dict
+from .progress import apply_progress, load_progress, record_rating, save_progress
 from .reviews import CardReview, apply_reviews, load_reviews, save_reviews
 from .storage import library_summary, load_library, save_library
 
@@ -17,6 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_ROOT = PROJECT_ROOT / "data"
 LIBRARY_PATH = DATA_ROOT / "library.json"
 REVIEWS_PATH = DATA_ROOT / "reviews.json"
+PROGRESS_PATH = DATA_ROOT / "progress.json"
 ASSET_ROOT = DATA_ROOT / "assets"
 
 app = FastAPI(title="StudyForge API", version="0.1.0")
@@ -47,10 +50,15 @@ class ReviewRequest(BaseModel):
     note: str = Field(default="", max_length=2000)
 
 
+class StudyRequest(BaseModel):
+    rating: Literal["again", "hard", "good", "easy"]
+
+
 def require_library():
     if not LIBRARY_PATH.exists():
         raise HTTPException(status_code=404, detail="Library has not been imported yet.")
-    return apply_reviews(load_library(LIBRARY_PATH), load_reviews(REVIEWS_PATH))
+    library = apply_reviews(load_library(LIBRARY_PATH), load_reviews(REVIEWS_PATH))
+    return apply_progress(library, load_progress(PROGRESS_PATH))
 
 
 @app.get("/api/health")
@@ -83,7 +91,8 @@ def rebuild_library(request: ImportRequest) -> dict[str, object]:
         render_pdf_pages=request.render_pdf_pages,
     )
     save_library(library, LIBRARY_PATH)
-    return library_summary(apply_reviews(library, load_reviews(REVIEWS_PATH)))
+    library = apply_reviews(library, load_reviews(REVIEWS_PATH))
+    return library_summary(apply_progress(library, load_progress(PROGRESS_PATH)))
 
 
 @app.patch("/api/cards/{card_id}/review")
@@ -106,6 +115,23 @@ def update_card_review(card_id: str, request: ReviewRequest) -> dict[str, object
     reviewed_payload = library_to_dict(reviewed_library)
     reviewed_card = next(card for card in reviewed_payload["cards"] if card["id"] == card_id)
     return {"card": reviewed_card}
+
+
+@app.patch("/api/cards/{card_id}/study")
+def update_card_study(card_id: str, request: StudyRequest) -> dict[str, object]:
+    library = require_library()
+    card_ids = {card.id for card in library.cards}
+    if card_id not in card_ids:
+        raise HTTPException(status_code=404, detail="Card not found.")
+
+    progress = load_progress(PROGRESS_PATH)
+    record_rating(progress, card_id, request.rating)
+    save_progress(PROGRESS_PATH, progress)
+
+    updated_library = require_library()
+    updated_payload = library_to_dict(updated_library)
+    updated_card = next(card for card in updated_payload["cards"] if card["id"] == card_id)
+    return {"card": updated_card, "summary": library_summary(updated_library)}
 
 
 @app.get("/api/external-asset")

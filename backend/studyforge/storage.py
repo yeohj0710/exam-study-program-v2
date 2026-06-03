@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from time import time
 
 from .models import Library, library_from_dict, library_to_dict
 
@@ -22,6 +23,7 @@ def load_library(path: Path) -> Library:
 def library_summary(library: Library) -> dict[str, object]:
     decks: dict[str, int] = {}
     subjects: dict[str, int] = {}
+    now = time()
     for card in library.cards:
         decks[card.deck] = decks.get(card.deck, 0) + 1
         subjects[card.subject] = subjects.get(card.subject, 0) + 1
@@ -33,6 +35,9 @@ def library_summary(library: Library) -> dict[str, object]:
         "low_confidence_count": sum(1 for card in library.cards if card.confidence < 0.55),
         "deck_count": len(decks),
         "subject_count": len(subjects),
+        "study_due_count": sum(1 for card in library.cards if card.study_seen_count > 0 and card.study_due_at <= now),
+        "study_new_count": sum(1 for card in library.cards if card.study_seen_count == 0),
+        "study_seen_count": sum(1 for card in library.cards if card.study_seen_count > 0),
         "decks": decks,
         "subjects": subjects,
         "report": library.report.__dict__,

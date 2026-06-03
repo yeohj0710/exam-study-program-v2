@@ -13,6 +13,8 @@ import {
 import './App.css'
 
 type AssetRole = 'front_image' | 'choice_image' | 'answer_image' | 'source_page' | 'page_crop'
+type StudyRating = 'new' | 'again' | 'hard' | 'good' | 'easy'
+type FilterMode = 'all' | 'due' | 'new' | 'low' | 'needs_work'
 
 type Asset = {
   id: string
@@ -37,6 +39,14 @@ type StudyCard = {
   review_flags: string[]
   review_status: 'unreviewed' | 'approved' | 'needs_work'
   review_note: string
+  study_seen_count: number
+  study_correct_count: number
+  study_wrong_count: number
+  study_streak: number
+  study_interval_days: number
+  study_due_at: number
+  study_last_studied_at?: number
+  study_last_rating: StudyRating
   assets: Asset[]
   tags: string[]
 }
@@ -76,6 +86,8 @@ function App() {
   const [order, setOrder] = useState<string[]>([])
   const [cursor, setCursor] = useState(0)
   const [showAnswer, setShowAnswer] = useState(false)
+  const [filterMode, setFilterMode] = useState<FilterMode>('all')
+  const [nowSeconds, setNowSeconds] = useState(0)
   const [sourceRoot, setSourceRoot] = useState(defaultSourceRoot)
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
   const [importing, setImporting] = useState(false)
@@ -150,6 +162,25 @@ function App() {
     })
   }
 
+  async function saveStudy(card: StudyCard, rating: Exclude<StudyRating, 'new'>) {
+    const response = await fetch(`/api/cards/${card.id}/study`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating }),
+    })
+    if (!response.ok) throw new Error(await response.text())
+    const payload = (await response.json()) as { card: StudyCard }
+    setLibrary((current) => {
+      if (!current) return current
+      return {
+        ...current,
+        cards: current.cards.map((item) => (item.id === payload.card.id ? payload.card : item)),
+      }
+    })
+    setOrder([])
+    setShowAnswer(false)
+  }
+
   useEffect(() => {
     let cancelled = false
     fetch('/api/library')
@@ -175,6 +206,16 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const updateNow = () => setNowSeconds(Date.now() / 1000)
+    const timeout = window.setTimeout(updateNow, 0)
+    const interval = window.setInterval(updateNow, 60_000)
+    return () => {
+      window.clearTimeout(timeout)
+      window.clearInterval(interval)
+    }
+  }, [])
+
   const decks = useMemo(() => {
     const grouped = new Map<string, StudyCard[]>()
     for (const card of library?.cards ?? []) {
@@ -187,26 +228,56 @@ function App() {
     () => library?.cards.filter((card) => card.deck === selectedDeck) ?? [],
     [library, selectedDeck],
   )
+  const deckStats = useMemo(
+    () => ({
+      all: deckCards.length,
+      due: deckCards.filter((card) => card.study_seen_count > 0 && card.study_due_at <= nowSeconds).length,
+      new: deckCards.filter((card) => card.study_seen_count === 0).length,
+      low: deckCards.filter((card) => card.confidence < 0.55 && card.review_status !== 'approved').length,
+      needs_work: deckCards.filter((card) => card.review_status === 'needs_work').length,
+    }),
+    [deckCards, nowSeconds],
+  )
+  const sessionCards = useMemo(
+    () =>
+      deckCards.filter((card) => {
+        if (filterMode === 'due') return card.study_seen_count > 0 && card.study_due_at <= nowSeconds
+        if (filterMode === 'new') return card.study_seen_count === 0
+        if (filterMode === 'low') return card.confidence < 0.55 && card.review_status !== 'approved'
+        if (filterMode === 'needs_work') return card.review_status === 'needs_work'
+        return true
+      }),
+    [deckCards, filterMode, nowSeconds],
+  )
 
   const cardsById = useMemo(
-    () => new Map(deckCards.map((card) => [card.id, card])),
-    [deckCards],
+    () => new Map(sessionCards.map((card) => [card.id, card])),
+    [sessionCards],
   )
   const effectiveOrder = useMemo(() => {
-    const isValidOrder = order.length === deckCards.length && order.every((id) => cardsById.has(id))
-    return isValidOrder ? order : deckCards.map((card) => card.id)
-  }, [cardsById, deckCards, order])
-  const currentCard = cardsById.get(effectiveOrder[cursor]) ?? deckCards[0]
-  const progressText = deckCards.length ? `${Math.min(cursor + 1, deckCards.length)} / ${deckCards.length}` : '0 / 0'
+    const isValidOrder = order.length === sessionCards.length && order.every((id) => cardsById.has(id))
+    return isValidOrder ? order : sessionCards.map((card) => card.id)
+  }, [cardsById, sessionCards, order])
+  const currentCard = cardsById.get(effectiveOrder[cursor]) ?? sessionCards[0]
+  const progressText = sessionCards.length
+    ? `${Math.min(cursor + 1, sessionCards.length)} / ${sessionCards.length}`
+    : '0 / 0'
 
   function nextCard() {
-    if (!deckCards.length) return
-    setCursor((value) => (value + 1) % deckCards.length)
+    if (!sessionCards.length) return
+    setCursor((value) => (value + 1) % sessionCards.length)
     setShowAnswer(false)
   }
 
   function reshuffle() {
-    setOrder(shuffleIds(deckCards))
+    setOrder(shuffleIds(sessionCards))
+    setCursor(0)
+    setShowAnswer(false)
+  }
+
+  function setFilter(nextMode: FilterMode) {
+    setFilterMode(nextMode)
+    setOrder([])
     setCursor(0)
     setShowAnswer(false)
   }
@@ -214,8 +285,15 @@ function App() {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.target instanceof HTMLInputElement) return
+      if (event.target instanceof HTMLTextAreaElement) return
       if (event.key.toLowerCase() === 'j') setShowAnswer((value) => !value)
       if (event.key.toLowerCase() === 'k') nextCard()
+      if (showAnswer && currentCard) {
+        if (event.key === '1') void saveStudy(currentCard, 'again')
+        if (event.key === '2') void saveStudy(currentCard, 'hard')
+        if (event.key === '3') void saveStudy(currentCard, 'good')
+        if (event.key === '4') void saveStudy(currentCard, 'easy')
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -302,6 +380,18 @@ function App() {
                 </button>
               </div>
             </header>
+            <div className="filter-bar" role="tablist" aria-label="Session filter">
+              <FilterButton label="전체" count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
+              <FilterButton label="복습" count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
+              <FilterButton label="신규" count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
+              <FilterButton label="검수" count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
+              <FilterButton
+                label="보류"
+                count={deckStats.needs_work}
+                active={filterMode === 'needs_work'}
+                onClick={() => setFilter('needs_work')}
+              />
+            </div>
 
             <article className="question-pane">
               {currentCard ? (
@@ -338,6 +428,14 @@ function App() {
                 <span>다음</span>
               </button>
             </div>
+            {showAnswer && currentCard && (
+              <div className="rating-controls" aria-label="Study rating">
+                <button type="button" onClick={() => void saveStudy(currentCard, 'again')}>Again 1</button>
+                <button type="button" onClick={() => void saveStudy(currentCard, 'hard')}>Hard 2</button>
+                <button type="button" onClick={() => void saveStudy(currentCard, 'good')}>Good 3</button>
+                <button type="button" onClick={() => void saveStudy(currentCard, 'easy')}>Easy 4</button>
+              </div>
+            )}
           </>
         )}
       </section>
@@ -347,6 +445,11 @@ function App() {
           <Check size={18} />
           <span>{library?.report.pdfs_imported ?? 0} PDF</span>
           <span>{library?.report.legacy_decks_imported ?? 0} legacy</span>
+        </div>
+        <div className="study-stats">
+          <span>{deckStats.new} new</span>
+          <span>{deckStats.due} due</span>
+          <span>{currentCard?.study_seen_count ?? 0} seen</span>
         </div>
         <div className="review-box">
           <div className="panel-heading">
@@ -365,6 +468,7 @@ function App() {
               </div>
               <p>{currentCard.source_page ? `page ${currentCard.source_page}` : currentCard.source_item}</p>
               <span className={`review-status ${currentCard.review_status}`}>{currentCard.review_status}</span>
+              <span className="review-status">{currentCard.study_last_rating}</span>
               {currentCard.review_flags.length > 0 && (
                 <ul className="flag-list">
                   {currentCard.review_flags.slice(0, 4).map((flag) => (
@@ -438,6 +542,25 @@ function ImageStrip({ assets, compact = false }: { assets: Asset[]; compact?: bo
         />
       ))}
     </div>
+  )
+}
+
+function FilterButton({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string
+  count: number
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button type="button" className={active ? 'filter-button active' : 'filter-button'} onClick={onClick}>
+      <span>{label}</span>
+      <strong>{count}</strong>
+    </button>
   )
 }
 

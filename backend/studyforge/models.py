@@ -7,6 +7,7 @@ from typing import Any, Literal
 AssetRole = Literal["front_image", "choice_image", "answer_image", "source_page", "page_crop"]
 CardSource = Literal["pdf", "legacy_capture", "manual", "page_fallback"]
 ReviewStatus = Literal["unreviewed", "approved", "needs_work"]
+StudyRating = Literal["new", "again", "hard", "good", "easy"]
 
 
 @dataclass
@@ -50,6 +51,14 @@ class StudyCard:
     review_status: ReviewStatus = "unreviewed"
     review_note: str = ""
     reviewed_at: float | None = None
+    study_seen_count: int = 0
+    study_correct_count: int = 0
+    study_wrong_count: int = 0
+    study_streak: int = 0
+    study_interval_days: float = 0.0
+    study_due_at: float = 0.0
+    study_last_studied_at: float | None = None
+    study_last_rating: StudyRating = "new"
     assets: list[Asset] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     created_at: float = field(default_factory=time)
