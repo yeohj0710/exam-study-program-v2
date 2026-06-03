@@ -42,14 +42,14 @@ def test_patch_study_progress_persists_and_updates_library(tmp_path, monkeypatch
     monkeypatch.setattr(api, "PROGRESS_PATH", progress_path)
     client = TestClient(api.app)
 
-    response = client.patch("/api/cards/card-1/study", json={"rating": "good"})
+    response = client.patch("/api/cards/card-1/study", json={"rating": "easy"})
 
     assert response.status_code == 200
     assert progress_path.exists()
     card = response.json()["card"]
     assert card["study_seen_count"] == 1
     assert card["study_correct_count"] == 1
-    assert card["study_last_rating"] == "good"
+    assert card["study_last_rating"] == "easy"
 
     library_response = client.get("/api/library")
     assert library_response.status_code == 200
@@ -65,5 +65,18 @@ def test_patch_study_rejects_new_rating(tmp_path, monkeypatch):
     client = TestClient(api.app)
 
     response = client.patch("/api/cards/card-1/study", json={"rating": "new"})
+
+    assert response.status_code == 422
+
+
+def test_patch_study_rejects_intermediate_ratings(tmp_path, monkeypatch):
+    library_path = tmp_path / "library.json"
+    make_library(library_path)
+    monkeypatch.setattr(api, "LIBRARY_PATH", library_path)
+    monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
+    monkeypatch.setattr(api, "PROGRESS_PATH", tmp_path / "progress.json")
+    client = TestClient(api.app)
+
+    response = client.patch("/api/cards/card-1/study", json={"rating": "good"})
 
     assert response.status_code == 422

@@ -88,8 +88,8 @@ const defaultLegacyRoot =
 const sessionStorageKey = 'exam-memory-app.session.v1'
 
 const filterLabels: Record<FilterMode, string> = {
-  all: '전체',
-  due: '복습',
+  all: '남은 카드',
+  due: '다시 볼 카드',
   new: '신규',
   low: '검수',
   needs_work: '보류',
@@ -143,11 +143,14 @@ function labelReviewStatus(status: StudyCard['review_status']) {
 }
 
 function labelRating(rating: StudyRating) {
-  if (rating === 'again') return '다시'
-  if (rating === 'hard') return '어려움'
-  if (rating === 'good') return '맞음'
-  if (rating === 'easy') return '쉬움'
+  if (rating === 'again') return '다시 보기'
+  if (rating === 'easy') return '외움'
+  if (rating === 'hard' || rating === 'good') return '진행 중'
   return '처음'
+}
+
+function isMastered(card: StudyCard) {
+  return card.study_last_rating === 'easy'
 }
 
 function selectExistingDeck(library: Library, current: string) {
@@ -257,7 +260,7 @@ function App() {
     })
   }
 
-  async function saveStudy(card: StudyCard, rating: Exclude<StudyRating, 'new'>) {
+  async function saveStudy(card: StudyCard, rating: 'again' | 'easy') {
     const response = await fetch(`/api/cards/${card.id}/study`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -272,6 +275,9 @@ function App() {
         cards: current.cards.map((item) => (item.id === payload.card.id ? payload.card : item)),
       }
     })
+    if (rating === 'again') {
+      setCursor((value) => (sessionCards.length ? (value + 1) % sessionCards.length : 0))
+    }
     setShowAnswer(false)
   }
 
@@ -325,17 +331,22 @@ function App() {
   )
   const deckStats = useMemo(
     () => ({
-      all: deckCards.length,
-      due: deckCards.filter((card) => card.study_seen_count > 0 && card.study_due_at <= nowSeconds).length,
-      new: deckCards.filter((card) => card.study_seen_count === 0).length,
-      low: deckCards.filter((card) => card.confidence < 0.55 && card.review_status !== 'approved').length,
-      needs_work: deckCards.filter((card) => card.review_status === 'needs_work').length,
+      all: deckCards.filter((card) => !isMastered(card)).length,
+      due: deckCards.filter(
+        (card) => !isMastered(card) && card.study_seen_count > 0 && card.study_due_at <= nowSeconds,
+      ).length,
+      new: deckCards.filter((card) => !isMastered(card) && card.study_seen_count === 0).length,
+      low: deckCards.filter(
+        (card) => !isMastered(card) && card.confidence < 0.55 && card.review_status !== 'approved',
+      ).length,
+      needs_work: deckCards.filter((card) => !isMastered(card) && card.review_status === 'needs_work').length,
     }),
     [deckCards, nowSeconds],
   )
   const sessionCards = useMemo(
     () =>
       deckCards.filter((card) => {
+        if (isMastered(card)) return false
         if (filterMode === 'due') return card.study_seen_count > 0 && card.study_due_at <= nowSeconds
         if (filterMode === 'new') return card.study_seen_count === 0
         if (filterMode === 'low') return card.confidence < 0.55 && card.review_status !== 'approved'
@@ -422,9 +433,7 @@ function App() {
       if (key === 'i') setShowInspector((value) => !value)
       if (showAnswer && currentCard) {
         if (event.key === '1') void saveStudy(currentCard, 'again')
-        if (event.key === '2') void saveStudy(currentCard, 'hard')
-        if (event.key === '3') void saveStudy(currentCard, 'good')
-        if (event.key === '4') void saveStudy(currentCard, 'easy')
+        if (event.key === '2') void saveStudy(currentCard, 'easy')
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -633,17 +642,11 @@ function App() {
             </div>
             {showAnswer && currentCard && (
               <div className="rating-controls" aria-label="학습 결과">
-                <button type="button" title="틀렸거나 바로 다시 볼 때" onClick={() => void saveStudy(currentCard, 'again')}>
-                  다시(1)
+                <button type="button" title="나중에 다시 볼 카드로 남깁니다." onClick={() => void saveStudy(currentCard, 'again')}>
+                  다시 보기(1)
                 </button>
-                <button type="button" title="맞았지만 어려웠을 때" onClick={() => void saveStudy(currentCard, 'hard')}>
-                  어려움(2)
-                </button>
-                <button type="button" title="정상적으로 맞았을 때" onClick={() => void saveStudy(currentCard, 'good')}>
-                  맞음(3)
-                </button>
-                <button type="button" title="쉽게 맞았을 때" onClick={() => void saveStudy(currentCard, 'easy')}>
-                  쉬움(4)
+                <button type="button" title="외운 카드로 처리하고 기본 학습 목록에서 제외합니다." onClick={() => void saveStudy(currentCard, 'easy')}>
+                  외움·제외(2)
                 </button>
               </div>
             )}
