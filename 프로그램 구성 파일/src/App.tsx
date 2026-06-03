@@ -592,8 +592,8 @@ function App() {
             <div className="brand-block">
               <BrandMark />
               <div>
-                <h1>시험 자료 암기 프로그램</h1>
-                <p>{library.cards.length.toLocaleString()}개 카드</p>
+                <h1>StudyForge</h1>
+                <p>시험 자료 암기 · {library.cards.length.toLocaleString()}개</p>
               </div>
             </div>
             <button
@@ -636,7 +636,7 @@ function App() {
             <div className="brand-block import-brand">
               <BrandMark />
               <div>
-                <h1>시험 자료 암기 프로그램</h1>
+                <h1>StudyForge</h1>
                 <p>PDF와 기존 캡처 자료를 카드로 변환합니다.</p>
               </div>
             </div>
@@ -769,28 +769,35 @@ function App() {
               />
             </div>
 
-            {showQuestionList && (
-              <section className="question-list-panel" aria-label="현재 문제 목록">
-                <div className="question-list-heading">
-                  <strong>{filterLabels[filterMode]} 문제</strong>
-                  <span>{orderedCards.length.toLocaleString()}개</span>
+            <section
+              className={showQuestionList ? 'question-list-panel expanded' : 'question-list-panel compact'}
+              aria-label="현재 문제 목록"
+            >
+              <div className="question-list-heading">
+                <div>
+                  <strong>문항 바로가기</strong>
+                  <span>{filterLabels[filterMode]} · {orderedCards.length.toLocaleString()}개</span>
                 </div>
-                <div className="question-list">
-                  {orderedCards.map((card, index) => (
-                    <button
-                      key={card.id}
-                      type="button"
-                      className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
-                      onClick={() => goToCard(index)}
-                    >
-                      <span>{index + 1}</span>
-                      <strong>{card.front_text || card.source_item || card.deck}</strong>
-                      <small>{labelReviewStatus(card.review_status)}</small>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            )}
+                <button type="button" className="inline-toggle" onClick={() => setShowQuestionList((value) => !value)}>
+                  {showQuestionList ? '작게 보기' : '크게 보기'}
+                  <ShortcutHint keys="Ctrl+P" />
+                </button>
+              </div>
+              <div className="question-list">
+                {orderedCards.map((card, index) => (
+                  <button
+                    key={card.id}
+                    type="button"
+                    className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
+                    onClick={() => goToCard(index)}
+                  >
+                    <span>{index + 1}</span>
+                    <strong>{card.front_text || card.source_item || card.deck}</strong>
+                    <small>{labelReviewStatus(card.review_status)}</small>
+                  </button>
+                ))}
+              </div>
+            </section>
 
             <article className="question-pane">
               {currentCard ? (
