@@ -307,22 +307,30 @@ internal sealed class LogoBox : Control
 
         using (SolidBrush dark = new SolidBrush(Color.FromArgb(32, 33, 35)))
         using (SolidBrush white = new SolidBrush(Color.White))
-        using (Pen check = new Pen(Color.FromArgb(15, 118, 110), 4.5F))
+        using (Pen check = new Pen(Color.FromArgb(15, 118, 110), 4.2F))
+        using (Font markFont = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Pixel))
+        using (StringFormat format = new StringFormat())
         {
-            e.Graphics.FillRectangle(dark, 0, 0, 54, 54);
-            PointF[] card =
+            using (System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath())
             {
-                new PointF(16, 14),
-                new PointF(34, 14),
-                new PointF(40, 20),
-                new PointF(40, 40),
-                new PointF(16, 40)
-            };
-            e.Graphics.FillPolygon(white, card);
+                const int radius = 10;
+                Rectangle rect = new Rectangle(0, 0, 54, 54);
+                path.AddArc(rect.Left, rect.Top, radius * 2, radius * 2, 180, 90);
+                path.AddArc(rect.Right - radius * 2 - 1, rect.Top, radius * 2, radius * 2, 270, 90);
+                path.AddArc(rect.Right - radius * 2 - 1, rect.Bottom - radius * 2 - 1, radius * 2, radius * 2, 0, 90);
+                path.AddArc(rect.Left, rect.Bottom - radius * 2 - 1, radius * 2, radius * 2, 90, 90);
+                path.CloseFigure();
+                e.Graphics.FillPath(dark, path);
+            }
+
+            format.Alignment = StringAlignment.Center;
+            format.LineAlignment = StringAlignment.Center;
+            e.Graphics.DrawString("SF", markFont, white, new RectangleF(2, 5, 50, 30), format);
+
             check.StartCap = System.Drawing.Drawing2D.LineCap.Round;
             check.EndCap = System.Drawing.Drawing2D.LineCap.Round;
             check.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
-            e.Graphics.DrawLines(check, new[] { new PointF(21, 28), new PointF(26, 33), new PointF(36, 22) });
+            e.Graphics.DrawLines(check, new[] { new PointF(15, 39), new PointF(23, 46), new PointF(39, 30) });
         }
     }
 }
