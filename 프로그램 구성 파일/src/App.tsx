@@ -590,7 +590,7 @@ function App() {
         <aside className="sidebar">
           <div className="sidebar-head">
             <div className="brand-block">
-              <div className="brand-mark">암기</div>
+              <BrandMark />
               <div>
                 <h1>시험 자료 암기 프로그램</h1>
                 <p>{library.cards.length.toLocaleString()}개 카드</p>
@@ -634,7 +634,7 @@ function App() {
         {!library ? (
           <section className="import-panel">
             <div className="brand-block import-brand">
-              <div className="brand-mark">암기</div>
+              <BrandMark />
               <div>
                 <h1>시험 자료 암기 프로그램</h1>
                 <p>PDF와 기존 캡처 자료를 카드로 변환합니다.</p>
@@ -1034,6 +1034,15 @@ function ImageStrip({ assets, compact = false }: { assets: Asset[]; compact?: bo
           loading="lazy"
         />
       ))}
+    </div>
+  )
+}
+
+function BrandMark() {
+  return (
+    <div className="brand-mark" aria-hidden="true">
+      <span className="brand-page" />
+      <span className="brand-check" />
     </div>
   )
 }

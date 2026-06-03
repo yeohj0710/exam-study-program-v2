@@ -19,9 +19,17 @@ _DEVNULL_STREAMS = []
 def app_root() -> Path:
     if getattr(sys, "frozen", False):
         exe_dir = Path(sys.executable).resolve().parent
-        for child in exe_dir.iterdir():
-            if (child / "backend" / "studyforge" / "api.py").exists() and (child / "dist" / "index.html").exists():
-                return child
+        candidates = [exe_dir, *exe_dir.parents[:3]]
+        for candidate in candidates:
+            if (candidate / "backend" / "studyforge" / "api.py").exists() and (
+                candidate / "dist" / "index.html"
+            ).exists():
+                return candidate
+            for child in candidate.iterdir():
+                if (child / "backend" / "studyforge" / "api.py").exists() and (
+                    child / "dist" / "index.html"
+                ).exists():
+                    return child
         return exe_dir
     return Path(__file__).resolve().parents[1]
 
@@ -137,25 +145,31 @@ def show_splash_until_ready(url: str, port: int, state: dict[str, Any]) -> None:
 
     window = tk.Tk()
     window.title("시험 자료 암기 프로그램")
-    window.geometry("420x170")
+    window.geometry("460x210")
     window.resizable(False, False)
-    window.configure(bg="#f7f8f5")
+    window.configure(bg="#f7f7f8")
     window.attributes("-topmost", True)
 
-    frame = tk.Frame(window, bg="#f7f8f5", padx=28, pady=24)
+    frame = tk.Frame(window, bg="#f7f7f8", padx=28, pady=24)
     frame.pack(fill="both", expand=True)
+
+    mark = tk.Canvas(frame, width=48, height=48, bg="#f7f7f8", highlightthickness=0)
+    mark.create_rectangle(4, 4, 44, 44, fill="#202123", outline="#202123", width=0)
+    mark.create_polygon(16, 17, 31, 17, 36, 22, 36, 36, 16, 36, fill="#ffffff", outline="")
+    mark.create_line(20, 26, 25, 31, 34, 21, fill="#0f766e", width=4, capstyle=tk.ROUND, joinstyle=tk.ROUND)
+    mark.pack(anchor="w", pady=(0, 12))
 
     title = tk.Label(
         frame,
-        text="시험 자료 암기 프로그램 준비 중",
-        bg="#f7f8f5",
-        fg="#173f3a",
-        font=("Malgun Gothic", 13, "bold"),
+        text="StudyForge 준비 중",
+        bg="#f7f7f8",
+        fg="#202123",
+        font=("Malgun Gothic", 14, "bold"),
     )
     title.pack(anchor="w")
 
     status = tk.StringVar(value="자료와 서버를 불러오는 중입니다.")
-    status_label = tk.Label(frame, textvariable=status, bg="#f7f8f5", fg="#4d5c57", font=("Malgun Gothic", 10))
+    status_label = tk.Label(frame, textvariable=status, bg="#f7f7f8", fg="#6b6f76", font=("Malgun Gothic", 10))
     status_label.pack(anchor="w", pady=(8, 14))
 
     progress = ttk.Progressbar(frame, mode="indeterminate", length=360)

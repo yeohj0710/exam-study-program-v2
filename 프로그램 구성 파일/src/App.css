@@ -109,14 +109,43 @@
 .brand-mark {
   width: 36px;
   height: 36px;
+  position: relative;
+  flex: 0 0 36px;
   display: grid;
   place-items: center;
   border-radius: 8px;
   background: #202123;
   color: #ffffff;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
+  overflow: hidden;
+}
+
+.brand-page {
+  width: 18px;
+  height: 22px;
+  position: relative;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+.brand-page::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-top: 7px solid #e9e9eb;
+  border-left: 7px solid transparent;
+}
+
+.brand-check {
+  position: absolute;
+  left: 13px;
+  top: 18px;
+  width: 14px;
+  height: 8px;
+  border-left: 3px solid #0f766e;
+  border-bottom: 3px solid #0f766e;
+  transform: rotate(-45deg);
+  border-radius: 1px;
 }
 
 .brand-block h1,
