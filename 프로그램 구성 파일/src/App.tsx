@@ -635,9 +635,15 @@ function App() {
                 <Eye size={18} />
                 <span>{showAnswer ? '정답 숨기기(J)' : '정답 보기(J)'}</span>
               </button>
-              <button type="button" className="secondary-action" onClick={nextCard} disabled={!currentCard}>
+              <button
+                type="button"
+                className="secondary-action"
+                title="외움 상태를 기록하지 않고 다음 카드로 넘깁니다."
+                onClick={nextCard}
+                disabled={!currentCard}
+              >
                 <ChevronRight size={18} />
-                <span>다음(K)</span>
+                <span>건너뛰기(K)</span>
               </button>
             </div>
             {showAnswer && currentCard && (
