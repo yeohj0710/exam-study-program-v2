@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import threading
 from pathlib import Path
 from typing import Literal
 
@@ -77,6 +78,15 @@ def health() -> dict[str, object]:
         "project_root": str(PROJECT_ROOT),
         "data_root": str(DATA_ROOT),
     }
+
+
+@app.post("/api/shutdown")
+def shutdown() -> dict[str, object]:
+    def stop_process() -> None:
+        os._exit(0)
+
+    threading.Timer(0.25, stop_process).start()
+    return {"ok": True}
 
 
 @app.get("/api/library")

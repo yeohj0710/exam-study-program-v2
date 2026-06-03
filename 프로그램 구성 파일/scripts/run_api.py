@@ -23,4 +23,5 @@ if __name__ == "__main__":
         port=args.port,
         reload=args.reload,
         app_dir=str(ROOT / "backend"),
+        access_log=False,
     )

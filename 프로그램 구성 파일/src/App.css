@@ -255,6 +255,15 @@
   background: #e9efeb;
 }
 
+.danger-action {
+  color: #8a2d1f;
+  border-color: #e1c2ba;
+}
+
+.danger-action:hover {
+  border-color: #b85c48;
+}
+
 .primary-action {
   background: #173f3a;
   border-color: #173f3a;

@@ -7,6 +7,7 @@ import {
   FileText,
   Image as ImageIcon,
   Play,
+  Power,
   RefreshCw,
   Shuffle,
 } from 'lucide-react'
@@ -185,6 +186,7 @@ function App() {
   const [sourceRoot, setSourceRoot] = useState(defaultSourceRoot)
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
   const [importing, setImporting] = useState(false)
+  const [stoppingServer, setStoppingServer] = useState(false)
 
   async function loadLibrary() {
     setLoading(true)
@@ -235,6 +237,18 @@ function App() {
       setError(caught instanceof Error ? caught.message : 'Import failed')
     } finally {
       setImporting(false)
+    }
+  }
+
+  async function shutdownApp() {
+    if (!window.confirm('시험 자료 암기 프로그램을 종료할까요?')) return
+    setStoppingServer(true)
+    try {
+      await fetch('/api/shutdown', { method: 'POST' })
+      setError('프로그램이 종료되었습니다. 이 탭을 닫아도 됩니다.')
+      window.setTimeout(() => window.close(), 300)
+    } catch {
+      setError('프로그램이 종료되었습니다. 이 탭을 닫아도 됩니다.')
     }
   }
 
@@ -551,6 +565,10 @@ function App() {
               {importing ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
               <span>{importing ? '가져오는 중' : '자료 가져오기'}</span>
             </button>
+            <button className="secondary-action" type="button" onClick={() => void shutdownApp()} disabled={stoppingServer}>
+              <Power size={18} />
+              <span>{stoppingServer ? '종료 중' : '종료'}</span>
+            </button>
             {error && <p className="error-text">{error}</p>}
           </section>
         ) : (
@@ -589,6 +607,16 @@ function App() {
                   aria-pressed={showInspector}
                 >
                   검수(I)
+                </button>
+                <button
+                  type="button"
+                  className="session-action danger-action"
+                  title="프로그램 종료"
+                  onClick={() => void shutdownApp()}
+                  disabled={stoppingServer}
+                >
+                  <Power size={18} />
+                  <span>{stoppingServer ? '종료 중' : '종료'}</span>
                 </button>
               </div>
             </header>
