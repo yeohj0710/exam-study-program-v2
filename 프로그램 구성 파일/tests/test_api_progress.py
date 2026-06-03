@@ -80,3 +80,16 @@ def test_patch_study_rejects_intermediate_ratings(tmp_path, monkeypatch):
     response = client.patch("/api/cards/card-1/study", json={"rating": "good"})
 
     assert response.status_code == 422
+
+
+def test_patch_study_rejects_again_rating(tmp_path, monkeypatch):
+    library_path = tmp_path / "library.json"
+    make_library(library_path)
+    monkeypatch.setattr(api, "LIBRARY_PATH", library_path)
+    monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
+    monkeypatch.setattr(api, "PROGRESS_PATH", tmp_path / "progress.json")
+    client = TestClient(api.app)
+
+    response = client.patch("/api/cards/card-1/study", json={"rating": "again"})
+
+    assert response.status_code == 422

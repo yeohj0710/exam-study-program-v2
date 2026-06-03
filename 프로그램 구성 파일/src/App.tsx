@@ -260,7 +260,7 @@ function App() {
     })
   }
 
-  async function saveStudy(card: StudyCard, rating: 'again' | 'easy') {
+  async function saveStudy(card: StudyCard, rating: 'easy') {
     const response = await fetch(`/api/cards/${card.id}/study`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -275,9 +275,6 @@ function App() {
         cards: current.cards.map((item) => (item.id === payload.card.id ? payload.card : item)),
       }
     })
-    if (rating === 'again') {
-      setCursor((value) => (sessionCards.length ? (value + 1) % sessionCards.length : 0))
-    }
     setShowAnswer(false)
   }
 
@@ -432,8 +429,7 @@ function App() {
       if (key === 'l') setShowQuestionList((value) => !value)
       if (key === 'i') setShowInspector((value) => !value)
       if (showAnswer && currentCard) {
-        if (event.key === '1') void saveStudy(currentCard, 'again')
-        if (event.key === '2') void saveStudy(currentCard, 'easy')
+        if (event.key === '1') void saveStudy(currentCard, 'easy')
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -648,11 +644,8 @@ function App() {
             </div>
             {showAnswer && currentCard && (
               <div className="rating-controls" aria-label="학습 결과">
-                <button type="button" title="나중에 다시 볼 카드로 남깁니다." onClick={() => void saveStudy(currentCard, 'again')}>
-                  다시 보기(1)
-                </button>
                 <button type="button" title="외운 카드로 처리하고 기본 학습 목록에서 제외합니다." onClick={() => void saveStudy(currentCard, 'easy')}>
-                  외움·제외(2)
+                  외움·제외(1)
                 </button>
               </div>
             )}

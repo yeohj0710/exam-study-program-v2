@@ -58,7 +58,7 @@ class ReviewRequest(BaseModel):
 
 
 class StudyRequest(BaseModel):
-    rating: Literal["again", "easy"]
+    rating: Literal["easy"]
 
 
 def require_library():
