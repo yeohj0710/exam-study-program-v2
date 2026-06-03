@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
   Check,
@@ -12,6 +12,8 @@ import {
   RefreshCw,
   RotateCcw,
   Shuffle,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react'
 import './App.css'
 
@@ -90,12 +92,16 @@ type PersistedSession = {
   showDecks: boolean
   showInspector: boolean
   showQuestionList: boolean
+  viewScale: number
 }
 
 const defaultSourceRoot = 'G:\\내 드라이브\\여형준님\\21 6-1'
 const defaultLegacyRoot =
   'G:\\내 드라이브\\여형준님\\21 6-1\\족보 암기 프로그램\\중간고사'
 const sessionStorageKey = 'exam-memory-app.session.v1'
+const minViewScale = 0.8
+const maxViewScale = 1.2
+const viewScaleStep = 0.05
 
 const filterLabels: Record<FilterMode, string> = {
   all: '남은 카드',
@@ -108,6 +114,17 @@ const filterLabels: Record<FilterMode, string> = {
 
 function isFilterMode(value: unknown): value is FilterMode {
   return typeof value === 'string' && value in filterLabels
+}
+
+function clampViewScale(value: number) {
+  return Math.min(maxViewScale, Math.max(minViewScale, Math.round(value * 100) / 100))
+}
+
+function defaultViewScale() {
+  if (typeof window === 'undefined') return 1
+  if (window.innerWidth <= 760) return 0.9
+  if (window.innerWidth <= 1180) return 0.95
+  return 1
 }
 
 function readSessionState(): Partial<PersistedSession> {
@@ -124,6 +141,7 @@ function readSessionState(): Partial<PersistedSession> {
       showDecks: typeof parsed.showDecks === 'boolean' ? parsed.showDecks : true,
       showInspector: typeof parsed.showInspector === 'boolean' ? parsed.showInspector : false,
       showQuestionList: typeof parsed.showQuestionList === 'boolean' ? parsed.showQuestionList : false,
+      viewScale: typeof parsed.viewScale === 'number' ? clampViewScale(parsed.viewScale) : undefined,
     }
   } catch {
     return {}
@@ -190,6 +208,7 @@ function App() {
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
   const [importing, setImporting] = useState(false)
   const [stoppingServer, setStoppingServer] = useState(false)
+  const [viewScale, setViewScale] = useState(savedSession.viewScale ?? defaultViewScale())
 
   async function loadLibrary() {
     setLoading(true)
@@ -424,6 +443,7 @@ function App() {
       showDecks,
       showInspector,
       showQuestionList,
+      viewScale,
     })
   }, [
     selectedDeck,
@@ -433,6 +453,7 @@ function App() {
     showDecks,
     showInspector,
     showQuestionList,
+    viewScale,
   ])
 
   function nextCard() {
@@ -459,6 +480,14 @@ function App() {
     setShowAnswer(false)
   }
 
+  function changeViewScale(delta: number) {
+    setViewScale((value) => clampViewScale(value + delta))
+  }
+
+  function resetViewScale() {
+    setViewScale(1)
+  }
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       const isTextInput = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement
@@ -478,6 +507,21 @@ function App() {
       if (library && isModifierShortcut && !event.altKey && key === 'i') {
         event.preventDefault()
         setShowInspector((value) => !value)
+        return
+      }
+      if (isModifierShortcut && !event.altKey && (key === '-' || key === '_')) {
+        event.preventDefault()
+        changeViewScale(-viewScaleStep)
+        return
+      }
+      if (isModifierShortcut && !event.altKey && (key === '=' || key === '+')) {
+        event.preventDefault()
+        changeViewScale(viewScaleStep)
+        return
+      }
+      if (isModifierShortcut && !event.altKey && key === '0') {
+        event.preventDefault()
+        resetViewScale()
         return
       }
 
@@ -524,9 +568,10 @@ function App() {
   ]
     .filter(Boolean)
     .join(' ')
+  const shellStyle = { '--view-scale': viewScale.toFixed(2) } as CSSProperties
 
   return (
-    <main className={shellClass}>
+    <main className={shellClass} style={shellStyle}>
       {library && !showDecks && (
         <button
           type="button"
@@ -646,6 +691,38 @@ function App() {
                   <ShortcutHint keys="Ctrl+P" />
                 </button>
                 <span className="progress-pill">{progressText}</span>
+                <div className="view-scale-controls" aria-label="화면 배율">
+                  <button
+                    type="button"
+                    title="화면 축소 (Ctrl+-)"
+                    aria-label="화면 축소"
+                    onClick={() => changeViewScale(-viewScaleStep)}
+                    disabled={viewScale <= minViewScale}
+                  >
+                    <ZoomOut size={16} />
+                    <ShortcutHint keys="Ctrl+-" />
+                  </button>
+                  <button
+                    type="button"
+                    className="view-scale-value"
+                    title="기본 배율로 되돌리기 (Ctrl+0)"
+                    aria-label="기본 배율"
+                    onClick={resetViewScale}
+                  >
+                    {Math.round(viewScale * 100)}%
+                    <ShortcutHint keys="Ctrl+0" />
+                  </button>
+                  <button
+                    type="button"
+                    title="화면 확대 (Ctrl+=)"
+                    aria-label="화면 확대"
+                    onClick={() => changeViewScale(viewScaleStep)}
+                    disabled={viewScale >= maxViewScale}
+                  >
+                    <ZoomIn size={16} />
+                    <ShortcutHint keys="Ctrl+=" />
+                  </button>
+                </div>
                 <button type="button" className="session-action" onClick={reshuffle} title="섞기">
                   <Shuffle size={18} />
                   <span>섞기</span>

@@ -1,5 +1,6 @@
 .app-shell {
   position: relative;
+  --view-scale: 1;
   min-height: 100vh;
   height: 100vh;
   overflow: hidden;
@@ -11,15 +12,15 @@
 }
 
 .app-shell.with-decks {
-  grid-template-columns: 288px minmax(0, 1fr);
+  grid-template-columns: calc(288px * var(--view-scale)) minmax(0, 1fr);
 }
 
 .app-shell.with-inspector {
-  grid-template-columns: minmax(0, 1fr) 336px;
+  grid-template-columns: minmax(0, 1fr) calc(336px * var(--view-scale));
 }
 
 .app-shell.with-decks.with-inspector {
-  grid-template-columns: 288px minmax(0, 1fr) 336px;
+  grid-template-columns: calc(288px * var(--view-scale)) minmax(0, 1fr) calc(336px * var(--view-scale));
 }
 
 .sidebar,
@@ -27,6 +28,7 @@
   background: #fbfbfb;
   border-color: #e3e3e6;
   border-style: solid;
+  zoom: var(--view-scale);
 }
 
 .sidebar {
@@ -178,6 +180,7 @@
 }
 
 .study-surface {
+  zoom: var(--view-scale);
   min-width: 0;
   min-height: 0;
   height: 100vh;
@@ -240,6 +243,49 @@
 .session-actions {
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+.view-scale-controls {
+  min-height: 38px;
+  border: 1px solid #dedee3;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #343541;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+}
+
+.view-scale-controls button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 8px;
+  font: inherit;
+}
+
+.view-scale-controls button:hover {
+  background: #f0f0f2;
+}
+
+.view-scale-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.view-scale-value {
+  min-width: 78px;
+  color: #202123;
+  font-variant-numeric: tabular-nums;
+  font-weight: 560;
 }
 
 .session-action,
@@ -889,8 +935,25 @@ button {
   }
 
   .session-action,
-  .progress-pill {
+  .progress-pill,
+  .view-scale-controls {
     flex: 0 0 auto;
+  }
+
+  .view-scale-controls .shortcut-hint {
+    display: none;
+  }
+
+  .view-scale-controls {
+    order: -1;
+  }
+
+  .view-scale-controls button {
+    padding: 0 7px;
+  }
+
+  .view-scale-value {
+    min-width: 48px;
   }
 
   .filter-bar {
