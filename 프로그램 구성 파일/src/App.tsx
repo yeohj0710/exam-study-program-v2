@@ -9,13 +9,14 @@ import {
   Play,
   Power,
   RefreshCw,
+  RotateCcw,
   Shuffle,
 } from 'lucide-react'
 import './App.css'
 
 type AssetRole = 'front_image' | 'choice_image' | 'answer_image' | 'source_page' | 'page_crop'
 type StudyRating = 'new' | 'again' | 'hard' | 'good' | 'easy'
-type FilterMode = 'all' | 'due' | 'new' | 'low' | 'needs_work'
+type FilterMode = 'all' | 'due' | 'new' | 'low' | 'needs_work' | 'mastered'
 
 type Asset = {
   id: string
@@ -101,6 +102,7 @@ const filterLabels: Record<FilterMode, string> = {
   new: '신규',
   low: '검수',
   needs_work: '보류',
+  mastered: '외운 카드',
 }
 
 function isFilterMode(value: unknown): value is FilterMode {
@@ -299,6 +301,20 @@ function App() {
     setShowAnswer(false)
   }
 
+  async function restoreStudy(card: StudyCard) {
+    const response = await fetch(`/api/cards/${card.id}/study`, { method: 'DELETE' })
+    if (!response.ok) throw new Error(await response.text())
+    const payload = (await response.json()) as { card: StudyCard }
+    setLibrary((current) => {
+      if (!current) return current
+      return {
+        ...current,
+        cards: current.cards.map((item) => (item.id === payload.card.id ? payload.card : item)),
+      }
+    })
+    setShowAnswer(false)
+  }
+
   useEffect(() => {
     let cancelled = false
     fetch('/api/library')
@@ -358,12 +374,14 @@ function App() {
         (card) => !isMastered(card) && card.confidence < 0.55 && card.review_status !== 'approved',
       ).length,
       needs_work: deckCards.filter((card) => !isMastered(card) && card.review_status === 'needs_work').length,
+      mastered: deckCards.filter((card) => isMastered(card)).length,
     }),
     [deckCards, nowSeconds],
   )
   const sessionCards = useMemo(
     () =>
       deckCards.filter((card) => {
+        if (filterMode === 'mastered') return isMastered(card)
         if (isMastered(card)) return false
         if (filterMode === 'due') return card.study_seen_count > 0 && card.study_due_at <= nowSeconds
         if (filterMode === 'new') return card.study_seen_count === 0
@@ -449,7 +467,7 @@ function App() {
       if (key === 'k') nextCard()
       if (key === 'l') setShowQuestionList((value) => !value)
       if (key === 'i') setShowInspector((value) => !value)
-      if (showAnswer && currentCard) {
+      if (showAnswer && currentCard && !isMastered(currentCard)) {
         if (event.key === '1') void saveStudy(currentCard, 'easy')
       }
     }
@@ -627,6 +645,12 @@ function App() {
               <FilterButton label={filterLabels.new} count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
               <FilterButton label={filterLabels.low} count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
               <FilterButton
+                label={filterLabels.mastered}
+                count={deckStats.mastered}
+                active={filterMode === 'mastered'}
+                onClick={() => setFilter('mastered')}
+              />
+              <FilterButton
                 label={filterLabels.needs_work}
                 count={deckStats.needs_work}
                 active={filterMode === 'needs_work'}
@@ -702,8 +726,19 @@ function App() {
                 <ChevronRight size={18} />
                 <span>건너뛰기(K)</span>
               </button>
+              {currentCard && isMastered(currentCard) && (
+                <button
+                  type="button"
+                  className="restore-action"
+                  title="외움·제외 기록을 지우고 다시 학습 목록에 넣습니다."
+                  onClick={() => void restoreStudy(currentCard)}
+                >
+                  <RotateCcw size={18} />
+                  <span>다시 복구</span>
+                </button>
+              )}
             </div>
-            {showAnswer && currentCard && (
+            {showAnswer && currentCard && !isMastered(currentCard) && (
               <div className="rating-controls" aria-label="학습 결과">
                 <button type="button" title="외운 카드로 처리하고 기본 학습 목록에서 제외합니다." onClick={() => void saveStudy(currentCard, 'easy')}>
                   외움·제외(1)

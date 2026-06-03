@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 
 from .importer import build_library
 from .models import ReviewStatus, library_to_dict
-from .progress import apply_progress, load_progress, record_rating, save_progress
+from .progress import apply_progress, clear_progress, load_progress, record_rating, save_progress
 from .reviews import CardReview, apply_reviews, load_reviews, save_reviews
 from .storage import library_summary, load_library, save_library
 from .validation import validate_library
@@ -160,6 +160,23 @@ def update_card_study(card_id: str, request: StudyRequest) -> dict[str, object]:
 
     progress = load_progress(PROGRESS_PATH)
     record_rating(progress, card_id, request.rating)
+    save_progress(PROGRESS_PATH, progress)
+
+    updated_library = require_library()
+    updated_payload = library_to_dict(updated_library)
+    updated_card = next(card for card in updated_payload["cards"] if card["id"] == card_id)
+    return {"card": updated_card, "summary": library_summary(updated_library)}
+
+
+@app.delete("/api/cards/{card_id}/study")
+def reset_card_study(card_id: str) -> dict[str, object]:
+    library = require_library()
+    card_ids = {card.id for card in library.cards}
+    if card_id not in card_ids:
+        raise HTTPException(status_code=404, detail="Card not found.")
+
+    progress = load_progress(PROGRESS_PATH)
+    clear_progress(progress, card_id)
     save_progress(PROGRESS_PATH, progress)
 
     updated_library = require_library()

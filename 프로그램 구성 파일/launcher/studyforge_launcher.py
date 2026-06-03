@@ -11,6 +11,7 @@ import traceback
 import urllib.request
 import webbrowser
 from pathlib import Path
+from typing import Any
 
 _DEVNULL_STREAMS = []
 
@@ -96,6 +97,111 @@ def open_url(url: str) -> None:
     webbrowser.open(url)
 
 
+def run_server(root: Path, port: int, state: dict[str, Any]) -> None:
+    backend = root / "backend"
+    os.environ["STUDYFORGE_APP_ROOT"] = str(root)
+    sys.path.insert(0, str(backend))
+
+    try:
+        from studyforge.api import app
+        import uvicorn
+
+        uvicorn.run(
+            app,
+            host="127.0.0.1",
+            port=port,
+            reload=False,
+            access_log=False,
+            log_config=None,
+            log_level="warning",
+        )
+    except Exception:
+        state["error"] = traceback.format_exc()
+        write_launch_error()
+
+
+def show_splash_until_ready(url: str, port: int, state: dict[str, Any]) -> None:
+    if os.environ.get("STUDYFORGE_NO_SPLASH") == "1":
+        open_when_ready(url)
+        return
+
+    try:
+        import tkinter as tk
+        from tkinter import ttk
+    except Exception:
+        open_when_ready(url)
+        return
+
+    ready = False
+    started_at = time.monotonic()
+
+    window = tk.Tk()
+    window.title("시험 자료 암기 프로그램")
+    window.geometry("420x170")
+    window.resizable(False, False)
+    window.configure(bg="#f7f8f5")
+    window.attributes("-topmost", True)
+
+    frame = tk.Frame(window, bg="#f7f8f5", padx=28, pady=24)
+    frame.pack(fill="both", expand=True)
+
+    title = tk.Label(
+        frame,
+        text="시험 자료 암기 프로그램 준비 중",
+        bg="#f7f8f5",
+        fg="#173f3a",
+        font=("Malgun Gothic", 13, "bold"),
+    )
+    title.pack(anchor="w")
+
+    status = tk.StringVar(value="자료와 서버를 불러오는 중입니다.")
+    status_label = tk.Label(frame, textvariable=status, bg="#f7f8f5", fg="#4d5c57", font=("Malgun Gothic", 10))
+    status_label.pack(anchor="w", pady=(8, 14))
+
+    progress = ttk.Progressbar(frame, mode="indeterminate", length=360)
+    progress.pack(fill="x")
+    progress.start(12)
+
+    cancel = ttk.Button(frame, text="취소", command=lambda: os._exit(0))
+    cancel.pack(anchor="e", pady=(16, 0))
+
+    def center_window() -> None:
+        window.update_idletasks()
+        width = window.winfo_width()
+        height = window.winfo_height()
+        x = (window.winfo_screenwidth() - width) // 2
+        y = (window.winfo_screenheight() - height) // 2
+        window.geometry(f"{width}x{height}+{x}+{y}")
+
+    def poll() -> None:
+        nonlocal ready
+        if state.get("error"):
+            progress.stop()
+            status.set("실행 오류가 발생했습니다. launcher-error.log를 확인해 주세요.")
+            cancel.configure(text="닫기")
+            return
+
+        if health_for_port(port):
+            ready = True
+            progress.stop()
+            status.set("브라우저를 여는 중입니다.")
+            window.after(200, window.destroy)
+            return
+
+        elapsed = int(time.monotonic() - started_at)
+        if elapsed >= 15:
+            status.set("처음 실행은 준비 시간이 조금 걸릴 수 있습니다.")
+        window.after(500, poll)
+
+    window.protocol("WM_DELETE_WINDOW", lambda: os._exit(0))
+    center_window()
+    window.after(100, poll)
+    window.mainloop()
+
+    if ready:
+        open_url(url)
+
+
 def main() -> None:
     ensure_stdio()
     root = app_root()
@@ -104,25 +210,18 @@ def main() -> None:
         open_url(f"http://127.0.0.1:{existing_port}")
         return
 
-    backend = root / "backend"
-    os.environ["STUDYFORGE_APP_ROOT"] = str(root)
-    sys.path.insert(0, str(backend))
-
-    from studyforge.api import app
-    import uvicorn
-
     port = find_port()
     url = f"http://127.0.0.1:{port}"
-    threading.Thread(target=open_when_ready, args=(url,), daemon=True).start()
-    uvicorn.run(
-        app,
-        host="127.0.0.1",
-        port=port,
-        reload=False,
-        access_log=False,
-        log_config=None,
-        log_level="warning",
-    )
+    state: dict[str, Any] = {}
+
+    if os.environ.get("STUDYFORGE_NO_BROWSER") == "1":
+        run_server(root, port, state)
+        return
+
+    server_thread = threading.Thread(target=run_server, args=(root, port, state), daemon=False)
+    server_thread.start()
+    show_splash_until_ready(url, port, state)
+    server_thread.join()
 
 
 if __name__ == "__main__":

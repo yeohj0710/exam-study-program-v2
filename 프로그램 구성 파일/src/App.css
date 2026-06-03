@@ -264,6 +264,16 @@
   border-color: #b85c48;
 }
 
+.restore-action {
+  color: #173f3a;
+  border-color: #9ab2a7;
+}
+
+.restore-action:hover {
+  border-color: #173f3a;
+  background: #eef4f0;
+}
+
 .primary-action {
   background: #173f3a;
   border-color: #173f3a;
@@ -284,7 +294,7 @@
 
 .filter-bar {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
   flex: 0 0 auto;
 }

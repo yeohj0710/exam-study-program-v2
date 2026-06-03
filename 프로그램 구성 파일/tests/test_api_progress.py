@@ -56,6 +56,31 @@ def test_patch_study_progress_persists_and_updates_library(tmp_path, monkeypatch
     assert library_response.json()["cards"][0]["study_seen_count"] == 1
 
 
+def test_delete_study_progress_restores_card_to_new(tmp_path, monkeypatch):
+    library_path = tmp_path / "library.json"
+    progress_path = tmp_path / "progress.json"
+    make_library(library_path)
+    monkeypatch.setattr(api, "LIBRARY_PATH", library_path)
+    monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
+    monkeypatch.setattr(api, "PROGRESS_PATH", progress_path)
+    client = TestClient(api.app)
+
+    mark_response = client.patch("/api/cards/card-1/study", json={"rating": "easy"})
+    assert mark_response.status_code == 200
+
+    response = client.delete("/api/cards/card-1/study")
+
+    assert response.status_code == 200
+    card = response.json()["card"]
+    assert card["study_seen_count"] == 0
+    assert card["study_correct_count"] == 0
+    assert card["study_last_rating"] == "new"
+
+    library_response = client.get("/api/library")
+    assert library_response.status_code == 200
+    assert library_response.json()["cards"][0]["study_last_rating"] == "new"
+
+
 def test_patch_study_rejects_new_rating(tmp_path, monkeypatch):
     library_path = tmp_path / "library.json"
     make_library(library_path)

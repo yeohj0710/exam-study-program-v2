@@ -46,6 +46,10 @@ def save_progress(path: Path, progress: dict[str, CardProgress]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def clear_progress(progress: dict[str, CardProgress], card_id: str) -> None:
+    progress.pop(card_id, None)
+
+
 def record_rating(
     progress: dict[str, CardProgress],
     card_id: str,
