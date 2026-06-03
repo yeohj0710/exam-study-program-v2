@@ -38,7 +38,7 @@ def import_legacy_bank(
     for deck_dir in sorted([path for path in legacy_root.iterdir() if path.is_dir()], key=lambda p: p.name):
         subject = deck_dir.name.replace(" 중간고사 오답노트", "").replace(" 중간고사", "")
         deck = deck_dir.name
-        source_id = stable_id("legacy", deck_dir, cheap_file_fingerprint(deck_dir), length=18)
+        source_id = stable_id("legacy", deck_dir, length=18)
         source = SourceDocument(
             id=source_id,
             type="legacy_bank",
@@ -60,8 +60,7 @@ def import_legacy_bank(
                 warnings.append(f"{question_dir}: no PNG files")
                 continue
 
-            image_fingerprints = [cheap_file_fingerprint(image) for image in images]
-            card_id = stable_id(source_id, question_dir.name, *image_fingerprints)
+            card_id = stable_id(source_id, question_dir.name)
             deck_slug = slugify(deck)
             card_assets: list[Asset] = []
 

@@ -83,7 +83,7 @@ def import_pdf(
 
     doc = fitz.open(pdf_path)
     fingerprint = file_sha1(pdf_path) if pdf_path.stat().st_size < 35_000_000 else cheap_file_fingerprint(pdf_path)
-    source_id = stable_id("pdf", pdf_path, fingerprint, length=18)
+    source_id = stable_id("pdf", pdf_path, length=18)
     source = SourceDocument(
         id=source_id,
         type="pdf",
@@ -98,6 +98,7 @@ def import_pdf(
     page_limit = min(doc.page_count, max_pages) if max_pages is not None else doc.page_count
     source_slug = slugify(f"{subject}-{deck}")
 
+    seen_card_ids: dict[str, int] = {}
     for page_index in range(page_limit):
         page = doc[page_index]
         page_number = page_index + 1
@@ -203,7 +204,10 @@ def import_pdf(
                 flags.append("has_page_snapshot")
             if segment.confidence < 0.55:
                 flags.append("needs_manual_review")
-            card_id = stable_id(source_id, page_number, segment_index, segment.raw_text)
+            base_card_id = stable_id(source_id, page_number, segment.raw_text)
+            duplicate_index = seen_card_ids.get(base_card_id, 0)
+            seen_card_ids[base_card_id] = duplicate_index + 1
+            card_id = base_card_id if duplicate_index == 0 else stable_id(base_card_id, duplicate_index)
             cards.append(
                 StudyCard(
                     id=card_id,

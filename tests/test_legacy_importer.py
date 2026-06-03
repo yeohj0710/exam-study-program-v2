@@ -25,3 +25,18 @@ def test_import_legacy_bank_roles_and_copies(tmp_path):
     assert [asset.role for asset in cards[0].assets] == ["front_image", "choice_image", "answer_image"]
     for asset in cards[0].assets:
         assert (tmp_path / "assets" / asset.path).exists()
+
+
+def test_import_legacy_ids_survive_image_replacement(tmp_path):
+    legacy = tmp_path / "legacy"
+    qdir = legacy / "deck" / "1"
+    write_png(qdir / "1.png", "white")
+    write_png(qdir / "2.png", "blue")
+
+    first_sources, first_cards, _ = import_legacy_bank(legacy, tmp_path / "assets")
+    write_png(qdir / "2.png", "red")
+    second_sources, second_cards, _ = import_legacy_bank(legacy, tmp_path / "assets")
+
+    assert first_sources[0].id == second_sources[0].id
+    assert first_cards[0].id == second_cards[0].id
+    assert first_cards[0].assets[-1].sha1 != second_cards[0].assets[-1].sha1
