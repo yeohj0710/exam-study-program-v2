@@ -107,7 +107,8 @@ def import_pdf(
         segments = segment_text(text)
         line_rects = extract_line_rects(page)
         if not segments:
-            segments = []
+            if text.strip():
+                continue
             warnings.append(f"{pdf_path.name} page {page_number}: no extractable text")
 
         page_asset: Asset | None = None

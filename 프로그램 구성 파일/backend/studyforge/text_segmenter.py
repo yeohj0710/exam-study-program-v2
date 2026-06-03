@@ -24,6 +24,11 @@ QUESTION_HINT_RE = re.compile(
 )
 NUMBERED_RE = re.compile(r"^\s*(?:Q\s*)?\d{1,3}[\.)]\s+\S")
 QUESTION_HEADER_RE = re.compile(r"^\s*Q\s*\d{1,3}\b", re.IGNORECASE)
+QUESTION_RANGE_ONLY_RE = re.compile(r"^\s*Q\s*\d{1,3}\s*(?:[-–—~]|to|[^\w\s]{1,4})\s*Q?\s*\d{1,3}\s*$", re.IGNORECASE)
+OUTLINE_HINT_RE = re.compile(
+    r"\b(?:part\s+[a-z]|lecture|lectures|foundations|tasks|linear algebra|loss functions|regularization|optimization)\b",
+    re.IGNORECASE,
+)
 SOURCE_NOTE_RE = re.compile(r"(?:p\.\s*\d+|pp\.\s*\d+|페이지|강의자료|수업자료|범위|참고)", re.IGNORECASE)
 ANSWER_MARKER_RE = re.compile(r"^(?:answer|solution|정답|풀이|해설|답)\b|(?:^|\s)Answer\s*[:：]", re.IGNORECASE)
 
@@ -68,6 +73,13 @@ def is_answer_marker_line(line: str) -> bool:
     if compact in {"answer", "solution", "정답", "풀이", "해설", "답"}:
         return True
     return bool(ANSWER_MARKER_RE.search(line))
+
+
+def is_outline_segment(front: str, raw: str) -> bool:
+    compact_front = re.sub(r"\s+", " ", front).strip()
+    if not QUESTION_RANGE_ONLY_RE.match(compact_front):
+        return False
+    return raw.strip() == front.strip() or bool(OUTLINE_HINT_RE.search(raw))
 
 
 def split_front_back(lines: list[str]) -> tuple[str, str, list[str], float, int | None]:
@@ -141,6 +153,8 @@ def segment_text(text: str) -> list[TextSegment]:
         segment_lines = lines[start:end]
         front, back, flags, confidence, split_at = split_front_back(segment_lines)
         raw = "\n".join(segment_lines)
+        if is_outline_segment(front, raw):
+            continue
         if len(segment_lines) > 24:
             flags.append("long_segment")
             confidence -= 0.08

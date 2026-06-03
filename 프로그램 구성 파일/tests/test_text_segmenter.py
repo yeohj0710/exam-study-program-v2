@@ -79,3 +79,18 @@ Answer: B.
 
     assert "S O L U T I O N" not in segment.front_text
     assert segment.back_text.startswith("S O L U T I O N")
+
+
+def test_skips_question_range_outline_rows():
+    text = """
+Part A · Foundations & Representation
+Q1-Q4
+Part B · Tasks, Linear Algebra & Trees
+Q5-Q8
+Part C · Segmentation, Classification & Distance
+Q9-Q11
+Part D · Activations & Losses
+Q12-Q14
+"""
+
+    assert segment_text(text) == []

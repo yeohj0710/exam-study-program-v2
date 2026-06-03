@@ -25,6 +25,19 @@ def make_blank_pdf(path: Path) -> None:
     doc.close()
 
 
+def make_outline_pdf(path: Path) -> None:
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((72, 72), "Part A · Foundations & Representation")
+    page.insert_text((72, 96), "Q1-Q4")
+    page.insert_text((72, 120), "Part B · Tasks, Linear Algebra & Trees")
+    page.insert_text((72, 144), "Q5-Q8")
+    page.insert_text((72, 168), "Part C · Loss Functions & Gradient Descent")
+    page.insert_text((72, 192), "Q9-Q11")
+    doc.save(path)
+    doc.close()
+
+
 def test_import_pdf_segments_and_renders_page(tmp_path):
     pdf = tmp_path / "sample.pdf"
     make_pdf(pdf)
@@ -70,6 +83,22 @@ def test_import_pdf_creates_review_card_for_image_only_page(tmp_path):
     assert roles == ["front_image", "source_page", "page_crop"]
     for asset in cards[0].assets:
         assert (tmp_path / "assets" / asset.path).exists()
+
+
+def test_import_pdf_skips_outline_only_pages(tmp_path):
+    pdf = tmp_path / "outline.pdf"
+    make_outline_pdf(pdf)
+
+    source, cards, warnings = import_pdf(
+        pdf,
+        tmp_path / "assets",
+        subject="deep learning",
+        deck="outline",
+    )
+
+    assert source.page_count == 1
+    assert cards == []
+    assert warnings == []
 
 
 def test_import_pdf_ids_survive_non_text_source_changes(tmp_path):

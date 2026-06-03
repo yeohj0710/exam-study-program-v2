@@ -202,7 +202,7 @@ function App() {
     typeof window !== 'undefined' && window.matchMedia('(max-width: 760px)').matches
   const [showDecks, setShowDecks] = useState(savedSession.showDecks ?? !compactScreen)
   const [showInspector, setShowInspector] = useState(savedSession.showInspector ?? false)
-  const [showQuestionList, setShowQuestionList] = useState(savedSession.showQuestionList ?? false)
+  const [showQuestionList, setShowQuestionList] = useState(false)
   const [nowSeconds, setNowSeconds] = useState(0)
   const [sourceRoot, setSourceRoot] = useState(defaultSourceRoot)
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
@@ -770,7 +770,7 @@ function App() {
             </div>
 
             <section
-              className={showQuestionList ? 'question-list-panel expanded' : 'question-list-panel compact'}
+              className={showQuestionList ? 'question-list-panel expanded' : 'question-list-panel collapsed'}
               aria-label="현재 문제 목록"
             >
               <div className="question-list-heading">
@@ -779,24 +779,26 @@ function App() {
                   <span>{filterLabels[filterMode]} · {orderedCards.length.toLocaleString()}개</span>
                 </div>
                 <button type="button" className="inline-toggle" onClick={() => setShowQuestionList((value) => !value)}>
-                  {showQuestionList ? '작게 보기' : '크게 보기'}
+                  {showQuestionList ? '접기' : '펼치기'}
                   <ShortcutHint keys="Ctrl+P" />
                 </button>
               </div>
-              <div className="question-list">
-                {orderedCards.map((card, index) => (
-                  <button
-                    key={card.id}
-                    type="button"
-                    className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
-                    onClick={() => goToCard(index)}
-                  >
-                    <span>{index + 1}</span>
-                    <strong>{card.front_text || card.source_item || card.deck}</strong>
-                    <small>{labelReviewStatus(card.review_status)}</small>
-                  </button>
-                ))}
-              </div>
+              {showQuestionList && (
+                <div className="question-list">
+                  {orderedCards.map((card, index) => (
+                    <button
+                      key={card.id}
+                      type="button"
+                      className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
+                      onClick={() => goToCard(index)}
+                    >
+                      <span>{index + 1}</span>
+                      <strong>{card.front_text || card.source_item || card.deck}</strong>
+                      <small>{labelReviewStatus(card.review_status)}</small>
+                    </button>
+                  ))}
+                </div>
+              )}
             </section>
 
             <article className="question-pane">
