@@ -30,5 +30,9 @@ def test_import_pdf_segments_and_renders_page(tmp_path):
     assert warnings == []
     assert source.page_count == 1
     assert len(cards) == 2
-    assert cards[0].assets[0].role == "source_page"
-    assert (tmp_path / "assets" / cards[0].assets[0].path).exists()
+    roles = [asset.role for asset in cards[0].assets]
+    assert roles == ["front_image", "source_page", "page_crop"]
+    for asset in cards[0].assets:
+        assert (tmp_path / "assets" / asset.path).exists()
+    assert "has_front_crop" in cards[0].review_flags
+    assert "has_question_crop" in cards[0].review_flags

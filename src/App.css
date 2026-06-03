@@ -208,6 +208,18 @@ button {
   white-space: pre-wrap;
 }
 
+.evidence-block {
+  margin-top: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.evidence-block > span,
+.locked-note {
+  color: #6c7772;
+  font-size: 13px;
+}
+
 .image-strip {
   display: grid;
   gap: 12px;
@@ -318,6 +330,14 @@ button {
   color: #6f4d13;
   padding: 3px 8px;
   font-size: 12px;
+}
+
+.locked-note {
+  margin: 14px 0 0;
+  border: 1px dashed #cbd6cf;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
 }
 
 .loading-screen,

@@ -193,6 +193,7 @@ function App() {
   const frontImages = currentCard?.assets.filter((asset) => asset.role === 'front_image') ?? []
   const choiceImages = currentCard?.assets.filter((asset) => asset.role === 'choice_image') ?? []
   const answerImages = currentCard?.assets.filter((asset) => asset.role === 'answer_image') ?? []
+  const pageCrops = currentCard?.assets.filter((asset) => asset.role === 'page_crop') ?? []
   const sourcePages = currentCard?.assets.filter((asset) => asset.role === 'source_page') ?? []
 
   if (loading) {
@@ -281,6 +282,12 @@ function App() {
                   {showAnswer && (
                     <div className="answer-zone">
                       {currentCard.back_text && <p>{currentCard.back_text}</p>}
+                      {pageCrops.length > 0 && (
+                        <div className="evidence-block">
+                          <span>원문 영역</span>
+                          <ImageStrip assets={pageCrops} />
+                        </div>
+                      )}
                       <ImageStrip assets={answerImages} />
                     </div>
                   )}
@@ -332,7 +339,11 @@ function App() {
                 ))}
               </ul>
             )}
-            <ImageStrip assets={sourcePages.slice(0, 1)} compact />
+            {showAnswer ? (
+              <ImageStrip assets={[...pageCrops, ...sourcePages].slice(0, 1)} compact />
+            ) : (
+              <p className="locked-note">정답 확인 후 원문 표시</p>
+            )}
           </div>
         )}
       </aside>
