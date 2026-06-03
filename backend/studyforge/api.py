@@ -14,6 +14,7 @@ from .models import ReviewStatus, library_to_dict
 from .progress import apply_progress, load_progress, record_rating, save_progress
 from .reviews import CardReview, apply_reviews, load_reviews, save_reviews
 from .storage import library_summary, load_library, save_library
+from .validation import validate_library
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_ROOT = PROJECT_ROOT / "data"
@@ -75,6 +76,17 @@ def get_library() -> dict[str, object]:
 @app.get("/api/summary")
 def get_summary() -> dict[str, object]:
     return library_summary(require_library())
+
+
+@app.get("/api/validation")
+def get_validation() -> dict[str, object]:
+    report = validate_library(
+        require_library(),
+        ASSET_ROOT,
+        reviews=load_reviews(REVIEWS_PATH),
+        progress=load_progress(PROGRESS_PATH),
+    )
+    return report.to_dict()
 
 
 @app.post("/api/import")

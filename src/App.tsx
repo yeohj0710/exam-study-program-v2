@@ -62,6 +62,16 @@ type Library = {
   }
 }
 
+type ValidationReport = {
+  ok: boolean
+  missing_asset_count: number
+  missing_source_count: number
+  duplicate_card_count: number
+  orphan_review_count: number
+  orphan_progress_count: number
+  issues: Array<{ severity: 'error' | 'warning'; code: string; message: string }>
+}
+
 const defaultSourceRoot = 'G:\\내 드라이브\\여형준님\\21 6-1'
 const defaultLegacyRoot =
   'G:\\내 드라이브\\여형준님\\21 6-1\\족보 암기 프로그램\\중간고사'
@@ -80,6 +90,7 @@ function shuffleIds(cards: StudyCard[]) {
 
 function App() {
   const [library, setLibrary] = useState<Library | null>(null)
+  const [validation, setValidation] = useState<ValidationReport | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedDeck, setSelectedDeck] = useState('')
@@ -101,11 +112,22 @@ function App() {
       const payload = (await response.json()) as Library
       setLibrary(payload)
       setSelectedDeck((current) => current || payload.cards[0]?.deck || '')
+      await loadValidation()
     } catch (caught) {
       if (caught instanceof Error && caught.message !== 'empty') setError(caught.message)
       setLibrary(null)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadValidation() {
+    try {
+      const response = await fetch('/api/validation')
+      if (!response.ok) throw new Error(response.statusText)
+      setValidation((await response.json()) as ValidationReport)
+    } catch {
+      setValidation(null)
     }
   }
 
@@ -192,6 +214,7 @@ function App() {
         if (cancelled) return
         setLibrary(payload)
         setSelectedDeck(payload.cards[0]?.deck || '')
+        void loadValidation()
       })
       .catch((caught) => {
         if (cancelled) return
@@ -445,6 +468,16 @@ function App() {
           <Check size={18} />
           <span>{library?.report.pdfs_imported ?? 0} PDF</span>
           <span>{library?.report.legacy_decks_imported ?? 0} legacy</span>
+        </div>
+        <div className={validation?.ok ? 'validation-box ok' : 'validation-box'}>
+          <div className="panel-heading">
+            {validation?.ok ? <Check size={18} /> : <AlertTriangle size={18} />}
+            <h2>무결성</h2>
+          </div>
+          <strong>{validation?.ok ? 'OK' : `${validation?.issues.length ?? 0} issues`}</strong>
+          <span>
+            assets {validation?.missing_asset_count ?? 0} · sources {validation?.missing_source_count ?? 0}
+          </span>
         </div>
         <div className="study-stats">
           <span>{deckStats.new} new</span>

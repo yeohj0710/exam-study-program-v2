@@ -361,11 +361,32 @@ button {
 
 .review-box,
 .source-box,
-.review-editor {
+.review-editor,
+.validation-box {
   border: 1px solid #dde3de;
   border-radius: 8px;
   background: #ffffff;
   padding: 16px;
+}
+
+.validation-box {
+  display: grid;
+  gap: 8px;
+}
+
+.validation-box strong {
+  color: #9a4f00;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.validation-box.ok strong {
+  color: #12633f;
+}
+
+.validation-box span {
+  color: #6c7772;
+  font-size: 13px;
 }
 
 .review-box strong {

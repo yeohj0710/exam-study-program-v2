@@ -60,7 +60,10 @@ Open the Vite URL shown in the terminal.
 ```powershell
 python -m pytest
 npm run build
+python scripts/run_cli.py validate
 ```
+
+`validate` checks that source files and assets exist, PDF cards have generated crops, legacy cards have front/answer images, and review/progress overlays do not point at missing cards.
 
 ## Import Strategy
 
