@@ -35,6 +35,8 @@ type StudyCard = {
   back_text: string
   confidence: number
   review_flags: string[]
+  review_status: 'unreviewed' | 'approved' | 'needs_work'
+  review_note: string
   assets: Asset[]
   tags: string[]
 }
@@ -117,6 +119,35 @@ function App() {
     } finally {
       setImporting(false)
     }
+  }
+
+  async function saveReview(card: StudyCard, status: StudyCard['review_status'], form?: HTMLFormElement) {
+    const formData = form ? new FormData(form) : null
+    const body = {
+      status,
+      front_text: formData ? String(formData.get('front_text') ?? card.front_text) : card.front_text,
+      back_text: formData ? String(formData.get('back_text') ?? card.back_text) : card.back_text,
+      note: formData ? String(formData.get('note') ?? '') : card.review_note,
+    }
+    const response = await fetch(`/api/cards/${card.id}/review`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    if (!response.ok) throw new Error(await response.text())
+    const payload = (await response.json()) as { card: StudyCard }
+    setLibrary((current) => {
+      if (!current) return current
+      const cards = current.cards.map((item) => (item.id === payload.card.id ? payload.card : item))
+      const unresolvedLowConfidence = cards.filter(
+        (item) => item.confidence < 0.55 && item.review_status !== 'approved',
+      ).length
+      return {
+        ...current,
+        cards,
+        report: { ...current.report, low_confidence_cards: unresolvedLowConfidence },
+      }
+    })
   }
 
   useEffect(() => {
@@ -323,28 +354,69 @@ function App() {
             <h2>검수</h2>
           </div>
           <strong>{library?.report.low_confidence_cards ?? 0}</strong>
-          <span>low confidence</span>
+          <span>unresolved low confidence</span>
         </div>
         {currentCard && (
-          <div className="source-box">
-            <div className="panel-heading">
-              <ImageIcon size={18} />
-              <h2>근거</h2>
+          <>
+            <div className="source-box">
+              <div className="panel-heading">
+                <ImageIcon size={18} />
+                <h2>근거</h2>
+              </div>
+              <p>{currentCard.source_page ? `page ${currentCard.source_page}` : currentCard.source_item}</p>
+              <span className={`review-status ${currentCard.review_status}`}>{currentCard.review_status}</span>
+              {currentCard.review_flags.length > 0 && (
+                <ul className="flag-list">
+                  {currentCard.review_flags.slice(0, 4).map((flag) => (
+                    <li key={flag}>{flag}</li>
+                  ))}
+                </ul>
+              )}
+              {showAnswer ? (
+                <ImageStrip assets={[...pageCrops, ...sourcePages].slice(0, 1)} compact />
+              ) : (
+                <p className="locked-note">정답 확인 후 원문 표시</p>
+              )}
             </div>
-            <p>{currentCard.source_page ? `page ${currentCard.source_page}` : currentCard.source_item}</p>
-            {currentCard.review_flags.length > 0 && (
-              <ul className="flag-list">
-                {currentCard.review_flags.slice(0, 4).map((flag) => (
-                  <li key={flag}>{flag}</li>
-                ))}
-              </ul>
-            )}
-            {showAnswer ? (
-              <ImageStrip assets={[...pageCrops, ...sourcePages].slice(0, 1)} compact />
-            ) : (
-              <p className="locked-note">정답 확인 후 원문 표시</p>
-            )}
-          </div>
+            <form
+              key={currentCard.id}
+              className="review-editor"
+              onSubmit={(event) => {
+                event.preventDefault()
+                void saveReview(currentCard, 'approved', event.currentTarget)
+              }}
+            >
+              <label>
+                앞면
+                <textarea name="front_text" defaultValue={currentCard.front_text} rows={4} />
+              </label>
+              <label>
+                뒷면
+                <textarea name="back_text" defaultValue={currentCard.back_text} rows={5} />
+              </label>
+              <label>
+                메모
+                <textarea name="note" defaultValue={currentCard.review_note} rows={3} />
+              </label>
+              <div className="review-actions">
+                <button type="submit" className="primary-action">
+                  <Check size={16} />
+                  <span>승인 저장</span>
+                </button>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  onClick={(event) => {
+                    const form = event.currentTarget.closest('form')
+                    if (form) void saveReview(currentCard, 'needs_work', form)
+                  }}
+                >
+                  <AlertTriangle size={16} />
+                  <span>보류 저장</span>
+                </button>
+              </div>
+            </form>
+          </>
         )}
       </aside>
     </main>

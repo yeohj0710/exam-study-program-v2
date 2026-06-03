@@ -10,6 +10,7 @@ The repository is intentionally separate from `exam-study-program`. Source mater
 - `src`: React + TypeScript study UI.
 - `tests`: Python regression tests for segmentation and import behavior.
 - `data/`: runtime library and assets, ignored by Git.
+- `data/reviews.json`: local review/edit overlay, ignored by Git and preserved across re-imports.
 
 ## Setup
 
@@ -68,3 +69,10 @@ npm run build
 - Existing image folders are imported as stable cards: first image is the front, last image is the answer, middle images are choices.
 - Existing capture PNGs are referenced by default for speed. Use `--copy-legacy-assets` when a fully self-contained local copy is needed.
 - Card IDs are deterministic from source fingerprints and content, so re-imports keep unchanged cards stable while allowing new or changed material to appear.
+
+## Review Workflow
+
+- The inspector panel shows unresolved low-confidence cards and per-card review flags.
+- Use `승인 저장` after checking or editing a card. Approved low-confidence cards no longer count as unresolved.
+- Use `보류 저장` when a card needs later manual cleanup.
+- Edits are stored as an overlay in `data/reviews.json`, not inside the imported source library. Running import again keeps the review overlay for cards whose deterministic IDs remain the same.

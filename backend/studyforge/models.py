@@ -6,6 +6,7 @@ from typing import Any, Literal
 
 AssetRole = Literal["front_image", "choice_image", "answer_image", "source_page", "page_crop"]
 CardSource = Literal["pdf", "legacy_capture", "manual", "page_fallback"]
+ReviewStatus = Literal["unreviewed", "approved", "needs_work"]
 
 
 @dataclass
@@ -46,6 +47,9 @@ class StudyCard:
     raw_text: str
     confidence: float
     review_flags: list[str] = field(default_factory=list)
+    review_status: ReviewStatus = "unreviewed"
+    review_note: str = ""
+    reviewed_at: float | None = None
     assets: list[Asset] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     created_at: float = field(default_factory=time)

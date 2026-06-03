@@ -295,7 +295,8 @@ button {
 }
 
 .review-box,
-.source-box {
+.source-box,
+.review-editor {
   border: 1px solid #dde3de;
   border-radius: 8px;
   background: #ffffff;
@@ -330,6 +331,60 @@ button {
   color: #6f4d13;
   padding: 3px 8px;
   font-size: 12px;
+}
+
+.review-status {
+  display: inline-flex;
+  margin-top: 10px;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  background: #eef2ef;
+  color: #4b5b55;
+}
+
+.review-status.approved {
+  background: #e0f1e8;
+  color: #12633f;
+}
+
+.review-status.needs_work {
+  background: #f8e4df;
+  color: #8a2d1f;
+}
+
+.review-editor {
+  display: grid;
+  gap: 12px;
+}
+
+.review-editor label {
+  display: grid;
+  gap: 6px;
+  color: #4e5d57;
+  font-size: 13px;
+}
+
+.review-editor textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #cfd8d2;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font: 14px/1.5 Inter, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  color: #1d2522;
+  background: #fbfcfa;
+}
+
+.review-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.review-actions button {
+  min-width: 0;
+  padding: 0 10px;
 }
 
 .locked-note {
@@ -376,7 +431,11 @@ button {
   }
 
   .inspector {
-    display: none;
+    grid-column: 1 / -1;
+    border-width: 1px 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
   }
 }
 
@@ -388,6 +447,10 @@ button {
   .sidebar {
     border-width: 0 0 1px;
     max-height: 230px;
+  }
+
+  .inspector {
+    grid-template-columns: 1fr;
   }
 
   .study-surface {
