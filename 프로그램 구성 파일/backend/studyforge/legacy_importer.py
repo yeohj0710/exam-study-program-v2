@@ -79,7 +79,7 @@ def import_legacy_bank(
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(image, target)
                     stored_path = rel.as_posix()
-                    stored_hash = file_sha1(target) if measure_images else cheap_file_fingerprint(target)
+                    stored_hash = file_sha1(target)
                 else:
                     stored_path = str(image)
                     stored_hash = cheap_file_fingerprint(image)

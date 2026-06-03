@@ -80,6 +80,24 @@ Relevant files:
 
 After changing import logic, regenerate local data through `/api/import` or the UI `자료 갱신` flow if current bundled data needs to reflect the change.
 
+## Deterministic Import Check
+
+2026-06-03 real-source verification:
+- Source root used: `G:\내 드라이브\여형준님\21 6-1`
+- Legacy root used: `G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사`
+- Ran `build_library(... copy_legacy_assets=True, render_pdf_pages=True)` twice into separate clean temp asset folders.
+- Result after latest fix: both full `library_to_dict()` JSON signatures matched.
+- Signature: `a9b48070ecbbada45065e953ba1874dd10a48e1677ec2acca179d1820d5b9f64`
+- Counts: 19 sources, 947 cards, 11 PDFs, 8 legacy decks, 79 low-confidence cards.
+- Validation: `ok=true`, missing assets 0, missing sources 0, PDF cards missing front 0, PDF cards missing crop 0.
+- Bad extraction guards: outline hits 0, thin front images 0, thin crop images 0.
+
+Regression fixed here:
+- `legacy_importer.py` copied legacy image assets were previously hashed with `cheap_file_fingerprint(target)` when image measuring was off.
+- That included copied temp path/mtime, so clean imports into different asset roots produced different JSON signatures.
+- Copied legacy assets now always use content hash `file_sha1(target)`.
+- Test coverage: `test_import_legacy_copy_hashes_do_not_depend_on_asset_root`.
+
 ## Build And Verification
 
 Use PowerShell from `C:\dev\studyforge`.
