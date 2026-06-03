@@ -1,89 +1,63 @@
 # StudyForge
 
-StudyForge is a local-first exam study system that imports Korean midterm PDFs and the old image-capture quiz bank into one reviewable card library.
+중간고사 PDF와 기존 캡처 문제 은행을 자동으로 가져와 카드처럼 복습하는 로컬 학습 프로그램입니다.
 
-The repository is intentionally separate from `exam-study-program`. Source materials on `G:\내 드라이브\여형준님` are treated as read-only. Generated libraries and rendered PDF pages are written only under this repository's `data/` directory. Legacy capture images are referenced by default and can be copied explicitly with `--copy-legacy-assets`.
+## 실행 방법
 
-## Architecture
+1. 이 저장소를 내려받거나 압축을 풉니다.
+2. 루트 폴더의 `StudyForge 실행.exe`를 더블클릭합니다.
+3. 브라우저가 자동으로 열리면 사용하면 됩니다.
 
-- `backend/studyforge`: FastAPI server, import CLI, PDF parser, legacy image importer, JSON storage.
-- `src`: React + TypeScript study UI.
-- `tests`: Python regression tests for segmentation and import behavior.
-- `data/`: runtime library and assets, ignored by Git.
-- `data/reviews.json`: local review/edit overlay, ignored by Git and preserved across re-imports.
-- `data/progress.json`: local study progress overlay, ignored by Git and preserved across re-imports.
+`StudyForge 실행.exe`가 보안 정책 때문에 막히는 환경에서는 `StudyForge 실행.cmd`를 더블클릭하면 됩니다. 실행 창을 닫으면 서버도 종료될 수 있습니다.
 
-## Setup
+## 자료 가져오기
+
+자료가 아직 없으면 화면의 `자료 가져오기`에서 아래 기본 경로가 자동으로 들어갑니다.
+
+```text
+G:\내 드라이브\여형준님\21 6-1
+G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사
+```
+
+원본 자료는 읽기만 합니다. 생성된 라이브러리, 복습 기록, 검수 기록은 `프로그램 구성 파일\data` 안에 저장됩니다.
+
+## 폴더 구조
+
+- `StudyForge 실행.exe`: Python 설치 없이 바로 실행하는 Windows 실행 파일
+- `StudyForge 실행.cmd`: exe가 막힐 때 쓰는 보조 실행 파일
+- `프로그램 구성 파일`: 실제 앱 코드, 빌드 파일, 테스트, 런처, 런타임 데이터
+- `README.md`: 사용 안내
+
+루트에는 실행에 필요한 최소 파일만 두었습니다.
+
+## 개발자용
+
+개발 작업을 할 때만 아래 폴더로 들어갑니다.
 
 ```powershell
-cd C:\dev\studyforge
+cd "C:\dev\studyforge\프로그램 구성 파일"
 python -m pip install -r requirements.txt
 npm install
 ```
 
-## Import Materials
-
-Summary PDFs and the existing captured bank:
-
-```powershell
-python scripts/run_cli.py import `
-  --source-root "G:\내 드라이브\여형준님\21 6-1" `
-  --legacy-root "G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사"
-```
-
-Quick smoke import with only the first two pages per PDF:
-
-```powershell
-npm run import:sample
-```
-
-By default, lecture slide PDFs whose names contain `수업자료` are skipped to avoid flooding the card set. Add `--include-lectures` when the full lecture material should be converted too.
-
-## Run
-
-Start the API:
+개발 서버:
 
 ```powershell
 npm run dev:api
-```
-
-Start the web app in another terminal:
-
-```powershell
 npm run dev
 ```
 
-Open the Vite URL shown in the terminal.
-
-## Verification
+빌드와 검증:
 
 ```powershell
 python -m pytest
+npm run lint
 npm run build
-python scripts/run_cli.py validate
+python scripts\run_cli.py validate
 ```
 
-`validate` checks that source files and assets exist, PDF cards have generated crops, legacy cards have front/answer images, and review/progress overlays do not point at missing cards.
+수동 import:
 
-## Import Strategy
-
-- PDF text is split into question-answer cards with Korean exam-question heuristics.
-- Each PDF card keeps the rendered source page as evidence, so diagrams and screenshots remain inspectable even when text extraction is incomplete.
-- Low-confidence or fallback cards are flagged for review instead of being silently discarded.
-- Existing image folders are imported as stable cards: first image is the front, last image is the answer, middle images are choices.
-- Existing capture PNGs are referenced by default for speed. Use `--copy-legacy-assets` when a fully self-contained local copy is needed.
-- Card IDs are deterministic from source fingerprints and content, so re-imports keep unchanged cards stable while allowing new or changed material to appear.
-
-## Review Workflow
-
-- The inspector panel shows unresolved low-confidence cards and per-card review flags.
-- Use `승인 저장` after checking or editing a card. Approved low-confidence cards no longer count as unresolved.
-- Use `보류 저장` when a card needs later manual cleanup.
-- Edits are stored as an overlay in `data/reviews.json`, not inside the imported source library. Running import again keeps the review overlay for cards whose deterministic IDs remain the same.
-
-## Study Workflow
-
-- Use the deck filter bar to switch between all cards, due reviews, new cards, low-confidence cards, and held cards.
-- Press `J` to show or hide the answer and `K` to move to the next card.
-- After checking an answer, rate it with `Again`, `Hard`, `Good`, or `Easy` (`1`-`4` shortcuts). Ratings are stored in `data/progress.json`.
-- Study progress is an overlay rather than imported data, so re-importing regenerated cards keeps progress for cards whose deterministic IDs remain stable.
+```powershell
+python scripts\run_cli.py import --source-root "G:\내 드라이브\여형준님\21 6-1" --legacy-root "G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사"
+```

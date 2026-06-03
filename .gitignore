@@ -7,14 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
+node_modules/
 dist-ssr
 *.local
-data/
+프로그램 구성 파일/data/
+프로그램 구성 파일/build/
+프로그램 구성 파일/.venv/
 .venv/
 .pytest_cache/
-__pycache__/
+**/__pycache__/
 *.pyc
 
 # Editor directories and files
