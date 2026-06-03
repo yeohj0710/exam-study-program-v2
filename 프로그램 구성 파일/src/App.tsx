@@ -6,6 +6,7 @@ import {
   Eye,
   FileText,
   Image as ImageIcon,
+  List,
   Play,
   Power,
   RefreshCw,
@@ -460,13 +461,38 @@ function App() {
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.target instanceof HTMLInputElement) return
-      if (event.target instanceof HTMLTextAreaElement) return
+      const isTextInput = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement
       const key = event.key.toLowerCase()
-      if (key === 'j') setShowAnswer((value) => !value)
-      if (key === 'k') nextCard()
-      if (key === 'l') setShowQuestionList((value) => !value)
+      const isModifierShortcut = event.ctrlKey || event.metaKey
+
+      if (library && isModifierShortcut && !event.altKey && key === 'b') {
+        event.preventDefault()
+        setShowDecks((value) => !value)
+        return
+      }
+      if (library && isModifierShortcut && !event.altKey && key === 'p') {
+        event.preventDefault()
+        setShowQuestionList((value) => !value)
+        return
+      }
+      if (library && isModifierShortcut && !event.altKey && key === 'i') {
+        event.preventDefault()
+        setShowInspector((value) => !value)
+        return
+      }
+
+      if (isTextInput) return
+
+      if (key === ' ' || key === 'j') {
+        event.preventDefault()
+        setShowAnswer((value) => !value)
+      }
+      if (key === 'k' || key === 'arrowright') {
+        event.preventDefault()
+        nextCard()
+      }
       if (key === 'i') setShowInspector((value) => !value)
+      if (key === 'r' && currentCard && isMastered(currentCard)) void restoreStudy(currentCard)
       if (showAnswer && currentCard && !isMastered(currentCard)) {
         if (event.key === '1') void saveStudy(currentCard, 'easy')
       }
@@ -509,8 +535,9 @@ function App() {
           aria-label="문제셋 펼치기"
           onClick={() => setShowDecks(true)}
         >
-          <ChevronRight size={18} />
+          <FileText size={18} />
           <span>문제셋</span>
+          <ShortcutHint keys="Ctrl+B" />
         </button>
       )}
 
@@ -533,6 +560,7 @@ function App() {
             >
               <ChevronRight className="collapse-icon" size={18} />
               <span>접기</span>
+              <ShortcutHint keys="Ctrl+B" />
             </button>
           </div>
 
@@ -603,7 +631,9 @@ function App() {
                   onClick={() => setShowDecks((value) => !value)}
                   aria-pressed={showDecks}
                 >
-                  문제셋
+                  <FileText size={18} />
+                  <span>문제셋</span>
+                  <ShortcutHint keys="Ctrl+B" />
                 </button>
                 <button
                   type="button"
@@ -611,12 +641,14 @@ function App() {
                   onClick={() => setShowQuestionList((value) => !value)}
                   aria-pressed={showQuestionList}
                 >
-                  목록(L)
+                  <List size={18} />
+                  <span>목록</span>
+                  <ShortcutHint keys="Ctrl+P" />
                 </button>
                 <span className="progress-pill">{progressText}</span>
                 <button type="button" className="session-action" onClick={reshuffle} title="섞기">
                   <Shuffle size={18} />
-                  섞기
+                  <span>섞기</span>
                 </button>
                 <button
                   type="button"
@@ -624,7 +656,9 @@ function App() {
                   onClick={() => setShowInspector((value) => !value)}
                   aria-pressed={showInspector}
                 >
-                  검수(I)
+                  <Check size={18} />
+                  <span>검수</span>
+                  <ShortcutHint keys="Ctrl+I" />
                 </button>
                 <button
                   type="button"
@@ -714,7 +748,8 @@ function App() {
                 disabled={!currentCard}
               >
                 <Eye size={18} />
-                <span>{showAnswer ? '정답 숨기기(J)' : '정답 보기(J)'}</span>
+                <span>{showAnswer ? '정답 숨기기' : '정답 보기'}</span>
+                <ShortcutHint keys="Space/J" />
               </button>
               <button
                 type="button"
@@ -724,7 +759,8 @@ function App() {
                 disabled={!currentCard}
               >
                 <ChevronRight size={18} />
-                <span>건너뛰기(K)</span>
+                <span>건너뛰기</span>
+                <ShortcutHint keys="K/→" />
               </button>
               {currentCard && isMastered(currentCard) && (
                 <button
@@ -735,13 +771,15 @@ function App() {
                 >
                   <RotateCcw size={18} />
                   <span>다시 복구</span>
+                  <ShortcutHint keys="R" />
                 </button>
               )}
             </div>
             {showAnswer && currentCard && !isMastered(currentCard) && (
               <div className="rating-controls" aria-label="학습 결과">
                 <button type="button" title="외운 카드로 처리하고 기본 학습 목록에서 제외합니다." onClick={() => void saveStudy(currentCard, 'easy')}>
-                  외움·제외(1)
+                  <span>외움·제외</span>
+                  <ShortcutHint keys="1" />
                 </button>
               </div>
             )}
@@ -940,6 +978,10 @@ function FilterButton({
       <strong>{count}</strong>
     </button>
   )
+}
+
+function ShortcutHint({ keys }: { keys: string }) {
+  return <span className="shortcut-hint">({keys})</span>
 }
 
 export default App
