@@ -803,7 +803,7 @@ function App() {
 
             <article className="question-pane">
               {currentCard ? (
-                <>
+                <div className="question-content">
                   <div className="question-text">
                     <p>{currentCard.front_text}</p>
                   </div>
@@ -820,7 +820,7 @@ function App() {
                       <ImageStrip assets={answerImages} />
                     </div>
                   )}
-                </>
+                </div>
               ) : (
                 <div className="card-empty-state">선택된 범위에 카드가 없습니다.</div>
               )}

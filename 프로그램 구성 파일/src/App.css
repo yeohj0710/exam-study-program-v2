@@ -229,6 +229,17 @@
   overflow: hidden;
 }
 
+.study-surface > .study-header,
+.study-surface > .filter-bar,
+.study-surface > .question-list-panel,
+.study-surface > .question-pane,
+.study-surface > .study-controls,
+.study-surface > .rating-controls {
+  width: min(100%, 1200px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .app-shell.has-library:not(.with-decks) .study-surface {
   padding-left: 72px;
 }
@@ -625,8 +636,19 @@ button {
   box-sizing: border-box;
 }
 
+.question-content {
+  width: min(100%, 980px);
+  min-height: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .question-text {
-  width: min(100%, 920px);
+  width: 100%;
   margin-right: auto;
   margin-left: auto;
   text-align: center;
@@ -646,7 +668,7 @@ button {
   margin-right: auto;
   margin-left: auto;
   padding-top: 22px;
-  width: min(100%, 920px);
+  width: 100%;
   border-top: 1px solid #ededf0;
   color: #202123;
   font-size: 18px;
@@ -668,7 +690,9 @@ button {
 }
 
 .image-strip {
+  width: 100%;
   display: grid;
+  justify-items: center;
   gap: 12px;
   margin-top: 18px;
 }
@@ -701,6 +725,10 @@ button {
   overflow-y: hidden;
   padding-bottom: 2px;
   scrollbar-width: thin;
+}
+
+.study-surface > .study-controls {
+  justify-content: center;
 }
 
 .study-controls button {
