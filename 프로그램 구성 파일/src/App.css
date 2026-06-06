@@ -32,10 +32,14 @@
   border-right: 1px solid #ececf0;
   background: #ffffff;
   padding: 10px 8px;
-  display: grid;
-  grid-template-rows: auto auto auto auto 1fr auto;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
+}
+
+.app-rail .rail-button:nth-last-child(2) {
+  margin-top: auto;
 }
 
 .rail-brand,
@@ -241,9 +245,9 @@
 .brand-block p,
 .eyebrow,
 .source-box p {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   color: #6b6f76;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .brand-block p {
@@ -298,7 +302,7 @@
   min-height: 0;
   height: 100vh;
   box-sizing: border-box;
-  padding: 8px 18px 12px;
+  padding: 8px 18px 10px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -306,14 +310,17 @@
 }
 
 .study-surface > .study-header,
-.study-surface > .filter-bar,
+.study-surface > .study-tool-panel,
 .study-surface > .question-list-panel,
 .study-surface > .question-pane,
-.study-surface > .study-controls,
-.study-surface > .rating-controls {
+.study-surface > .study-composer {
   width: min(100%, 1200px);
   margin-right: auto;
   margin-left: auto;
+}
+
+.study-surface > .study-composer {
+  width: min(100%, 720px);
 }
 
 .app-shell.has-library:not(.with-decks) .study-surface {
@@ -336,7 +343,7 @@
   align-items: end;
   gap: 10px;
   flex: 0 0 auto;
-  min-height: 38px;
+  min-height: 32px;
   min-width: 0;
 }
 
@@ -345,8 +352,8 @@
 }
 
 .study-header h2 {
-  font-size: 18px;
-  font-weight: 660;
+  font-size: 16px;
+  font-weight: 640;
   letter-spacing: 0;
   line-height: 1.25;
   overflow: hidden;
@@ -356,7 +363,6 @@
 
 .session-actions,
 .topbar-actions,
-.study-controls,
 .status-row {
   display: flex;
   align-items: center;
@@ -422,7 +428,6 @@
 }
 
 .session-action,
-.study-controls button,
 .primary-action,
 .secondary-action {
   min-height: 30px;
@@ -441,7 +446,6 @@
 }
 
 .session-action span:not(.shortcut-hint),
-.study-controls span:not(.shortcut-hint),
 .primary-action span:not(.shortcut-hint),
 .secondary-action span:not(.shortcut-hint) {
   white-space: nowrap;
@@ -497,16 +501,35 @@
   opacity: 0.55;
 }
 
-.filter-bar {
+.study-tool-panel {
+  border: 1px solid #e3e3e6;
+  border-radius: 12px;
+  background: #fbfbfb;
+  box-shadow: none;
+  padding: 8px;
   display: grid;
-  grid-template-columns: repeat(6, minmax(118px, 1fr));
-  gap: 5px;
+  gap: 8px;
   flex: 0 0 auto;
   min-width: 0;
   max-width: 100%;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(96px, 1fr));
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
-  padding-bottom: 2px;
   scrollbar-width: thin;
+}
+
+.study-tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
 }
 
 .filter-button {
@@ -545,14 +568,14 @@
 }
 
 .progress-pill {
-  min-width: 82px;
-  text-align: center;
-  border: 1px solid #dedee3;
-  border-radius: 999px;
-  padding: 5px 9px;
-  background: #ffffff;
-  color: #4b4f58;
-  font-size: 13px;
+  min-width: 56px;
+  text-align: right;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: #8a8f98;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -583,7 +606,7 @@
 
 .primary-action .shortcut-hint,
 .filter-button.active .shortcut-hint,
-.rating-controls .shortcut-hint {
+.mark-action .shortcut-hint {
   color: rgba(255, 255, 255, 0.72);
 }
 
@@ -847,65 +870,77 @@ button {
   width: 100%;
 }
 
-.study-controls {
-  justify-content: flex-end;
-  flex: 0 0 auto;
-  flex-wrap: nowrap;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 2px;
-  scrollbar-width: thin;
-}
-
-.study-surface > .study-controls {
-  justify-content: center;
-}
-
-.study-controls button {
-  flex: 0 0 184px;
-}
-
-.study-controls .primary-action {
-  border-color: #dedee3;
+.study-composer {
+  width: min(100%, 720px);
+  margin-right: auto;
+  margin-left: auto;
+  border: 1px solid #dedee3;
+  border-radius: 22px;
   background: #ffffff;
-  color: #343541;
-}
-
-.study-controls .primary-action:hover {
-  border-color: #d1d1d6;
-  background: #f4f4f5;
-}
-
-.study-controls .primary-action .shortcut-hint {
-  color: #6b6f76;
-}
-
-.rating-controls {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
   flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.rating-controls button {
-  min-height: 38px;
-  border: 1px solid #202123;
-  border-radius: 8px;
-  background: #202123;
-  color: #ffffff;
+.composer-action {
+  min-height: 40px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: #343541;
   cursor: pointer;
-  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
+  padding: 0 13px;
+  font-weight: 560;
+  white-space: nowrap;
+  min-width: 0;
 }
 
-.rating-controls button:hover {
+.composer-action span:not(.shortcut-hint) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.composer-action:hover {
+  background: #f4f4f5;
+}
+
+.composer-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.answer-action {
+  flex: 1 1 auto;
+  min-width: 160px;
+  justify-content: flex-start;
+}
+
+.mark-action {
+  background: #202123;
+  color: #ffffff;
+}
+
+.mark-action:hover {
   background: #343541;
-  border-color: #343541;
+}
+
+.composer-action .shortcut-hint {
+  color: #6b6f76;
+}
+
+.mark-action .shortcut-hint {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .import-panel {
@@ -1173,6 +1208,8 @@ button {
 .theme-dark .import-panel,
 .theme-dark .question-pane,
 .theme-dark .question-list-panel,
+.theme-dark .study-tool-panel,
+.theme-dark .study-composer,
 .theme-dark .inspector-section {
   background: #1f1f1f;
   border-color: #333333;
@@ -1197,6 +1234,7 @@ button {
 
 .theme-dark .rail-button,
 .theme-dark .icon-action,
+.theme-dark .composer-action,
 .theme-dark .sidebar-toggle,
 .theme-dark .deck-button,
 .theme-dark .session-action,
@@ -1207,8 +1245,7 @@ button {
 .theme-dark .view-scale-controls,
 .theme-dark .view-scale-controls button,
 .theme-dark .progress-pill,
-.theme-dark .study-controls button,
-.theme-dark .rating-controls button {
+.theme-dark .mark-action {
   color: #ececec;
 }
 
@@ -1221,18 +1258,16 @@ button {
 .theme-dark .secondary-action:hover,
 .theme-dark .session-action:hover,
 .theme-dark .inline-toggle:hover,
-.theme-dark .study-controls .primary-action:hover {
+.theme-dark .composer-action:hover {
   background: #2f2f2f;
   border-color: #444444;
 }
 
 .theme-dark .view-scale-controls,
-.theme-dark .progress-pill,
 .theme-dark .filter-button,
 .theme-dark .primary-action,
 .theme-dark .secondary-action,
 .theme-dark .inline-toggle,
-.theme-dark .study-controls .primary-action,
 .theme-dark .study-stats span,
 .theme-dark .review-status,
 .theme-dark .question-list-item,
@@ -1248,7 +1283,7 @@ button {
 }
 
 .theme-dark .filter-button.active,
-.theme-dark .rating-controls button {
+.theme-dark .mark-action {
   background: #ececec;
   border-color: #ececec;
   color: #121212;
@@ -1385,23 +1420,24 @@ button {
 
   .study-header {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
     width: calc(100vw - 28px);
     max-width: calc(100vw - 28px);
     gap: 8px;
   }
 
   .study-header h2 {
-    white-space: normal;
-    font-size: 20px;
+    white-space: nowrap;
+    font-size: 16px;
   }
 
   .session-actions,
   .topbar-actions {
-    justify-content: flex-start;
+    justify-content: flex-end;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 2px;
+    overflow: hidden;
+    padding-bottom: 0;
   }
 
   .session-action,
@@ -1422,12 +1458,19 @@ button {
     min-width: 48px;
   }
 
+  .study-tool-panel {
+    width: calc(100vw - 28px);
+    max-width: calc(100vw - 28px);
+  }
+
   .filter-bar {
     display: flex;
     overflow-x: auto;
-    padding-bottom: 2px;
-    width: calc(100vw - 28px);
-    max-width: calc(100vw - 28px);
+  }
+
+  .study-tool-row {
+    justify-content: flex-start;
+    overflow-x: auto;
   }
 
   .filter-button {
@@ -1453,10 +1496,6 @@ button {
 
   .question-list {
     grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
-  }
-
-  .rating-controls {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .question-pane {
@@ -1488,28 +1527,25 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .study-controls {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: hidden;
+  .study-composer {
     width: calc(100vw - 28px);
     max-width: calc(100vw - 28px);
-  }
-
-  .study-controls button {
-    min-width: 0;
-    flex: 1 1 0;
-    padding: 0 9px;
-  }
-
-  .study-controls span:not(.shortcut-hint) {
-    min-width: 0;
+    justify-content: center;
+    flex-wrap: wrap;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .study-controls .shortcut-hint {
+  .composer-action {
+    flex: 1 1 120px;
+    padding: 0 10px;
+  }
+
+  .answer-action {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .composer-action .shortcut-hint {
     display: none;
   }
 }

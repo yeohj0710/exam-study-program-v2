@@ -643,6 +643,16 @@ function App() {
         </button>
         <button
           type="button"
+          className={showFilters ? 'rail-button active' : 'rail-button'}
+          title="학습 도구"
+          aria-label="학습 도구"
+          onClick={() => setShowFilters((value) => !value)}
+          disabled={!library}
+        >
+          <SlidersHorizontal size={18} />
+        </button>
+        <button
+          type="button"
           className="rail-button"
           title={themeMode === 'dark' ? '밝은 모드' : '어두운 모드'}
           aria-label={themeMode === 'dark' ? '밝은 모드' : '어두운 모드'}
@@ -762,85 +772,72 @@ function App() {
               </div>
               <div className="topbar-actions">
                 <span className="progress-pill">{progressText}</span>
-                <button
-                  type="button"
-                  className={showFilters ? 'icon-action active' : 'icon-action'}
-                  onClick={() => setShowFilters((value) => !value)}
-                  aria-pressed={showFilters}
-                  title="학습 범위"
-                  aria-label="학습 범위"
-                >
-                  <SlidersHorizontal size={17} />
-                  <ShortcutHint keys="Ctrl+F" />
-                </button>
-                <button
-                  type="button"
-                  className={showQuestionList ? 'icon-action active' : 'icon-action'}
-                  onClick={() => setShowQuestionList((value) => !value)}
-                  aria-pressed={showQuestionList}
-                  title="문항 목록"
-                  aria-label="문항 목록"
-                >
-                  <List size={18} />
-                  <ShortcutHint keys="Ctrl+P" />
-                </button>
-                <div className="view-scale-controls" aria-label="화면 배율">
-                  <button
-                    type="button"
-                    title="화면 축소 (Ctrl+-)"
-                    aria-label="화면 축소"
-                    onClick={() => changeViewScale(-viewScaleStep)}
-                    disabled={viewScale <= minViewScale}
-                  >
-                    <ZoomOut size={16} />
-                    <ShortcutHint keys="Ctrl+-" />
-                  </button>
-                  <button
-                    type="button"
-                    className="view-scale-value"
-                    title="기본 배율로 되돌리기 (Ctrl+0)"
-                    aria-label="기본 배율"
-                    onClick={resetViewScale}
-                  >
-                    {Math.round(viewScale * 100)}%
-                    <ShortcutHint keys="Ctrl+0" />
-                  </button>
-                  <button
-                    type="button"
-                    title="화면 확대 (Ctrl+=)"
-                    aria-label="화면 확대"
-                    onClick={() => changeViewScale(viewScaleStep)}
-                    disabled={viewScale >= maxViewScale}
-                  >
-                    <ZoomIn size={16} />
-                    <ShortcutHint keys="Ctrl+=" />
-                  </button>
-                </div>
-                <button type="button" className="icon-action" onClick={reshuffle} title="섞기" aria-label="섞기">
-                  <Shuffle size={18} />
-                </button>
               </div>
             </header>
 
             {showFilters && (
-              <div className="filter-bar" role="tablist" aria-label="학습 범위">
-                <FilterButton label={filterLabels.all} count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
-                <FilterButton label={filterLabels.due} count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
-                <FilterButton label={filterLabels.new} count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
-                <FilterButton label={filterLabels.low} count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
-                <FilterButton
-                  label={filterLabels.mastered}
-                  count={deckStats.mastered}
-                  active={filterMode === 'mastered'}
-                  onClick={() => setFilter('mastered')}
-                />
-                <FilterButton
-                  label={filterLabels.needs_work}
-                  count={deckStats.needs_work}
-                  active={filterMode === 'needs_work'}
-                  onClick={() => setFilter('needs_work')}
-                />
-              </div>
+              <section className="study-tool-panel" aria-label="학습 도구">
+                <div className="filter-bar" role="tablist" aria-label="학습 범위">
+                  <FilterButton label={filterLabels.all} count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
+                  <FilterButton label={filterLabels.due} count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
+                  <FilterButton label={filterLabels.new} count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
+                  <FilterButton label={filterLabels.low} count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
+                  <FilterButton
+                    label={filterLabels.mastered}
+                    count={deckStats.mastered}
+                    active={filterMode === 'mastered'}
+                    onClick={() => setFilter('mastered')}
+                  />
+                  <FilterButton
+                    label={filterLabels.needs_work}
+                    count={deckStats.needs_work}
+                    active={filterMode === 'needs_work'}
+                    onClick={() => setFilter('needs_work')}
+                  />
+                </div>
+                <div className="study-tool-row">
+                  <div className="view-scale-controls" aria-label="화면 배율">
+                    <button
+                      type="button"
+                      title="화면 축소 (Ctrl+-)"
+                      aria-label="화면 축소"
+                      onClick={() => changeViewScale(-viewScaleStep)}
+                      disabled={viewScale <= minViewScale}
+                    >
+                      <ZoomOut size={16} />
+                      <ShortcutHint keys="Ctrl+-" />
+                    </button>
+                    <button
+                      type="button"
+                      className="view-scale-value"
+                      title="기본 배율로 되돌리기 (Ctrl+0)"
+                      aria-label="기본 배율"
+                      onClick={resetViewScale}
+                    >
+                      {Math.round(viewScale * 100)}%
+                      <ShortcutHint keys="Ctrl+0" />
+                    </button>
+                    <button
+                      type="button"
+                      title="화면 확대 (Ctrl+=)"
+                      aria-label="화면 확대"
+                      onClick={() => changeViewScale(viewScaleStep)}
+                      disabled={viewScale >= maxViewScale}
+                    >
+                      <ZoomIn size={16} />
+                      <ShortcutHint keys="Ctrl+=" />
+                    </button>
+                  </div>
+                  <button type="button" className="secondary-action" onClick={reshuffle}>
+                    <Shuffle size={17} />
+                    <span>섞기</span>
+                  </button>
+                  <button type="button" className="secondary-action" onClick={() => setShowFilters(false)}>
+                    <span>닫기</span>
+                    <ShortcutHint keys="Ctrl+F" />
+                  </button>
+                </div>
+              </section>
             )}
 
             <section
@@ -914,10 +911,10 @@ function App() {
               )}
             </article>
 
-            <div className="study-controls">
+            <div className="study-composer" aria-label="학습 동작">
               <button
                 type="button"
-                className="primary-action"
+                className="composer-action answer-action"
                 onClick={() => setShowAnswer((value) => !value)}
                 disabled={!currentCard}
               >
@@ -927,7 +924,7 @@ function App() {
               </button>
               <button
                 type="button"
-                className="secondary-action"
+                className="composer-action"
                 title="외움 상태를 기록하지 않고 다음 카드로 넘깁니다."
                 onClick={nextCard}
                 disabled={!currentCard}
@@ -936,10 +933,22 @@ function App() {
                 <span>건너뛰기</span>
                 <ShortcutHint keys="K/→" />
               </button>
+              {showAnswer && currentCard && !isMastered(currentCard) && (
+                <button
+                  type="button"
+                  className="composer-action mark-action"
+                  title="외운 카드로 처리하고 기본 학습 목록에서 제외합니다."
+                  onClick={() => void saveStudy(currentCard, 'easy')}
+                >
+                  <Check size={18} />
+                  <span>외움·제외</span>
+                  <ShortcutHint keys="1" />
+                </button>
+              )}
               {currentCard && isMastered(currentCard) && (
                 <button
                   type="button"
-                  className="restore-action"
+                  className="composer-action restore-action"
                   title="외움·제외 기록을 지우고 다시 학습 목록에 넣습니다."
                   onClick={() => void restoreStudy(currentCard)}
                 >
@@ -949,14 +958,6 @@ function App() {
                 </button>
               )}
             </div>
-            {showAnswer && currentCard && !isMastered(currentCard) && (
-              <div className="rating-controls" aria-label="학습 결과">
-                <button type="button" title="외운 카드로 처리하고 기본 학습 목록에서 제외합니다." onClick={() => void saveStudy(currentCard, 'easy')}>
-                  <span>외움·제외</span>
-                  <ShortcutHint keys="1" />
-                </button>
-              </div>
-            )}
           </>
         )}
       </section>
