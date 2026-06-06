@@ -11,6 +11,7 @@ from .sources import discover_midterm_pdfs
 def build_library(
     *,
     source_root: Path | None,
+    pdf_paths: list[Path] | None = None,
     legacy_root: Path | None,
     asset_root: Path,
     include_lectures: bool = False,
@@ -21,6 +22,22 @@ def build_library(
     library = Library(generated_at=0.0)
     report = ImportReport()
     asset_root.mkdir(parents=True, exist_ok=True)
+
+    for pdf in pdf_paths or []:
+        try:
+            source, cards, warnings = import_pdf(
+                pdf,
+                asset_root,
+                max_pages=max_pages_per_pdf,
+                render_pages=render_pdf_pages,
+            )
+            library.sources.append(source)
+            library.cards.extend(cards)
+            report.pdfs_imported += 1
+            report.sources_scanned += 1
+            report.warnings.extend(warnings)
+        except Exception as exc:
+            report.warnings.append(f"PDF import failed: {pdf}: {exc}")
 
     if source_root:
         pdfs = discover_midterm_pdfs(source_root, include_lectures=include_lectures)

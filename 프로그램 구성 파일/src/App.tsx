@@ -95,7 +95,7 @@ type PersistedSession = {
   viewScale: number
 }
 
-const defaultSourceRoot = 'G:\\내 드라이브\\여형준님\\21 6-1'
+const defaultPdfPaths = ''
 const defaultLegacyRoot =
   'G:\\내 드라이브\\여형준님\\21 6-1\\족보 암기 프로그램\\중간고사'
 const sessionStorageKey = 'exam-memory-app.session.v1'
@@ -158,6 +158,19 @@ function assetUrl(asset: Asset) {
   return `/assets/${asset.path.split('/').map(encodeURIComponent).join('/')}`
 }
 
+function previewAsset(card: StudyCard) {
+  return (
+    card.assets.find((asset) => asset.role === 'front_image') ??
+    card.assets.find((asset) => asset.role === 'page_crop') ??
+    card.assets.find((asset) => asset.role === 'source_page')
+  )
+}
+
+function listPrimaryText(card: StudyCard) {
+  if (card.source === 'legacy_capture') return card.deck
+  return card.front_text || card.source_item || card.deck
+}
+
 function shuffleIds(cards: StudyCard[]) {
   return cards
     .map((card) => ({ card, sort: Math.random() }))
@@ -204,7 +217,7 @@ function App() {
   const [showInspector, setShowInspector] = useState(savedSession.showInspector ?? false)
   const [showQuestionList, setShowQuestionList] = useState(false)
   const [nowSeconds, setNowSeconds] = useState(0)
-  const [sourceRoot, setSourceRoot] = useState(defaultSourceRoot)
+  const [pdfPaths, setPdfPaths] = useState(defaultPdfPaths)
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
   const [importing, setImporting] = useState(false)
   const [stoppingServer, setStoppingServer] = useState(false)
@@ -246,7 +259,10 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          source_root: sourceRoot || null,
+          pdf_paths: pdfPaths
+            .split(/\r?\n/)
+            .map((path) => path.trim())
+            .filter(Boolean),
           legacy_root: legacyRoot || null,
           include_lectures: false,
           copy_legacy_assets: true,
@@ -637,7 +653,7 @@ function App() {
               <BrandMark />
               <div>
                 <h1>StudyForge</h1>
-                <p>PDF와 기존 캡처 자료를 카드로 변환합니다.</p>
+                <p>분류된 캡처 자료를 카드로 가져옵니다.</p>
               </div>
             </div>
             <div className="panel-heading">
@@ -645,12 +661,17 @@ function App() {
               <h2>처음 설정</h2>
             </div>
             <label>
-              PDF 폴더
-              <input value={sourceRoot} onChange={(event) => setSourceRoot(event.target.value)} />
-            </label>
-            <label>
               기존 캡처 폴더
               <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
+            </label>
+            <label>
+              PDF 직접 가공
+              <textarea
+                value={pdfPaths}
+                onChange={(event) => setPdfPaths(event.target.value)}
+                placeholder="가공할 PDF 파일 경로를 한 줄에 하나씩 입력"
+                rows={3}
+              />
             </label>
             <button className="primary-action" type="button" onClick={runImport} disabled={importing}>
               {importing ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
@@ -785,18 +806,28 @@ function App() {
               </div>
               {showQuestionList && (
                 <div className="question-list">
-                  {orderedCards.map((card, index) => (
-                    <button
-                      key={card.id}
-                      type="button"
-                      className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
-                      onClick={() => goToCard(index)}
-                    >
-                      <span>{index + 1}</span>
-                      <strong>{card.front_text || card.source_item || card.deck}</strong>
-                      <small>{labelReviewStatus(card.review_status)}</small>
-                    </button>
-                  ))}
+                  {orderedCards.map((card, index) => {
+                    const preview = previewAsset(card)
+                    return (
+                      <button
+                        key={card.id}
+                        type="button"
+                        className={card.id === currentCard?.id ? 'question-list-item active' : 'question-list-item'}
+                        onClick={() => goToCard(index)}
+                      >
+                        <span className="question-list-number">{index + 1}</span>
+                        <div className="question-list-thumb">
+                          {preview ? <img src={assetUrl(preview)} alt="" loading="lazy" /> : <span>텍스트</span>}
+                        </div>
+                        <div className="question-list-copy">
+                          <strong>{listPrimaryText(card)}</strong>
+                          <small>
+                            #{card.source_item ?? index + 1} · {labelReviewStatus(card.review_status)}
+                          </small>
+                        </div>
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </section>
@@ -804,9 +835,13 @@ function App() {
             <article className="question-pane">
               {currentCard ? (
                 <div className="question-content">
-                  <div className="question-text">
-                    <p>{currentCard.front_text}</p>
-                  </div>
+                  {currentCard.source === 'legacy_capture' ? (
+                    <p className="question-card-label">{currentCard.front_text}</p>
+                  ) : (
+                    <div className="question-text">
+                      <p>{currentCard.front_text}</p>
+                    </div>
+                  )}
                   <ImageStrip assets={[...frontImages, ...choiceImages]} />
                   {showAnswer && (
                     <div className="answer-zone">
@@ -908,21 +943,26 @@ function App() {
             </div>
           </details>
 
-          <details className="inspector-section">
-            <summary>
-              <span>자료 갱신</span>
-              <RefreshCw size={16} />
-            </summary>
-            <div className="reimport-box">
-              <label>
-                PDF 폴더
-                <input value={sourceRoot} onChange={(event) => setSourceRoot(event.target.value)} />
-              </label>
-              <label>
-                기존 캡처 폴더
-                <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
-              </label>
-              <button className="secondary-action" type="button" onClick={runImport} disabled={importing}>
+            <details className="inspector-section">
+              <summary>
+                <span>자료 갱신</span>
+                <RefreshCw size={16} />
+              </summary>
+              <div className="reimport-box">
+                <label>
+                  기존 캡처 폴더
+                  <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
+                </label>
+                <label>
+                  PDF 직접 가공
+                  <textarea
+                    value={pdfPaths}
+                    onChange={(event) => setPdfPaths(event.target.value)}
+                    placeholder="가공할 PDF 파일 경로를 한 줄에 하나씩 입력"
+                    rows={3}
+                  />
+                </label>
+                <button className="secondary-action" type="button" onClick={runImport} disabled={importing}>
                 {importing ? <RefreshCw className="spin" size={16} /> : <Play size={16} />}
                 <span>{importing ? '가져오는 중' : '다시 가져오기'}</span>
               </button>

@@ -61,3 +61,21 @@ def test_validation_endpoint_returns_report(tmp_path, monkeypatch):
     assert payload["ok"] is True
     assert payload["missing_asset_count"] == 0
     assert payload["card_count"] == 1
+
+
+def test_import_endpoint_does_not_auto_scan_pdf_folder(tmp_path, monkeypatch):
+    library_path = tmp_path / "library.json"
+    asset_root = tmp_path / "assets"
+    pdf_root = tmp_path / "pdfs"
+    pdf_root.mkdir()
+    (pdf_root / "ignored.pdf").write_bytes(b"%PDF-1.4\n")
+    monkeypatch.setattr(api, "LIBRARY_PATH", library_path)
+    monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
+    monkeypatch.setattr(api, "PROGRESS_PATH", tmp_path / "progress.json")
+    monkeypatch.setattr(api, "ASSET_ROOT", asset_root)
+    client = TestClient(api.app)
+
+    response = client.post("/api/import", json={"source_root": str(pdf_root)})
+
+    assert response.status_code == 400
+    assert not library_path.exists()

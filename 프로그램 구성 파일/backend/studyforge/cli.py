@@ -16,6 +16,7 @@ def parse_args() -> argparse.Namespace:
 
     build = subparsers.add_parser("import", help="Build a study library from PDFs and legacy captures.")
     build.add_argument("--source-root", type=Path, default=None)
+    build.add_argument("--pdf", dest="pdf_paths", type=Path, action="append", default=[])
     build.add_argument("--legacy-root", type=Path, default=None)
     build.add_argument("--output", type=Path, default=Path("data/library.json"))
     build.add_argument("--asset-root", type=Path, default=Path("data/assets"))
@@ -39,6 +40,7 @@ def main() -> None:
     if args.command == "import":
         library = build_library(
             source_root=args.source_root,
+            pdf_paths=args.pdf_paths,
             legacy_root=args.legacy_root,
             asset_root=args.asset_root,
             include_lectures=args.include_lectures,

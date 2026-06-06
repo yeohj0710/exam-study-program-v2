@@ -30,18 +30,17 @@ PDF와 기존 캡처 문제 은행을 자동으로 가져와 카드처럼 복습
 
 ## 자료 가져오기
 
-자료가 아직 없으면 첫 화면에서 PDF 폴더와 기존 캡처 폴더를 확인한 뒤 `자료 가져오기`를 누릅니다.
-PDF 폴더 안에 `중간고사 정리자료` 구조가 있으면 그 대상만 가져오고, 그런 구조가 없으면 폴더 안의 일반 PDF를 자동으로 문제셋으로 가져옵니다.
+자료가 아직 없으면 첫 화면에서 기존 캡처 폴더를 확인한 뒤 `자료 가져오기`를 누릅니다.
+기본 가져오기는 이미 분류해 둔 캡처 문제셋만 가져옵니다. PDF는 폴더를 자동으로 뒤져서 가공하지 않습니다.
 
 기본 경로:
 
 ```text
-G:\내 드라이브\여형준님\21 6-1
 G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사
 ```
 
 원본 자료는 읽기만 합니다. 생성된 라이브러리, 복습 기록, 검수 기록은 `프로그램 구성 파일\data` 안에 저장됩니다.
-텍스트가 안 뽑히는 스캔 PDF도 전체 페이지 검수 카드로 남기므로, 가져온 뒤 `검수(I)`에서 확인하면 됩니다.
+PDF를 가공해야 할 때만 `PDF 직접 가공` 입력칸에 PDF 파일 경로를 한 줄에 하나씩 넣습니다.
 
 ## 폴더 구조
 
@@ -79,5 +78,11 @@ python scripts\run_cli.py validate
 수동 import:
 
 ```powershell
-python scripts\run_cli.py import --source-root "G:\내 드라이브\여형준님\21 6-1" --legacy-root "G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사" --copy-legacy-assets
+python scripts\run_cli.py import --legacy-root "G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사" --copy-legacy-assets
+```
+
+PDF 파일을 직접 지정해 같이 가져올 때:
+
+```powershell
+python scripts\run_cli.py import --legacy-root "G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사" --pdf "G:\path\to\file.pdf" --copy-legacy-assets
 ```

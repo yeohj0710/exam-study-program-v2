@@ -43,7 +43,7 @@ if (DIST_ROOT / "app-assets").exists():
 
 
 class ImportRequest(BaseModel):
-    source_root: str | None = None
+    pdf_paths: list[str] = Field(default_factory=list)
     legacy_root: str | None = None
     include_lectures: bool = False
     max_pages_per_pdf: int | None = None
@@ -113,10 +113,12 @@ def get_validation() -> dict[str, object]:
 
 @app.post("/api/import")
 def rebuild_library(request: ImportRequest) -> dict[str, object]:
-    if not request.source_root and not request.legacy_root:
-        raise HTTPException(status_code=400, detail="source_root or legacy_root is required.")
+    pdf_paths = [Path(path) for path in request.pdf_paths if path.strip()]
+    if not pdf_paths and not request.legacy_root:
+        raise HTTPException(status_code=400, detail="pdf_paths or legacy_root is required.")
     library = build_library(
-        source_root=Path(request.source_root) if request.source_root else None,
+        source_root=None,
+        pdf_paths=pdf_paths,
         legacy_root=Path(request.legacy_root) if request.legacy_root else None,
         asset_root=ASSET_ROOT,
         include_lectures=request.include_lectures,
