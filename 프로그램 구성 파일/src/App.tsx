@@ -7,11 +7,14 @@ import {
   FileText,
   Image as ImageIcon,
   List,
+  Moon,
   Play,
   Power,
   RefreshCw,
   RotateCcw,
   Shuffle,
+  SlidersHorizontal,
+  Sun,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
@@ -20,6 +23,7 @@ import './App.css'
 type AssetRole = 'front_image' | 'choice_image' | 'answer_image' | 'source_page' | 'page_crop'
 type StudyRating = 'new' | 'again' | 'hard' | 'good' | 'easy'
 type FilterMode = 'all' | 'due' | 'new' | 'low' | 'needs_work' | 'mastered'
+type ThemeMode = 'light' | 'dark'
 
 type Asset = {
   id: string
@@ -92,7 +96,9 @@ type PersistedSession = {
   showDecks: boolean
   showInspector: boolean
   showQuestionList: boolean
+  showFilters: boolean
   viewScale: number
+  themeMode: ThemeMode
 }
 
 const defaultPdfPaths = ''
@@ -127,6 +133,15 @@ function defaultViewScale() {
   return 1
 }
 
+function defaultThemeMode(): ThemeMode {
+  if (typeof window === 'undefined') return 'light'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+function isThemeMode(value: unknown): value is ThemeMode {
+  return value === 'light' || value === 'dark'
+}
+
 function readSessionState(): Partial<PersistedSession> {
   if (typeof window === 'undefined') return {}
   try {
@@ -141,7 +156,9 @@ function readSessionState(): Partial<PersistedSession> {
       showDecks: typeof parsed.showDecks === 'boolean' ? parsed.showDecks : true,
       showInspector: typeof parsed.showInspector === 'boolean' ? parsed.showInspector : false,
       showQuestionList: typeof parsed.showQuestionList === 'boolean' ? parsed.showQuestionList : false,
+      showFilters: typeof parsed.showFilters === 'boolean' ? parsed.showFilters : false,
       viewScale: typeof parsed.viewScale === 'number' ? clampViewScale(parsed.viewScale) : undefined,
+      themeMode: isThemeMode(parsed.themeMode) ? parsed.themeMode : undefined,
     }
   } catch {
     return {}
@@ -211,17 +228,17 @@ function App() {
   const [cursor, setCursor] = useState(savedSession.cursor ?? 0)
   const [showAnswer, setShowAnswer] = useState(false)
   const [filterMode, setFilterMode] = useState<FilterMode>(savedSession.filterMode ?? 'all')
-  const compactScreen =
-    typeof window !== 'undefined' && window.matchMedia('(max-width: 760px)').matches
-  const [showDecks, setShowDecks] = useState(savedSession.showDecks ?? !compactScreen)
+  const [showDecks, setShowDecks] = useState(savedSession.showDecks ?? false)
   const [showInspector, setShowInspector] = useState(savedSession.showInspector ?? false)
-  const [showQuestionList, setShowQuestionList] = useState(false)
+  const [showQuestionList, setShowQuestionList] = useState(savedSession.showQuestionList ?? false)
+  const [showFilters, setShowFilters] = useState(savedSession.showFilters ?? false)
   const [nowSeconds, setNowSeconds] = useState(0)
   const [pdfPaths, setPdfPaths] = useState(defaultPdfPaths)
   const [legacyRoot, setLegacyRoot] = useState(defaultLegacyRoot)
   const [importing, setImporting] = useState(false)
   const [stoppingServer, setStoppingServer] = useState(false)
   const [viewScale, setViewScale] = useState(savedSession.viewScale ?? defaultViewScale())
+  const [themeMode, setThemeMode] = useState<ThemeMode>(savedSession.themeMode ?? defaultThemeMode())
 
   async function loadLibrary() {
     setLoading(true)
@@ -362,7 +379,7 @@ function App() {
         if (cancelled) return
         setLibrary(payload)
         setSelectedDeck((current) => selectExistingDeck(payload, current))
-        void loadValidation()
+        window.setTimeout(() => void loadValidation(), 0)
       })
       .catch((caught) => {
         if (cancelled) return
@@ -459,7 +476,9 @@ function App() {
       showDecks,
       showInspector,
       showQuestionList,
+      showFilters,
       viewScale,
+      themeMode,
     })
   }, [
     selectedDeck,
@@ -469,7 +488,9 @@ function App() {
     showDecks,
     showInspector,
     showQuestionList,
+    showFilters,
     viewScale,
+    themeMode,
   ])
 
   function nextCard() {
@@ -525,6 +546,11 @@ function App() {
         setShowInspector((value) => !value)
         return
       }
+      if (library && isModifierShortcut && !event.altKey && key === 'f') {
+        event.preventDefault()
+        setShowFilters((value) => !value)
+        return
+      }
       if (isModifierShortcut && !event.altKey && (key === '-' || key === '_')) {
         event.preventDefault()
         changeViewScale(-viewScaleStep)
@@ -567,18 +593,11 @@ function App() {
   const pageCrops = currentCard?.assets.filter((asset) => asset.role === 'page_crop') ?? []
   const sourcePages = currentCard?.assets.filter((asset) => asset.role === 'source_page') ?? []
 
-  if (loading) {
-    return (
-      <main className="loading-screen">
-        <RefreshCw className="spin" size={28} />
-        <span>라이브러리 확인 중</span>
-      </main>
-    )
-  }
-
   const shellClass = [
     'app-shell',
+    `theme-${themeMode}`,
     library ? 'has-library' : '',
+    loading && !library ? 'is-booting' : '',
     library && showDecks ? 'with-decks' : '',
     library && showInspector ? 'with-inspector' : '',
   ]
@@ -588,19 +607,60 @@ function App() {
 
   return (
     <main className={shellClass} style={shellStyle}>
-      {library && !showDecks && (
+      <aside className="app-rail" aria-label="앱 메뉴">
+        <button type="button" className="rail-brand" title="StudyForge" aria-label="StudyForge">
+          <BrandMark />
+        </button>
         <button
           type="button"
-          className="deck-tab-toggle"
-          title="문제셋 펼치기"
-          aria-label="문제셋 펼치기"
-          onClick={() => setShowDecks(true)}
+          className={showDecks ? 'rail-button active' : 'rail-button'}
+          title="문제셋"
+          aria-label="문제셋"
+          onClick={() => setShowDecks((value) => !value)}
+          disabled={!library}
         >
           <FileText size={18} />
-          <span>문제셋</span>
-          <ShortcutHint keys="Ctrl+B" />
         </button>
-      )}
+        <button
+          type="button"
+          className={showQuestionList ? 'rail-button active' : 'rail-button'}
+          title="문항 목록"
+          aria-label="문항 목록"
+          onClick={() => setShowQuestionList((value) => !value)}
+          disabled={!library}
+        >
+          <List size={18} />
+        </button>
+        <button
+          type="button"
+          className={showInspector ? 'rail-button active' : 'rail-button'}
+          title="검수"
+          aria-label="검수"
+          onClick={() => setShowInspector((value) => !value)}
+          disabled={!library}
+        >
+          <Check size={18} />
+        </button>
+        <button
+          type="button"
+          className="rail-button"
+          title={themeMode === 'dark' ? '밝은 모드' : '어두운 모드'}
+          aria-label={themeMode === 'dark' ? '밝은 모드' : '어두운 모드'}
+          onClick={() => setThemeMode((value) => (value === 'dark' ? 'light' : 'dark'))}
+        >
+          {themeMode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
+        <button
+          type="button"
+          className="rail-button danger-action"
+          title="종료"
+          aria-label="종료"
+          onClick={() => void shutdownApp()}
+          disabled={stoppingServer}
+        >
+          <Power size={18} />
+        </button>
+      </aside>
 
       {library && showDecks && (
         <aside className="sidebar">
@@ -653,34 +713,44 @@ function App() {
               <BrandMark />
               <div>
                 <h1>StudyForge</h1>
-                <p>분류된 캡처 자료를 카드로 가져옵니다.</p>
+                <p>{loading ? '라이브러리를 확인하는 중입니다.' : '분류된 캡처 자료를 카드로 가져옵니다.'}</p>
               </div>
             </div>
-            <div className="panel-heading">
-              <FileText size={22} />
-              <h2>처음 설정</h2>
-            </div>
-            <label>
-              기존 캡처 폴더
-              <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
-            </label>
-            <label>
-              PDF 직접 가공
-              <textarea
-                value={pdfPaths}
-                onChange={(event) => setPdfPaths(event.target.value)}
-                placeholder="가공할 PDF 파일 경로를 한 줄에 하나씩 입력"
-                rows={3}
-              />
-            </label>
-            <button className="primary-action" type="button" onClick={runImport} disabled={importing}>
-              {importing ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
-              <span>{importing ? '가져오는 중' : '자료 가져오기'}</span>
-            </button>
-            <button className="secondary-action" type="button" onClick={() => void shutdownApp()} disabled={stoppingServer}>
-              <Power size={18} />
-              <span>{stoppingServer ? '종료 중' : '종료'}</span>
-            </button>
+            {loading && (
+              <div className="boot-status">
+                <RefreshCw className="spin" size={18} />
+                <span>앱을 먼저 열고 자료는 뒤에서 불러오는 중입니다.</span>
+              </div>
+            )}
+            {!loading && (
+              <>
+                <div className="panel-heading">
+                  <FileText size={22} />
+                  <h2>처음 설정</h2>
+                </div>
+                <label>
+                  기존 캡처 폴더
+                  <input value={legacyRoot} onChange={(event) => setLegacyRoot(event.target.value)} />
+                </label>
+                <label>
+                  PDF 직접 가공
+                  <textarea
+                    value={pdfPaths}
+                    onChange={(event) => setPdfPaths(event.target.value)}
+                    placeholder="가공할 PDF 파일 경로를 한 줄에 하나씩 입력"
+                    rows={3}
+                  />
+                </label>
+                <button className="primary-action" type="button" onClick={runImport} disabled={importing}>
+                  {importing ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
+                  <span>{importing ? '가져오는 중' : '자료 가져오기'}</span>
+                </button>
+                <button className="secondary-action" type="button" onClick={() => void shutdownApp()} disabled={stoppingServer}>
+                  <Power size={18} />
+                  <span>{stoppingServer ? '종료 중' : '종료'}</span>
+                </button>
+              </>
+            )}
             {error && <p className="error-text">{error}</p>}
           </section>
         ) : (
@@ -690,28 +760,30 @@ function App() {
                 <p className="eyebrow">{currentCard?.subject ?? '문제셋 없음'}</p>
                 <h2>{selectedDeck || '문제셋'}</h2>
               </div>
-              <div className="session-actions">
+              <div className="topbar-actions">
+                <span className="progress-pill">{progressText}</span>
                 <button
                   type="button"
-                  className={showDecks ? 'session-action active' : 'session-action'}
-                  onClick={() => setShowDecks((value) => !value)}
-                  aria-pressed={showDecks}
+                  className={showFilters ? 'icon-action active' : 'icon-action'}
+                  onClick={() => setShowFilters((value) => !value)}
+                  aria-pressed={showFilters}
+                  title="학습 범위"
+                  aria-label="학습 범위"
                 >
-                  <FileText size={18} />
-                  <span>문제셋</span>
-                  <ShortcutHint keys="Ctrl+B" />
+                  <SlidersHorizontal size={17} />
+                  <ShortcutHint keys="Ctrl+F" />
                 </button>
                 <button
                   type="button"
-                  className={showQuestionList ? 'session-action active' : 'session-action'}
+                  className={showQuestionList ? 'icon-action active' : 'icon-action'}
                   onClick={() => setShowQuestionList((value) => !value)}
                   aria-pressed={showQuestionList}
+                  title="문항 목록"
+                  aria-label="문항 목록"
                 >
                   <List size={18} />
-                  <span>목록</span>
                   <ShortcutHint keys="Ctrl+P" />
                 </button>
-                <span className="progress-pill">{progressText}</span>
                 <div className="view-scale-controls" aria-label="화면 배율">
                   <button
                     type="button"
@@ -744,51 +816,32 @@ function App() {
                     <ShortcutHint keys="Ctrl+=" />
                   </button>
                 </div>
-                <button type="button" className="session-action" onClick={reshuffle} title="섞기">
+                <button type="button" className="icon-action" onClick={reshuffle} title="섞기" aria-label="섞기">
                   <Shuffle size={18} />
-                  <span>섞기</span>
-                </button>
-                <button
-                  type="button"
-                  className={showInspector ? 'session-action active' : 'session-action'}
-                  onClick={() => setShowInspector((value) => !value)}
-                  aria-pressed={showInspector}
-                >
-                  <Check size={18} />
-                  <span>검수</span>
-                  <ShortcutHint keys="Ctrl+I" />
-                </button>
-                <button
-                  type="button"
-                  className="session-action danger-action"
-                  title="프로그램 종료"
-                  onClick={() => void shutdownApp()}
-                  disabled={stoppingServer}
-                >
-                  <Power size={18} />
-                  <span>{stoppingServer ? '종료 중' : '종료'}</span>
                 </button>
               </div>
             </header>
 
-            <div className="filter-bar" role="tablist" aria-label="학습 범위">
-              <FilterButton label={filterLabels.all} count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
-              <FilterButton label={filterLabels.due} count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
-              <FilterButton label={filterLabels.new} count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
-              <FilterButton label={filterLabels.low} count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
-              <FilterButton
-                label={filterLabels.mastered}
-                count={deckStats.mastered}
-                active={filterMode === 'mastered'}
-                onClick={() => setFilter('mastered')}
-              />
-              <FilterButton
-                label={filterLabels.needs_work}
-                count={deckStats.needs_work}
-                active={filterMode === 'needs_work'}
-                onClick={() => setFilter('needs_work')}
-              />
-            </div>
+            {showFilters && (
+              <div className="filter-bar" role="tablist" aria-label="학습 범위">
+                <FilterButton label={filterLabels.all} count={deckStats.all} active={filterMode === 'all'} onClick={() => setFilter('all')} />
+                <FilterButton label={filterLabels.due} count={deckStats.due} active={filterMode === 'due'} onClick={() => setFilter('due')} />
+                <FilterButton label={filterLabels.new} count={deckStats.new} active={filterMode === 'new'} onClick={() => setFilter('new')} />
+                <FilterButton label={filterLabels.low} count={deckStats.low} active={filterMode === 'low'} onClick={() => setFilter('low')} />
+                <FilterButton
+                  label={filterLabels.mastered}
+                  count={deckStats.mastered}
+                  active={filterMode === 'mastered'}
+                  onClick={() => setFilter('mastered')}
+                />
+                <FilterButton
+                  label={filterLabels.needs_work}
+                  count={deckStats.needs_work}
+                  active={filterMode === 'needs_work'}
+                  onClick={() => setFilter('needs_work')}
+                />
+              </div>
+            )}
 
             <section
               className={showQuestionList ? 'question-list-panel expanded' : 'question-list-panel collapsed'}
