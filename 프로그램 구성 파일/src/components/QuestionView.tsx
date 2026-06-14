@@ -155,7 +155,7 @@ export function QuestionView({
       {showAnswer && (
         <>
           <section className="answer-section" ref={answerRef}>
-            <MarkdownContent markdown={question.answer_markdown} />
+            <MarkdownContent markdown={question.answer_markdown} stripLeadingAnswerPrefix />
           </section>
           {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}
         </>

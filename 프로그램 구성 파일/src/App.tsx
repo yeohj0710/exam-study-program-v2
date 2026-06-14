@@ -270,8 +270,10 @@ function App() {
     const question = session.currentQuestion
     const nextShowAnswer = !session.showAnswer
     session.setShowAnswer(nextShowAnswer)
-    if (question && nextShowAnswer) {
+    if (question && !nextShowAnswer) {
       setChoiceShuffleSeed((value) => value + 1)
+    }
+    if (question && nextShowAnswer) {
       const progress = await patchQuestionProgress(question.id, 'reveal')
       setPayload((current) => applyProgress(current, question.id, progress))
     }
@@ -641,9 +643,7 @@ function App() {
       <QuestionView
         question={session.currentQuestion}
         showAnswer={session.showAnswer}
-        choiceShuffleKey={
-          session.showAnswer && session.currentQuestion ? `${session.currentQuestion.id}:${choiceShuffleSeed}` : ''
-        }
+        choiceShuffleKey={session.currentQuestion ? `${session.currentQuestion.id}:${choiceShuffleSeed}` : ''}
       />
 
       {showQuestionPicker && (

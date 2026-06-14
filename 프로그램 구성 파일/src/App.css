@@ -593,7 +593,7 @@ button:disabled {
 }
 
 .source-evidence {
-  width: min(860px, calc(100vw - 220px));
+  width: min(1200px, calc(100vw - 220px));
   margin-top: 16px;
 }
 
@@ -602,10 +602,13 @@ button:disabled {
 }
 
 .source-evidence .markdown-image {
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
 }
 
 .source-evidence .markdown-image img {
+  width: 100%;
   max-height: none;
 }
 

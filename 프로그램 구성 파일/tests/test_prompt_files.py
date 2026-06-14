@@ -3,6 +3,8 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CORE_PROMPT = PROJECT_ROOT / "시험공부자료 MD 작성 프롬프트.txt"
+DETAIL_PROMPT = PROJECT_ROOT / "프로그램 구성 파일" / "prompts" / "시험공부자료 MD 작성 상세 프롬프트.txt"
+FAILURE_CASE_PROMPT = PROJECT_ROOT / "프로그램 구성 파일" / "prompts" / "시험공부자료 MD 작성 실패사례와 처리원칙.txt"
 
 
 def test_core_prompt_fits_codex_goal_limit():
@@ -16,9 +18,17 @@ def test_core_prompt_keeps_critical_generation_rules():
 
     required_phrases = [
         "상세 프롬프트",
+        "실패사례와 처리원칙",
         "마지막 줄에 붙여넣은 시험범위 자료 경로 안의 파일만",
         "기출문제는 최대한 원문 그대로 복원",
         "단답형 문제로 바꾸지 않는다",
+        "답은 번호가 아니라 보기 내용",
+        "보기 앞 원문 번호는 제거",
+        "빨간 숫자, 정답 표시, 채점 흔적",
+        "복원 안 된 보기",
+        "누락된 선지는 자료를 참고해 맞거나 틀린 완성 선지",
+        "계산 문제는 원본 표와 수치 조건",
+        "복합형 조합 보기",
         "출처 페이지/슬라이드 원본 이미지를 답안 맨 아래",
         "PPT/PDF/슬라이드는 텍스트 추출만 믿지 말고",
         "표, 비교표, 계산표",
@@ -27,3 +37,24 @@ def test_core_prompt_keeps_critical_generation_rules():
     ]
     for phrase in required_phrases:
         assert phrase in prompt
+
+
+def test_prompt_points_to_failure_cases_file():
+    prompt = CORE_PROMPT.read_text(encoding="utf-8")
+    detail = DETAIL_PROMPT.read_text(encoding="utf-8")
+    failure_cases = FAILURE_CASE_PROMPT.read_text(encoding="utf-8")
+
+    assert FAILURE_CASE_PROMPT.name in prompt
+    assert FAILURE_CASE_PROMPT.name in detail
+
+    required_phrases = [
+        "기출 복원 실패",
+        "보기 번호와 조합 보기",
+        "표/비교표/계산표",
+        "출처와 출처 이미지",
+        "레퍼런스 활용",
+        "G:\\내 드라이브\\여형준님\\21 6-1",
+        "특정 과목 전용 규칙이 아니라",
+    ]
+    for phrase in required_phrases:
+        assert phrase in failure_cases

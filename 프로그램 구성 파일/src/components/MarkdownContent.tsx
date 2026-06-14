@@ -1,9 +1,20 @@
 import { useState } from 'react'
 
+const CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：])|\d{1,2}\s+)\s*/
+const ANSWER_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：]))\s*/
+
 function imageUrl(path: string) {
   if (/^[a-zA-Z]:\\/.test(path)) return `/api/external-asset?path=${encodeURIComponent(path)}`
   if (path.startsWith('assets/')) return `/${path.split('/').map(encodeURIComponent).join('/')}`
   return path
+}
+
+function stripChoicePrefix(text: string) {
+  return text.replace(CHOICE_PREFIX_RE, '').trimStart()
+}
+
+function stripAnswerPrefix(text: string) {
+  return text.replace(ANSWER_PREFIX_RE, '').trimStart()
 }
 
 function renderInline(text: string) {
@@ -49,7 +60,7 @@ function trimEmptyEdges(block: string[]) {
   return block.slice(start, end)
 }
 
-function renderLine(line: string, key: string) {
+function renderLine(line: string, key: string, stripLeadingAnswerPrefix = false) {
   const normalized = line.trimStart()
   const image = normalized.match(/^!\[([^\]]*)]\(([^)]+)\)\s*$/)
   if (image) {
@@ -66,7 +77,8 @@ function renderLine(line: string, key: string) {
   if (normalized.startsWith('### ')) return <h3 key={key}>{renderInline(normalized.slice(4))}</h3>
   if (normalized.startsWith('## ')) return <h2 key={key}>{renderInline(normalized.slice(3))}</h2>
   if (normalized.startsWith('# ')) return <h1 key={key}>{renderInline(normalized.slice(2))}</h1>
-  return <p key={key}>{renderInline(normalized)}</p>
+  const text = stripLeadingAnswerPrefix ? stripAnswerPrefix(normalized) : normalized
+  return <p key={key}>{renderInline(text)}</p>
 }
 
 function MarkdownImage({ alt, path }: { alt: string; path: string }) {
@@ -97,18 +109,18 @@ function renderChoiceBlock(block: string[], key: string) {
 
   return (
     <div className="markdown-choice" key={key}>
-      <p>{renderInline(firstLine.slice(2).trim())}</p>
+      <p>{renderInline(stripChoicePrefix(firstLine.slice(2).trim()))}</p>
       {rest.map((line, index) => renderLine(line, `${key}-${index}`))}
     </div>
   )
 }
 
-function renderLines(lines: string[], shuffleChoicesKey?: string) {
+function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAnswerPrefix = false) {
   const output = []
   let index = 0
   while (index < lines.length) {
     if (!isChoiceStart(lines[index])) {
-      output.push(renderLine(lines[index], `${index}-${lines[index]}`))
+      output.push(renderLine(lines[index], `${index}-${lines[index]}`, stripLeadingAnswerPrefix))
       index += 1
       continue
     }
@@ -131,7 +143,15 @@ function renderLines(lines: string[], shuffleChoicesKey?: string) {
   return output
 }
 
-export function MarkdownContent({ markdown, shuffleChoicesKey }: { markdown: string; shuffleChoicesKey?: string }) {
+export function MarkdownContent({
+  markdown,
+  shuffleChoicesKey,
+  stripLeadingAnswerPrefix,
+}: {
+  markdown: string
+  shuffleChoicesKey?: string
+  stripLeadingAnswerPrefix?: boolean
+}) {
   const lines = markdown.split(/\r?\n/)
-  return <div className="markdown-content">{renderLines(lines, shuffleChoicesKey)}</div>
+  return <div className="markdown-content">{renderLines(lines, shuffleChoicesKey, stripLeadingAnswerPrefix)}</div>
 }

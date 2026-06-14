@@ -23,3 +23,19 @@ def test_source_section_has_no_divider_line():
 
     assert "margin:" in block
     assert "border-top:" not in block
+
+
+def test_source_evidence_images_are_large_enough_to_read():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    section_start = css.index(".source-evidence {")
+    section_block = css[section_start : css.index("}", section_start)]
+    figure_start = css.index(".source-evidence .markdown-image {")
+    figure_block = css[figure_start : css.index("}", figure_start)]
+    image_start = css.index(".source-evidence .markdown-image img {")
+    image_block = css[image_start : css.index("}", image_start)]
+
+    assert "1200px" in section_block
+    assert "width: 100%;" in figure_block
+    assert "max-width: none;" in figure_block
+    assert "width: 100%;" in image_block
+    assert "max-height: none;" in image_block
