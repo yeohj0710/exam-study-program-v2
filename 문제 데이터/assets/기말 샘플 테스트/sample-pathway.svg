@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260" role="img" aria-label="sample pathway diagram">
+  <rect width="720" height="260" fill="#fafafc"/>
+  <text x="34" y="64" fill="#202123" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">Sample Pathway</text>
+  <g fill="#e8f5f2" stroke="#0f766e" stroke-width="5">
+    <rect x="55" y="120" width="150" height="70"/>
+    <rect x="275" y="120" width="150" height="70"/>
+    <rect x="515" y="120" width="150" height="70"/>
+  </g>
+  <g fill="#202123" font-family="Segoe UI, Arial, sans-serif" font-size="25">
+    <text x="92" y="164">Input</text>
+    <text x="303" y="164">Process</text>
+    <text x="548" y="164">Output</text>
+  </g>
+  <g stroke="#0f766e" stroke-width="5" stroke-linecap="round" fill="#0f766e">
+    <line x1="210" y1="155" x2="265" y2="155"/>
+    <polygon points="270,155 250,143 250,167"/>
+    <line x1="430" y1="155" x2="505" y2="155"/>
+    <polygon points="510,155 490,143 490,167"/>
+  </g>
+</svg>

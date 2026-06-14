@@ -1,0 +1,184 @@
+from __future__ import annotations
+
+from base64 import b64decode
+from binascii import Error as Base64Error
+from dataclasses import asdict
+import os
+from pathlib import Path
+from typing import Literal
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
+
+from .asset_manager import save_image_asset
+from .final_models import QuestionProgress
+from .final_progress import (
+    load_final_progress,
+    mark_memorized,
+    record_reveal,
+    record_seen,
+    restore_question,
+    save_final_progress,
+)
+from .markdown_parser import parse_studyset_markdown
+from .studysets import create_studyset, list_studysets, read_studyset, save_studyset
+
+PROJECT_ROOT = Path(os.environ.get("STUDYFORGE_APP_ROOT", Path(__file__).resolve().parents[2]))
+
+
+def resolve_data_root(app_root: Path) -> Path:
+    override = os.environ.get("EXAM_STUDY_DATA_ROOT")
+    if override:
+        return Path(override)
+    return app_root.resolve().parent / "문제 데이터"
+
+
+DATA_ROOT = resolve_data_root(PROJECT_ROOT)
+STUDYSETS_ROOT = DATA_ROOT
+ASSET_ROOT = DATA_ROOT / "assets"
+FINAL_PROGRESS_PATH = DATA_ROOT / "progress.json"
+
+router = APIRouter()
+
+
+class StudySetCreateRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=160)
+
+
+class StudySetSaveRequest(BaseModel):
+    markdown: str
+
+
+class AssetUploadRequest(BaseModel):
+    content_base64: str
+    content_type: str
+    alt_text: str = "image"
+
+
+class QuestionProgressRequest(BaseModel):
+    action: Literal["seen", "reveal", "memorized"]
+
+
+@router.get("/api/studysets")
+def get_studysets() -> dict[str, object]:
+    return {"studysets": [asdict(item) for item in list_studysets(STUDYSETS_ROOT)]}
+
+
+@router.post("/api/studysets")
+def post_studyset(request: StudySetCreateRequest) -> dict[str, object]:
+    return asdict(create_studyset(STUDYSETS_ROOT, title=request.title.strip()))
+
+
+@router.get("/api/studysets/{studyset_id}")
+def get_studyset(studyset_id: str) -> dict[str, object]:
+    markdown = _read_or_404(studyset_id)
+    return _studyset_payload(studyset_id, markdown)
+
+
+@router.put("/api/studysets/{studyset_id}")
+def put_studyset(studyset_id: str, request: StudySetSaveRequest) -> dict[str, object]:
+    markdown = request.markdown
+    save_studyset(STUDYSETS_ROOT, studyset_id, markdown)
+    return _studyset_payload(studyset_id, markdown)
+
+
+@router.post("/api/studysets/{studyset_id}/assets")
+def post_studyset_asset(studyset_id: str, request: AssetUploadRequest) -> dict[str, object]:
+    _read_or_404(studyset_id)
+    try:
+        content = b64decode(request.content_base64, validate=True)
+    except Base64Error as exc:
+        raise HTTPException(status_code=400, detail="Invalid base64 image content.") from exc
+    try:
+        saved = save_image_asset(
+            ASSET_ROOT,
+            studyset_slug=studyset_id,
+            content=content,
+            content_type=request.content_type,
+            alt_text=request.alt_text,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return asdict(saved)
+
+
+@router.get("/api/studysets/{studyset_id}/questions")
+def get_studyset_questions(studyset_id: str) -> dict[str, object]:
+    markdown = _read_or_404(studyset_id)
+    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+    return {
+        "studyset_id": studyset_id,
+        "questions": _questions_payload(parsed.questions),
+        "issues": [asdict(issue) for issue in parsed.issues],
+    }
+
+
+def validation_report() -> dict[str, object]:
+    studysets = list_studysets(STUDYSETS_ROOT)
+    issues = []
+    question_count = 0
+    for studyset in studysets:
+        markdown = read_studyset(STUDYSETS_ROOT, studyset.id)
+        parsed = parse_studyset_markdown(markdown, studyset_id=studyset.id, asset_root=_data_root())
+        question_count += len(parsed.questions)
+        issues.extend(asdict(issue) for issue in parsed.issues)
+    return {
+        "ok": not any(issue["severity"] == "error" for issue in issues),
+        "studyset_count": len(studysets),
+        "question_count": question_count,
+        "issue_count": len(issues),
+        "issues": issues,
+    }
+
+
+@router.patch("/api/questions/{question_id}/progress")
+def patch_question_progress(question_id: str, request: QuestionProgressRequest) -> dict[str, object]:
+    progress = load_final_progress(FINAL_PROGRESS_PATH)
+    if request.action == "seen":
+        entry = record_seen(progress, question_id)
+    elif request.action == "reveal":
+        entry = record_reveal(progress, question_id)
+    else:
+        entry = mark_memorized(progress, question_id)
+    save_final_progress(FINAL_PROGRESS_PATH, progress)
+    return {"progress": asdict(entry)}
+
+
+@router.delete("/api/questions/{question_id}/progress")
+def delete_question_progress(question_id: str) -> dict[str, object]:
+    progress = load_final_progress(FINAL_PROGRESS_PATH)
+    entry = restore_question(progress, question_id)
+    save_final_progress(FINAL_PROGRESS_PATH, progress)
+    return {"progress": asdict(entry)}
+
+
+def _read_or_404(studyset_id: str) -> str:
+    try:
+        return read_studyset(STUDYSETS_ROOT, studyset_id)
+    except (FileNotFoundError, ValueError) as exc:
+        raise HTTPException(status_code=404, detail="Studyset not found.") from exc
+
+
+def _studyset_payload(studyset_id: str, markdown: str) -> dict[str, object]:
+    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+    return {
+        "id": studyset_id,
+        "title": parsed.title,
+        "markdown": markdown,
+        "questions": _questions_payload(parsed.questions),
+        "issues": [asdict(issue) for issue in parsed.issues],
+    }
+
+
+def _questions_payload(questions) -> list[dict[str, object]]:
+    progress = load_final_progress(FINAL_PROGRESS_PATH)
+    payload = []
+    for question in questions:
+        item = asdict(question)
+        item["progress"] = asdict(progress.get(question.id, QuestionProgress(question_id=question.id)))
+        payload.append(item)
+    return payload
+
+
+def _data_root() -> Path:
+    return ASSET_ROOT.parent

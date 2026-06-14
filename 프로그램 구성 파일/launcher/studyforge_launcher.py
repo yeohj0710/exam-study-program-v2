@@ -144,7 +144,7 @@ def show_splash_until_ready(url: str, port: int, state: dict[str, Any]) -> None:
     started_at = time.monotonic()
 
     window = tk.Tk()
-    window.title("시험 자료 암기 프로그램")
+    window.title("Exam Study Program")
     window.geometry("460x210")
     window.resizable(False, False)
     window.configure(bg="#f7f7f8")
@@ -154,14 +154,13 @@ def show_splash_until_ready(url: str, port: int, state: dict[str, Any]) -> None:
     frame.pack(fill="both", expand=True)
 
     mark = tk.Canvas(frame, width=48, height=48, bg="#f7f7f8", highlightthickness=0)
-    mark.create_rectangle(4, 4, 44, 44, fill="#202123", outline="#202123", width=0)
-    mark.create_polygon(16, 17, 31, 17, 36, 22, 36, 36, 16, 36, fill="#ffffff", outline="")
-    mark.create_line(20, 26, 25, 31, 34, 21, fill="#0f766e", width=4, capstyle=tk.ROUND, joinstyle=tk.ROUND)
+    mark.create_rectangle(4, 4, 44, 44, fill="#141617", outline="#141617", width=0)
+    mark.create_text(24, 25, text="ES", fill="#f5f4ef", font=("Segoe UI", 15, "bold"))
     mark.pack(anchor="w", pady=(0, 12))
 
     title = tk.Label(
         frame,
-        text="StudyForge 준비 중",
+        text="Exam Study 준비 중",
         bg="#f7f7f8",
         fg="#202123",
         font=("Malgun Gothic", 14, "bold"),

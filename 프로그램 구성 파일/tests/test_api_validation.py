@@ -51,7 +51,7 @@ def test_validation_endpoint_returns_report(tmp_path, monkeypatch):
     monkeypatch.setattr(api, "LIBRARY_PATH", library_path)
     monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
     monkeypatch.setattr(api, "PROGRESS_PATH", tmp_path / "progress.json")
-    monkeypatch.setattr(api, "ASSET_ROOT", asset_root)
+    monkeypatch.setattr(api, "LEGACY_ASSET_ROOT", asset_root)
     client = TestClient(api.app)
 
     response = client.get("/api/validation")
@@ -72,7 +72,7 @@ def test_import_endpoint_does_not_auto_scan_pdf_folder(tmp_path, monkeypatch):
     monkeypatch.setattr(api, "LIBRARY_PATH", library_path)
     monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
     monkeypatch.setattr(api, "PROGRESS_PATH", tmp_path / "progress.json")
-    monkeypatch.setattr(api, "ASSET_ROOT", asset_root)
+    monkeypatch.setattr(api, "LEGACY_ASSET_ROOT", asset_root)
     client = TestClient(api.app)
 
     response = client.post("/api/import", json={"source_root": str(pdf_root)})

@@ -24,96 +24,130 @@ internal sealed class SplashForm : Form
 {
     private readonly Label statusLabel;
     private readonly Label detailLabel;
-    private readonly ProgressBar progressBar;
+    private readonly LoadingLine loadingLine;
     private readonly Button cancelButton;
     private Process coreProcess;
     private bool closingAfterReady;
+    private bool launchStarted;
 
     public SplashForm()
     {
-        Text = "StudyForge";
+        Text = "Exam Study Program";
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.None;
-        BackColor = Color.FromArgb(247, 247, 248);
-        ClientSize = new Size(460, 230);
+        BackColor = Color.FromArgb(16, 17, 17);
+        ClientSize = new Size(430, 132);
         ShowInTaskbar = true;
         Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-
-        Panel card = new Panel();
-        card.BackColor = Color.White;
-        card.Bounds = new Rectangle(18, 18, 424, 194);
-        Controls.Add(card);
+        Icon appIcon = LoadAppIcon();
+        if (appIcon != null)
+        {
+            Icon = appIcon;
+        }
 
         LogoBox logo = new LogoBox();
-        logo.Bounds = new Rectangle(28, 30, 54, 54);
-        card.Controls.Add(logo);
+        logo.Bounds = new Rectangle(24, 32, 46, 46);
+        Controls.Add(logo);
 
         Label title = new Label();
         title.AutoSize = true;
-        title.Text = "StudyForge";
-        title.ForeColor = Color.FromArgb(32, 33, 35);
-        title.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-        title.Location = new Point(96, 29);
-        card.Controls.Add(title);
+        title.Text = "Exam Study Program";
+        title.ForeColor = Color.FromArgb(239, 238, 232);
+        title.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point);
+        title.Location = new Point(92, 25);
+        Controls.Add(title);
 
         Label subtitle = new Label();
         subtitle.AutoSize = true;
-        subtitle.Text = "\uc2dc\ud5d8 \uc790\ub8cc \uc554\uae30 \ud504\ub85c\uadf8\ub7a8";
-        subtitle.ForeColor = Color.FromArgb(107, 111, 118);
-        subtitle.Font = new Font("Malgun Gothic", 9.5F, FontStyle.Regular, GraphicsUnit.Point);
-        subtitle.Location = new Point(98, 65);
-        card.Controls.Add(subtitle);
+        subtitle.Text = "\ub85c\uceec \uc2dc\ud5d8 \uc554\uae30 \ub3c4\uad6c";
+        subtitle.ForeColor = Color.FromArgb(150, 154, 151);
+        subtitle.Font = new Font("Malgun Gothic", 8.5F, FontStyle.Regular, GraphicsUnit.Point);
+        subtitle.Location = new Point(94, 52);
+        Controls.Add(subtitle);
 
         statusLabel = new Label();
-        statusLabel.AutoSize = true;
+        statusLabel.AutoSize = false;
+        statusLabel.AutoEllipsis = true;
         statusLabel.Text = "\uc900\ube44 \uc911";
-        statusLabel.ForeColor = Color.FromArgb(32, 33, 35);
-        statusLabel.Font = new Font("Malgun Gothic", 10F, FontStyle.Bold, GraphicsUnit.Point);
-        statusLabel.Location = new Point(30, 106);
-        card.Controls.Add(statusLabel);
+        statusLabel.ForeColor = Color.FromArgb(239, 238, 232);
+        statusLabel.Font = new Font("Malgun Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point);
+        statusLabel.Bounds = new Rectangle(94, 76, 238, 20);
+        Controls.Add(statusLabel);
 
         detailLabel = new Label();
         detailLabel.AutoSize = false;
-        detailLabel.Text = "\uc11c\ubc84\uc640 \uc790\ub8cc\ub97c \ubd88\ub7ec\uc624\ub294 \uc911\uc785\ub2c8\ub2e4.";
-        detailLabel.ForeColor = Color.FromArgb(107, 111, 118);
-        detailLabel.Font = new Font("Malgun Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point);
-        detailLabel.Bounds = new Rectangle(30, 128, 360, 22);
-        card.Controls.Add(detailLabel);
+        detailLabel.AutoEllipsis = true;
+        detailLabel.Text = "\uc790\ub8cc\ub97c \ud655\uc778\ud558\uace0 \uc788\uc2b5\ub2c8\ub2e4.";
+        detailLabel.ForeColor = Color.FromArgb(150, 154, 151);
+        detailLabel.Font = new Font("Malgun Gothic", 8.5F, FontStyle.Regular, GraphicsUnit.Point);
+        detailLabel.Bounds = new Rectangle(94, 96, 238, 20);
+        Controls.Add(detailLabel);
 
-        progressBar = new ProgressBar();
-        progressBar.Style = ProgressBarStyle.Marquee;
-        progressBar.MarqueeAnimationSpeed = 18;
-        progressBar.Bounds = new Rectangle(30, 158, 300, 8);
-        card.Controls.Add(progressBar);
+        loadingLine = new LoadingLine();
+        loadingLine.Bounds = new Rectangle(94, 117, 238, 2);
+        Controls.Add(loadingLine);
 
         cancelButton = new Button();
         cancelButton.Text = "\ucde8\uc18c";
         cancelButton.FlatStyle = FlatStyle.Flat;
-        cancelButton.FlatAppearance.BorderColor = Color.FromArgb(222, 222, 227);
-        cancelButton.BackColor = Color.White;
-        cancelButton.ForeColor = Color.FromArgb(52, 53, 65);
-        cancelButton.Bounds = new Rectangle(344, 146, 56, 30);
+        cancelButton.FlatAppearance.BorderColor = Color.FromArgb(54, 58, 57);
+        cancelButton.BackColor = Color.FromArgb(24, 26, 26);
+        cancelButton.ForeColor = Color.FromArgb(215, 213, 205);
+        cancelButton.Bounds = new Rectangle(356, 52, 50, 30);
         cancelButton.Click += delegate { CancelLaunch(); };
-        card.Controls.Add(cancelButton);
+        Controls.Add(cancelButton);
 
         Shown += async delegate { await StartAndMonitorAsync(); };
         FormClosing += OnFormClosing;
     }
 
+    private static Icon LoadAppIcon()
+    {
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        string appDir = Path.Combine(baseDir, "\ud504\ub85c\uadf8\ub7a8 \uad6c\uc131 \ud30c\uc77c");
+        string[] candidates = new string[]
+        {
+            Path.Combine(appDir, "public", "exam-study.ico"),
+            Path.Combine(appDir, "dist", "exam-study.ico")
+        };
+
+        foreach (string candidate in candidates)
+        {
+            try
+            {
+                if (File.Exists(candidate))
+                {
+                    return new Icon(candidate);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        return null;
+    }
+
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        using (SolidBrush brush = new SolidBrush(Color.FromArgb(35, 0, 0, 0)))
+        using (Pen border = new Pen(Color.FromArgb(49, 55, 54)))
         {
-            e.Graphics.FillRectangle(brush, 22, 22, 424, 194);
+            e.Graphics.DrawRectangle(border, 0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
         }
     }
 
     private async Task StartAndMonitorAsync()
     {
+        if (launchStarted)
+        {
+            return;
+        }
+        launchStarted = true;
+
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         string appDir = Path.Combine(baseDir, "\ud504\ub85c\uadf8\ub7a8 \uad6c\uc131 \ud30c\uc77c");
-        string coreExe = Path.Combine(appDir, "launcher", "StudyForgeCore.exe");
+        string coreExe = Path.Combine(appDir, "launcher", "ExamStudyCore.exe");
 
         if (!File.Exists(coreExe))
         {
@@ -123,6 +157,14 @@ internal sealed class SplashForm : Form
 
         string instanceId = InstanceId(appDir);
         DateTime startedAt = DateTime.UtcNow;
+        int? alreadyRunningPort = FindHealthyPort(instanceId);
+        if (alreadyRunningPort != null)
+        {
+            OpenUrl(alreadyRunningPort.Value);
+            closingAfterReady = true;
+            Close();
+            return;
+        }
 
         try
         {
@@ -132,6 +174,7 @@ internal sealed class SplashForm : Form
             startInfo.CreateNoWindow = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.EnvironmentVariables["STUDYFORGE_NO_SPLASH"] = "1";
+            startInfo.EnvironmentVariables["STUDYFORGE_NO_BROWSER"] = "1";
             coreProcess = Process.Start(startInfo);
         }
         catch (Exception ex)
@@ -142,11 +185,13 @@ internal sealed class SplashForm : Form
 
         while (!IsDisposed)
         {
-            if (FindHealthyPort(instanceId) != null)
+            int? readyPort = FindHealthyPort(instanceId);
+            if (readyPort != null)
             {
                 closingAfterReady = true;
-                statusLabel.Text = "\ube0c\ub77c\uc6b0\uc800\ub97c \uc5ec\ub294 \uc911";
+                statusLabel.Text = "\ube0c\ub77c\uc6b0\uc800 \uc5ec\ub294 \uc911";
                 detailLabel.Text = "\uc900\ube44\uac00 \ub05d\ub0ac\uc2b5\ub2c8\ub2e4.";
+                OpenUrl(readyPort.Value);
                 await Task.Delay(650);
                 Close();
                 return;
@@ -169,11 +214,30 @@ internal sealed class SplashForm : Form
             int elapsed = (int)(DateTime.UtcNow - startedAt).TotalSeconds;
             if (elapsed >= 12)
             {
-                statusLabel.Text = "\uccab \uc2e4\ud589 \uc900\ube44 \uc911";
-                detailLabel.Text = "\ucc98\uc74c \uc2e4\ud589\uc740 \uc790\ub8cc \ud655\uc778 \ub54c\ubb38\uc5d0 \uc870\uae08 \ub354 \uac78\ub9b4 \uc218 \uc788\uc2b5\ub2c8\ub2e4.";
+                statusLabel.Text = "\uc900\ube44 \uc911";
+                detailLabel.Text = "\ucc98\uc74c \uc2e4\ud589\uc774\ub77c \uc870\uae08 \ub354 \uac78\ub9b4 \uc218 \uc788\uc2b5\ub2c8\ub2e4.";
             }
 
             await Task.Delay(350);
+        }
+    }
+
+    private static void OpenUrl(int port)
+    {
+        if (Environment.GetEnvironmentVariable("STUDYFORGE_NO_BROWSER") == "1")
+        {
+            return;
+        }
+        try
+        {
+            string url = "http://127.0.0.1:" + port + "/?sf_launch=" + DateTime.UtcNow.Ticks.ToString();
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
         }
     }
 
@@ -214,14 +278,6 @@ internal sealed class SplashForm : Form
                     {
                         return port;
                     }
-                    if (
-                        body.IndexOf("\"ok\":true", StringComparison.Ordinal) >= 0 &&
-                        body.IndexOf("\"instance_id\"", StringComparison.Ordinal) >= 0 &&
-                        body.IndexOf("\"project_root\"", StringComparison.Ordinal) >= 0
-                    )
-                    {
-                        return port;
-                    }
                 }
             }
             catch
@@ -256,8 +312,7 @@ internal sealed class SplashForm : Form
 
     private void ShowError(string title, string detail)
     {
-        progressBar.Style = ProgressBarStyle.Continuous;
-        progressBar.Value = 0;
+        loadingLine.Stop();
         statusLabel.Text = title;
         detailLabel.Text = detail;
         cancelButton.Text = "\ub2eb\uae30";
@@ -305,26 +360,73 @@ internal sealed class LogoBox : Control
         base.OnPaint(e);
         e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        using (SolidBrush white = new SolidBrush(Color.White))
-        using (SolidBrush teal = new SolidBrush(Color.FromArgb(15, 118, 110)))
+        using (SolidBrush white = new SolidBrush(Color.FromArgb(245, 244, 239)))
+        using (SolidBrush black = new SolidBrush(Color.FromArgb(20, 22, 23)))
         using (Font markFont = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Pixel))
         using (StringFormat format = new StringFormat())
         {
             using (System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath())
             {
                 const int radius = 10;
-                Rectangle rect = new Rectangle(0, 0, 54, 54);
+                Rectangle rect = new Rectangle(0, 0, Width, Height);
                 path.AddArc(rect.Left, rect.Top, radius * 2, radius * 2, 180, 90);
                 path.AddArc(rect.Right - radius * 2 - 1, rect.Top, radius * 2, radius * 2, 270, 90);
                 path.AddArc(rect.Right - radius * 2 - 1, rect.Bottom - radius * 2 - 1, radius * 2, radius * 2, 0, 90);
                 path.AddArc(rect.Left, rect.Bottom - radius * 2 - 1, radius * 2, radius * 2, 90, 90);
                 path.CloseFigure();
-                e.Graphics.FillPath(teal, path);
+                e.Graphics.FillPath(black, path);
             }
 
             format.Alignment = StringAlignment.Center;
             format.LineAlignment = StringAlignment.Center;
-            e.Graphics.DrawString("SF", markFont, white, new RectangleF(2, 2, 50, 50), format);
+            e.Graphics.DrawString("ES", markFont, white, new RectangleF(0, 0, Width, Height), format);
+        }
+    }
+}
+
+internal sealed class LoadingLine : Control
+{
+    private readonly Timer timer;
+    private int frame;
+
+    public LoadingLine()
+    {
+        DoubleBuffered = true;
+        timer = new Timer();
+        timer.Interval = 45;
+        timer.Tick += delegate
+        {
+            frame = (frame + 1) % 120;
+            Invalidate();
+        };
+        timer.Start();
+    }
+
+    public void Stop()
+    {
+        timer.Stop();
+        Visible = false;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            timer.Dispose();
+        }
+        base.Dispose(disposing);
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        base.OnPaint(e);
+        using (SolidBrush track = new SolidBrush(Color.FromArgb(46, 50, 49)))
+        using (SolidBrush accent = new SolidBrush(Color.FromArgb(32, 197, 167)))
+        {
+            e.Graphics.FillRectangle(track, 0, 0, Width, Height);
+            int segment = Math.Max(34, Width / 4);
+            int x = (int)((Width + segment) * (frame / 119.0)) - segment;
+            e.Graphics.FillRectangle(accent, x, 0, segment, Height);
         }
     }
 }

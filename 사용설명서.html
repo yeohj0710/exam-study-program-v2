@@ -1,13 +1,13 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>시험 자료 암기 프로그램 사용설명서</title>
+    <title>Exam Study Program 사용설명서</title>
     <style>
       :root {
-        color: #1d2522;
-        background: #f6f7f4;
+        color: #191c1c;
+        background: #f4f4f1;
         font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
       }
       body {
@@ -15,11 +15,11 @@
         padding: 32px 18px;
       }
       main {
-        max-width: 920px;
+        max-width: 860px;
         margin: 0 auto;
-        background: #ffffff;
-        border: 1px solid #dde3de;
-        border-radius: 8px;
+        background: #fbfbf8;
+        border: 1px solid #d7d8d3;
+        border-radius: 10px;
         padding: 30px;
       }
       h1,
@@ -36,135 +36,83 @@
       }
       p,
       li {
-        line-height: 1.7;
+        line-height: 1.75;
       }
       code,
       kbd {
-        border: 1px solid #d6ded8;
+        border: 1px solid #d7d8d3;
         border-radius: 5px;
-        background: #f6f7f4;
+        background: #ededeb;
         padding: 2px 6px;
         font-family: Consolas, "Courier New", monospace;
       }
+      pre {
+        overflow: auto;
+        border: 1px solid #d7d8d3;
+        border-radius: 8px;
+        background: #ededeb;
+        padding: 14px;
+      }
       .lead {
-        margin-top: 10px;
-        color: #52615c;
+        color: #727879;
       }
       .box {
-        border: 1px solid #dde3de;
+        border: 1px solid #d7d8d3;
         border-radius: 8px;
-        background: #fbfcfa;
+        background: #f4f4f1;
         padding: 14px 16px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 12px;
-      }
-      th,
-      td {
-        border: 1px solid #dde3de;
-        padding: 10px;
-        text-align: left;
-        vertical-align: top;
-      }
-      th {
-        background: #f0f3f1;
-      }
-      @media (max-width: 720px) {
-        main {
-          padding: 22px;
-        }
       }
     </style>
   </head>
   <body>
     <main>
-      <h1>시험 자료 암기 프로그램 사용설명서</h1>
-      <p class="lead">비개발자가 내려받은 뒤 더블클릭으로 실행해서 PDF 문제 자료를 카드처럼 복습하는 용도입니다.</p>
+      <h1>Exam Study Program 사용설명서</h1>
+      <p class="lead">Markdown 문제 데이터로 시험 문항을 섞어서 암기하는 로컬 프로그램입니다.</p>
 
       <h2>1. 실행</h2>
       <ol>
-        <li>폴더를 열고 <code>시험 자료 암기 프로그램.exe</code>를 더블클릭합니다.</li>
-        <li>StudyForge 로딩 창이 즉시 뜨고, 준비가 끝나면 검은 로그 창 없이 브라우저가 자동으로 열립니다.</li>
-        <li>이미 실행 중이면 새 서버를 만들지 않고 기존 프로그램 주소를 다시 엽니다.</li>
-        <li>완전히 끌 때는 화면 오른쪽 위의 <strong>종료</strong> 버튼을 누릅니다.</li>
+        <li><code>시험 자료 암기 프로그램.exe</code>를 실행합니다.</li>
+        <li>종료할 때는 왼쪽 아래 전원 버튼을 누르고 확인합니다.</li>
+        <li>전체화면은 브라우저 기본 단축키 <kbd>F11</kbd>을 사용합니다.</li>
       </ol>
-      <div class="box">
-        루트 exe는 로딩 창을 먼저 띄우는 작은 실행 파일이고, 실제 서버 실행 파일은 <code>프로그램 구성 파일\launcher\StudyForgeCore.exe</code>에 있습니다. exe가 회사나 학교 보안 정책 때문에 막히면 <code>시험 자료 암기 프로그램.cmd</code>를 더블클릭하세요. 이 보조 실행 파일은 콘솔 창이 보일 수 있습니다.
-      </div>
 
-      <h2>2. 자료 가져오기</h2>
-      <p>처음 실행했을 때 자료가 없으면 기존 캡처 폴더 입력칸이 보입니다. 경로가 맞으면 <code>자료 가져오기</code>를 누릅니다.</p>
-      <table>
-        <tr>
-          <th>입력칸</th>
-          <th>기본 경로</th>
-        </tr>
-        <tr>
-          <td>기존 캡처 폴더</td>
-          <td><code>G:\내 드라이브\여형준님\21 6-1\족보 암기 프로그램\중간고사</code></td>
-        </tr>
-        <tr>
-          <td>PDF 직접 가공</td>
-          <td>가공할 PDF 파일 경로를 한 줄에 하나씩 입력</td>
-        </tr>
-      </table>
-      <p>기본 가져오기는 이미 분류된 캡처 문제셋만 가져옵니다. PDF 폴더를 자동으로 훑어 가공하지 않으며, PDF 가공은 파일 경로를 직접 넣었을 때만 실행됩니다.</p>
+      <h2>2. 데이터 위치</h2>
+      <div class="box"><code>C:\dev\exam-study-program\문제 데이터</code></div>
+      <p>이 폴더의 <code>.md</code> 파일이 문제 세트입니다. 파일명이 과목명처럼 표시됩니다.</p>
 
-      <h2>3. 학습 화면</h2>
+      <h2>3. Markdown 형식</h2>
+      <pre><code># 문제 제목
+
+문제 본문입니다.
+
+- 보기 A
+  여러 줄 보기도 가능합니다.
+  ![그림 설명](assets/과목명/example.png)
+
+- 보기 B
+
+답: 정답 내용
+![정답 그림](assets/과목명/answer.png)</code></pre>
       <ul>
-        <li>왼쪽 <strong>문제셋</strong>에서 과목이나 자료 묶음을 고릅니다.</li>
-        <li>왼쪽 패널의 <strong>접기</strong> 버튼으로 문제셋을 접고, 닫힌 뒤에는 왼쪽 <strong>문제셋</strong> 탭으로 다시 펼칩니다.</li>
-        <li>상단의 <strong>남은 카드, 다시 볼 카드, 신규, 검수, 외운 카드, 보류</strong> 버튼으로 볼 범위를 바꿉니다.</li>
-        <li><strong>정답 보기(J)</strong>를 누르면 정답과 원문 crop이 보입니다.</li>
-        <li><strong>건너뛰기(K)</strong>는 기록 없이 다음 카드로 넘깁니다. 카드는 목록에 그대로 남습니다.</li>
-        <li><strong>외움·제외(1)</strong>를 누르면 외운 카드로 처리되어 기본 학습 목록에서 빠집니다.</li>
-        <li>잘못 제외한 문항은 <strong>외운 카드</strong> 필터에서 찾은 뒤 <strong>다시 복구</strong>를 누르면 기본 학습 목록으로 돌아옵니다.</li>
-        <li><strong>종료</strong>를 누르면 백그라운드 서버까지 같이 종료됩니다.</li>
-      </ul>
-      <div class="box">
-        단축키: <kbd>Ctrl+B</kbd> 문제셋, <kbd>Ctrl+P</kbd> 목록, <kbd>Ctrl+I</kbd> 검수,
-        <kbd>Ctrl+-</kbd> 축소, <kbd>Ctrl+=</kbd> 확대, <kbd>Ctrl+0</kbd> 기본 배율,
-        <kbd>Space</kbd>/<kbd>J</kbd> 정답 보기, <kbd>K</kbd>/<kbd>→</kbd> 다음 카드,
-        <kbd>1</kbd> 외움·제외, <kbd>R</kbd> 다시 복구
-      </div>
-
-      <h2>4. 목록과 검수</h2>
-      <ul>
-        <li><strong>목록(L)</strong>을 누르면 현재 문제셋의 카드가 한눈에 보입니다. 원하는 문제를 클릭하면 바로 이동합니다.</li>
-        <li><strong>검수(I)</strong>를 누르면 오른쪽 검수 패널이 열립니다.</li>
-        <li>검수 패널에서는 누락 이미지, 원본 근거, 자동 추출 신뢰도, 카드 앞면/뒷면 편집을 확인할 수 있습니다.</li>
+        <li>문항은 <code># 문제 제목</code>으로 시작합니다.</li>
+        <li>보기는 없어도 되고, 필요할 때만 <code>- 보기</code>로 씁니다.</li>
+        <li>보기 다음 줄들은 다음 <code>- 보기</code> 전까지 같은 보기로 묶입니다.</li>
+        <li>답은 <code>답:</code> 또는 <code>정답:</code>으로 시작합니다.</li>
+        <li>그림 이름은 화면에 표시되지 않고 툴팁으로만 남습니다.</li>
       </ul>
 
-      <h2>5. 데이터 위치</h2>
-      <p>원본 PDF와 캡처 자료는 읽기만 합니다. 프로그램이 만든 데이터는 아래 폴더에 저장됩니다.</p>
-      <div class="box"><code>프로그램 구성 파일\data</code></div>
-      <p>이 폴더에는 카드 라이브러리, 복습 기록, 검수 기록, 자동 생성된 이미지가 들어갑니다.</p>
-
-      <h2>6. 자주 생기는 문제</h2>
-      <table>
-        <tr>
-          <th>증상</th>
-          <th>확인할 것</th>
-        </tr>
-        <tr>
-          <td>브라우저가 안 열림</td>
-          <td>실행 창에 표시된 <code>http://127.0.0.1:포트번호</code> 주소를 직접 브라우저 주소창에 붙여 넣습니다.</td>
-        </tr>
-        <tr>
-          <td>자료가 안 만들어짐</td>
-          <td>기존 캡처 폴더 경로가 맞는지, 과목별 문제 폴더와 PNG 파일이 실제로 들어 있는지 확인합니다.</td>
-        </tr>
-        <tr>
-          <td>이미지가 안 보임</td>
-          <td>검수 패널의 무결성 항목에서 누락 이미지 수를 확인한 뒤 자료를 다시 가져옵니다.</td>
-        </tr>
-        <tr>
-          <td>이전 순서가 바뀐 것 같음</td>
-          <td>브라우저 저장소에 선택 문제셋, 필터, 섞은 순서, 현재 위치가 저장됩니다. 같은 브라우저에서 다시 열면 이어집니다.</td>
-        </tr>
-      </table>
+      <h2>4. 조작</h2>
+      <ul>
+        <li><kbd>J</kbd> 또는 <kbd>Space</kbd>: 정답 보기/숨기기</li>
+        <li><kbd>K</kbd> 또는 <kbd>→</kbd>: 다음 문제</li>
+        <li><kbd>1</kbd>: 암기 완료</li>
+        <li><kbd>R</kbd>: 암기 완료 복구</li>
+        <li><kbd>Ctrl+B</kbd>: 문제 데이터 패널</li>
+        <li><kbd>Ctrl+E</kbd>: Markdown 편집 패널</li>
+        <li><kbd>Ctrl+I</kbd>: 검증 패널</li>
+        <li><kbd>Ctrl+-</kbd>, <kbd>Ctrl+=</kbd>, <kbd>Ctrl+0</kbd>: 글자 크기 조절/초기화</li>
+        <li><kbd>Alt+[</kbd>, <kbd>Alt+]</kbd>: 다크모드 눈부심 조절</li>
+      </ul>
     </main>
   </body>
 </html>

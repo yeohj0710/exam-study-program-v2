@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "updated_at": 1781446239.1757307,
+  "questions": [
+    {
+      "question_id": "기말 샘플 테스트-001",
+      "memorized": false,
+      "seen_count": 39,
+      "reveal_count": 61,
+      "last_seen_at": 1781446236.8946652,
+      "updated_at": 1781446237.702859
+    },
+    {
+      "question_id": "기말 샘플 테스트-002",
+      "memorized": false,
+      "seen_count": 42,
+      "reveal_count": 85,
+      "last_seen_at": 1781446234.9038627,
+      "updated_at": 1781446235.9742618
+    },
+    {
+      "question_id": "기말 샘플 테스트-003",
+      "memorized": false,
+      "seen_count": 48,
+      "reveal_count": 55,
+      "last_seen_at": 1781446237.9709153,
+      "updated_at": 1781446239.1753547
+    },
+    {
+      "question_id": "기말 샘플 테스트-004",
+      "memorized": false,
+      "seen_count": 40,
+      "reveal_count": 42,
+      "last_seen_at": 1781446093.9540298,
+      "updated_at": 1781446095.9228795
+    },
+    {
+      "question_id": "기말 샘플 테스트-005",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 19,
+      "last_seen_at": 1781446075.135965,
+      "updated_at": 1781446075.3137534
+    }
+  ]
+}

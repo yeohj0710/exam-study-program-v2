@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from . import final_api
 from .importer import build_library
 from .models import ReviewStatus, library_to_dict
 from .progress import apply_progress, clear_progress, load_progress, record_rating, save_progress
@@ -24,7 +25,8 @@ DATA_ROOT = PROJECT_ROOT / "data"
 LIBRARY_PATH = DATA_ROOT / "library.json"
 REVIEWS_PATH = DATA_ROOT / "reviews.json"
 PROGRESS_PATH = DATA_ROOT / "progress.json"
-ASSET_ROOT = DATA_ROOT / "assets"
+LEGACY_ASSET_ROOT = DATA_ROOT / "assets"
+ASSET_ROOT = final_api.ASSET_ROOT
 DIST_ROOT = PROJECT_ROOT / "dist"
 INSTANCE_ID = hashlib.sha1(str(PROJECT_ROOT).encode("utf-8")).hexdigest()[:16]
 
@@ -40,6 +42,7 @@ ASSET_ROOT.mkdir(parents=True, exist_ok=True)
 app.mount("/assets", StaticFiles(directory=ASSET_ROOT), name="assets")
 if (DIST_ROOT / "app-assets").exists():
     app.mount("/app-assets", StaticFiles(directory=DIST_ROOT / "app-assets"), name="app-assets")
+app.include_router(final_api.router)
 
 
 class ImportRequest(BaseModel):
@@ -102,13 +105,35 @@ def get_summary() -> dict[str, object]:
 
 @app.get("/api/validation")
 def get_validation() -> dict[str, object]:
-    report = validate_library(
-        require_library(),
-        ASSET_ROOT,
-        reviews=load_reviews(REVIEWS_PATH),
-        progress=load_progress(PROGRESS_PATH),
-    )
-    return report.to_dict()
+    if LIBRARY_PATH.exists():
+        report = validate_library(
+            require_library(),
+            LEGACY_ASSET_ROOT,
+            reviews=load_reviews(REVIEWS_PATH),
+            progress=load_progress(PROGRESS_PATH),
+        )
+        payload = report.to_dict()
+    else:
+        payload = {
+            "ok": True,
+            "source_count": 0,
+            "card_count": 0,
+            "asset_count": 0,
+            "missing_asset_count": 0,
+            "missing_source_count": 0,
+            "duplicate_card_count": 0,
+            "orphan_review_count": 0,
+            "orphan_progress_count": 0,
+            "pdf_cards_missing_front_count": 0,
+            "pdf_cards_missing_crop_count": 0,
+            "legacy_cards_missing_front_count": 0,
+            "legacy_cards_missing_answer_count": 0,
+            "issues": [],
+        }
+    final_report = final_api.validation_report()
+    payload["final"] = final_report
+    payload["ok"] = bool(payload["ok"]) and bool(final_report["ok"])
+    return payload
 
 
 @app.post("/api/import")
@@ -120,7 +145,7 @@ def rebuild_library(request: ImportRequest) -> dict[str, object]:
         source_root=None,
         pdf_paths=pdf_paths,
         legacy_root=Path(request.legacy_root) if request.legacy_root else None,
-        asset_root=ASSET_ROOT,
+        asset_root=LEGACY_ASSET_ROOT,
         include_lectures=request.include_lectures,
         max_pages_per_pdf=request.max_pages_per_pdf,
         copy_legacy_assets=request.copy_legacy_assets,
