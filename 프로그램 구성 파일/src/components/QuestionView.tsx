@@ -3,17 +3,51 @@ import { openSourceReference } from '../api'
 import type { Question } from '../types'
 import { MarkdownContent } from './MarkdownContent'
 
-function sourceItems(markdown: string) {
+const SOURCE_LINE_RE = /^(?:출처|reference|source)\s*[:：]\s*/i
+const IMAGE_LINE_RE = /^!\[[^\]]*]\([^)]+\)\s*$/
+
+function splitSourceMarkdown(markdown: string) {
+  const references: string[] = []
+  const evidenceLines: string[] = []
+  let currentReference = ''
+
+  function flushReference() {
+    if (!currentReference.trim()) return
+    currentReference
+      .split(/\s+\+\s+/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .forEach((item) => references.push(item))
+    currentReference = ''
+  }
+
+  for (const line of markdown.split(/\r?\n/)) {
+    const normalized = line.trim()
+    if (SOURCE_LINE_RE.test(normalized)) {
+      flushReference()
+      currentReference = normalized.replace(SOURCE_LINE_RE, '').trim()
+      continue
+    }
+
+    if (currentReference && normalized && !IMAGE_LINE_RE.test(normalized)) {
+      currentReference = `${currentReference} ${normalized}`
+      continue
+    }
+
+    flushReference()
+    evidenceLines.push(line)
+  }
+  flushReference()
+
+  return { references, evidenceMarkdown: sourceEvidenceMarkdown(evidenceLines.join('\n')) }
+}
+
+function sourceEvidenceMarkdown(markdown: string) {
   return markdown
-    .replace(/\s*\r?\n\s*/g, ' ')
     .split(/\r?\n/)
-    .flatMap((line) =>
-      line
-        .replace(/^(?:출처|reference|source)\s*[:：]\s*/i, '')
-        .split(/\s+\+\s+/)
-        .map((item) => item.trim())
-        .filter(Boolean),
-    )
+    .map((line) => line.trimEnd())
+    .join('\n')
+    .trim()
 }
 
 function sourceLabel(reference: string) {
@@ -25,8 +59,8 @@ function sourceLabel(reference: string) {
 
 function SourceReferences({ markdown }: { markdown: string }) {
   const [opening, setOpening] = useState('')
-  const items = sourceItems(markdown)
-  if (!items.length) return null
+  const { references: items, evidenceMarkdown } = splitSourceMarkdown(markdown)
+  if (!items.length && !evidenceMarkdown) return null
 
   async function open(reference: string) {
     setOpening(reference)
@@ -43,21 +77,30 @@ function SourceReferences({ markdown }: { markdown: string }) {
 
   return (
     <section className="source-section" aria-label="출처">
-      <span>출처</span>
-      <div>
-        {items.map((item, index) => (
-          <button
-            type="button"
-            className="source-button"
-            key={`${item}-${index}`}
-            title={item}
-            disabled={opening === item}
-            onClick={() => void open(item)}
-          >
-            {sourceLabel(item)}
-          </button>
-        ))}
-      </div>
+      {items.length > 0 && (
+        <>
+          <span>출처</span>
+          <div>
+            {items.map((item, index) => (
+              <button
+                type="button"
+                className="source-button"
+                key={`${item}-${index}`}
+                title={item}
+                disabled={opening === item}
+                onClick={() => void open(item)}
+              >
+                {sourceLabel(item)}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {evidenceMarkdown && (
+        <div className="source-evidence">
+          <MarkdownContent markdown={evidenceMarkdown} />
+        </div>
+      )}
     </section>
   )
 }

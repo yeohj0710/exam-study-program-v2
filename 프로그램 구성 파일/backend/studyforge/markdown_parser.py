@@ -108,11 +108,8 @@ def parse_studyset_markdown(
                 if SOURCE_RE.match(line.strip()):
                     in_source = True
                     source_lines.append(line)
-                elif in_source and line.strip():
-                    source_lines.append(line)
                 elif in_source:
-                    in_source = False
-                    answer_lines.append(line)
+                    source_lines.append(line)
                 else:
                     answer_lines.append(line)
             else:

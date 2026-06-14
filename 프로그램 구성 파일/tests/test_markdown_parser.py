@@ -78,6 +78,28 @@ def test_wrapped_source_lines_stay_out_of_answer_markdown():
     assert question.source_markdown == "출처: G:\\내 드라이브\\과목\\6.1.\n 영양과 건강.pdf p.24"
 
 
+def test_source_page_image_after_source_stays_in_source_markdown():
+    markdown = """# 문제
+<!-- sf:id: source-image -->
+
+기출 원문 문제
+
+답: 정답
+출처: G:\\내 드라이브\\과목\\2023 기출.pdf p.4
+
+![출처 페이지](assets/sample-final/source-001.png)
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    question = result.questions[0]
+    assert question.answer_markdown == "정답"
+    assert question.source_markdown == (
+        "출처: G:\\내 드라이브\\과목\\2023 기출.pdf p.4\n\n"
+        "![출처 페이지](assets/sample-final/source-001.png)"
+    )
+
+
 def test_insert_missing_question_ids_places_comment_after_hash_heading():
     markdown = """# First question
 

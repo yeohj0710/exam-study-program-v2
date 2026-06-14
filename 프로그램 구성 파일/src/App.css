@@ -592,6 +592,23 @@ button:disabled {
   gap: 6px;
 }
 
+.source-evidence {
+  width: min(860px, calc(100vw - 220px));
+  margin-top: 16px;
+}
+
+.source-evidence .markdown-content {
+  gap: 12px;
+}
+
+.source-evidence .markdown-image {
+  margin: 0 auto;
+}
+
+.source-evidence .markdown-image img {
+  max-height: none;
+}
+
 .source-button {
   max-width: min(520px, calc(100vw - 220px));
   min-height: 26px;
