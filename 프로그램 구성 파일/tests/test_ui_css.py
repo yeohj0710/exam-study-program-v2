@@ -39,3 +39,15 @@ def test_source_evidence_images_are_large_enough_to_read():
     assert "max-width: none;" in figure_block
     assert "width: 100%;" in image_block
     assert "max-height: none;" in image_block
+
+
+def test_markdown_text_wraps_by_words_before_breaking_long_tokens():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    selector = ".markdown-content p"
+    start = css.index(selector)
+    block = css[start : css.index("}", start)]
+
+    assert "overflow-wrap: break-word;" in block
+    assert "word-break: keep-all;" in block
+    assert "line-break: strict;" in block
+    assert "overflow-wrap: anywhere;" not in block

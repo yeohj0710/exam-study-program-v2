@@ -75,6 +75,26 @@ function isValidOrder(orderIds: string[], questions: Question[]) {
   return orderIds.length === questions.length && orderIds.every((id) => ids.has(id))
 }
 
+function reconcileOrder(order: StoredOrder, studysetId: string, questions: Question[]): StoredOrder {
+  const signature = questionSignature(questions)
+  const questionIds = new Set(questions.map((question) => question.id))
+  const preservedOrderIds = order.orderIds.filter((id) => questionIds.has(id))
+  const preservedIds = new Set(preservedOrderIds)
+  const addedQuestions = questions.filter((question) => !preservedIds.has(question.id))
+  const nextOrderIds = [...preservedOrderIds, ...shuffledIds(addedQuestions, order.round)]
+  const currentQuestionId = order.orderIds[order.cursor]
+  const preservedCursor = currentQuestionId ? nextOrderIds.indexOf(currentQuestionId) : -1
+  const fallbackCursor = Math.min(order.cursor, Math.max(nextOrderIds.length - 1, 0))
+
+  return {
+    studysetId,
+    signature,
+    orderIds: nextOrderIds.length ? nextOrderIds : shuffledIds(questions, order.round),
+    cursor: preservedCursor >= 0 ? preservedCursor : fallbackCursor,
+    round: Number.isFinite(order.round) ? order.round : 0,
+  }
+}
+
 function normalizeOrder(order: StoredOrder, studysetId: string, questions: Question[]): StoredOrder {
   if (!studysetId || questions.length === 0) return { ...emptyOrder, studysetId }
 
@@ -98,9 +118,16 @@ function normalizeOrder(order: StoredOrder, studysetId: string, questions: Quest
           round: Number.isFinite(parsed.round) ? parsed.round : 0,
         }
       }
+      if (parsed.orderIds?.length) {
+        return reconcileOrder(parsed, studysetId, questions)
+      }
     }
   } catch {
     // Ignore corrupted session order and rebuild below.
+  }
+
+  if (order.studysetId === studysetId && order.orderIds.length) {
+    return reconcileOrder(order, studysetId, questions)
   }
 
   return {

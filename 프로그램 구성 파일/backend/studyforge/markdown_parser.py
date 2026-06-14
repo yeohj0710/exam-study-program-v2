@@ -10,6 +10,13 @@ QUESTION_ID_RE = re.compile(r"<!--\s*sf:id:\s*(?P<id>[-A-Za-z0-9_:.]+)\s*-->")
 ANSWER_RE = re.compile(r"^(?:답|정답)\s*:\s*(?P<answer>.*)$", re.IGNORECASE)
 SOURCE_RE = re.compile(r"^(?:출처|reference|source)\s*[:：]", re.IGNORECASE)
 GENERIC_QUESTION_HEADING_RE = re.compile(r"^(?:question|q|문제|문항)\s*\d*$", re.IGNORECASE)
+SHUFFLED_LABEL_CHOICE_RE = re.compile(r"^-\s+[ㄱ-ㅎ]\.\s+")
+LABEL_ONLY_ANSWER_RE = re.compile(r"^[ㄱ-ㅎ](?:\s*,\s*[ㄱ-ㅎ])*\s*$")
+ANSWER_LABEL_REFERENCE_RE = re.compile(
+    r"(?<![\wㄱ-ㅎ])[ㄱ-ㅎ](?:\s*,\s*[ㄱ-ㅎ])*(?=(?:은|는|이|가|을|를|에|의|와|과|\s|$|[.:,)]))"
+)
+ANSWER_LABEL_ITEM_SEPARATOR_RE = re.compile(r"(?:^|/)\s*[가-마]\s*:\s*[^/\n]+/\s*[가-마]\s*:")
+CHOICE_EMPHASIS_TOKENS = ("**", "==")
 
 
 def _strip_blank_edges(lines: list[str]) -> str:
@@ -32,6 +39,20 @@ def _question_starts(lines: list[str]) -> list[int]:
 
 def _is_generic_question_heading(title: str) -> bool:
     return bool(GENERIC_QUESTION_HEADING_RE.match(title.strip()))
+
+
+def _choice_line_has_emphasis(line: str) -> bool:
+    stripped = line.strip()
+    return stripped.startswith("- ") and any(token in stripped for token in CHOICE_EMPHASIS_TOKENS)
+
+
+def _answer_line_has_inline_slash_separator(line: str) -> bool:
+    stripped = line.strip()
+    if stripped.startswith("답:"):
+        stripped = stripped.removeprefix("답:").strip()
+    if ". / " in stripped:
+        return True
+    return bool(ANSWER_LABEL_ITEM_SEPARATOR_RE.search(stripped))
 
 
 def insert_missing_question_ids(markdown: str, *, studyset_id: str) -> str:
@@ -130,6 +151,7 @@ def parse_studyset_markdown(
             asset_paths=_asset_paths("\n".join(parse_lines)),
         )
         _append_asset_issues(question, result, asset_root, line_number=start + 1)
+        _append_shuffle_label_issues(question, result, prompt_lines, answer_lines, line_number=start + 1)
 
         if not has_answer:
             issue = ValidationIssue(
@@ -156,6 +178,78 @@ def parse_studyset_markdown(
         result.questions.append(question)
 
     return result
+
+
+def _append_shuffle_label_issues(
+    question: Question,
+    result: MarkdownParseResult,
+    prompt_lines: list[str],
+    answer_lines: list[str],
+    *,
+    line_number: int,
+) -> None:
+    if any(SHUFFLED_LABEL_CHOICE_RE.match(line.strip()) for line in prompt_lines):
+        issue = ValidationIssue(
+            severity="warning",
+            code="choice_label_in_shuffled_option",
+            message="Remove ㄱ/ㄴ/ㄷ labels from `- choice` lines because choices are shuffled.",
+            question_id=question.id,
+            line=line_number,
+        )
+        question.issues.append(issue)
+        result.issues.append(issue)
+
+    for offset, line in enumerate(prompt_lines):
+        if _choice_line_has_emphasis(line):
+            issue = ValidationIssue(
+                severity="warning",
+                code="choice_emphasis_in_shuffled_option",
+                message="Remove Markdown emphasis from `- choice` lines because it can reveal the answer before reveal.",
+                question_id=question.id,
+                line=line_number + offset,
+            )
+            question.issues.append(issue)
+            result.issues.append(issue)
+            break
+
+    answer_text = " ".join(line.strip() for line in answer_lines if line.strip())
+    if LABEL_ONLY_ANSWER_RE.match(answer_text):
+        issue = ValidationIssue(
+            severity="warning",
+            code="label_only_answer_for_shuffled_choices",
+            message="Use the actual correct choice text instead of `답: ㄱ, ㄴ` for shuffled choices.",
+            question_id=question.id,
+            line=line_number,
+        )
+        question.issues.append(issue)
+        result.issues.append(issue)
+
+    if any(line.strip().startswith("- ") for line in prompt_lines):
+        for offset, line in enumerate(answer_lines):
+            if ANSWER_LABEL_REFERENCE_RE.search(line):
+                issue = ValidationIssue(
+                    severity="warning",
+                    code="answer_label_reference_for_shuffled_choices",
+                    message="Use the actual choice text in answers and explanations instead of ㄱ/ㄴ labels for shuffled choices.",
+                    question_id=question.id,
+                    line=line_number + len(prompt_lines) + 1 + offset,
+                )
+                question.issues.append(issue)
+                result.issues.append(issue)
+                break
+
+    for offset, line in enumerate(answer_lines):
+        if _answer_line_has_inline_slash_separator(line):
+            issue = ValidationIssue(
+                severity="warning",
+                code="answer_inline_slash_separator",
+                message="Split multiple answer or explanation items onto separate lines instead of joining them with ` / `.",
+                question_id=question.id,
+                line=line_number + len(prompt_lines) + 1 + offset,
+            )
+            question.issues.append(issue)
+            result.issues.append(issue)
+            break
 
 
 def _append_asset_issues(

@@ -186,3 +186,77 @@ def test_absolute_image_link_is_warning(tmp_path):
     assert len(absolute_issues) == 1
     assert absolute_issues[0].severity == "warning"
     assert absolute_issues[0].question_id == "absolute-image"
+
+
+def test_labelled_shuffle_choices_are_warnings():
+    markdown = """# 문제
+<!-- sf:id: labelled-choices -->
+
+옳은 것을 모두 고르시오.
+
+- ㄱ. 맞는 설명
+- ㄴ. 틀린 설명
+
+답: ㄱ
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    codes = {issue.code for issue in result.issues}
+    assert "choice_label_in_shuffled_option" in codes
+    assert "label_only_answer_for_shuffled_choices" in codes
+
+
+def test_choice_emphasis_in_shuffled_choices_is_warning():
+    markdown = """# 문제
+<!-- sf:id: emphasized-choice -->
+
+옳은 것을 모두 고르시오.
+
+- 정답 보기의 **핵심 단서**
+- 평범한 오답
+
+답: 정답 보기의 핵심 단서
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    codes = {issue.code for issue in result.issues}
+    assert "choice_emphasis_in_shuffled_option" in codes
+
+
+def test_answer_label_reference_for_shuffled_choices_is_warning():
+    markdown = """# 문제
+<!-- sf:id: labelled-answer-reference -->
+
+옳은 것을 모두 고르시오.
+
+- 실제 정답 보기
+- 실제 오답 보기
+
+답: 실제 정답 보기
+ㄴ은 실제 오답 보기 설명이다.
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    codes = {issue.code for issue in result.issues}
+    assert "answer_label_reference_for_shuffled_choices" in codes
+
+
+def test_answer_inline_slash_separator_is_warning():
+    markdown = """# 문제
+<!-- sf:id: slash-separated-answer -->
+
+옳은 것을 모두 고르시오.
+
+- 첫 번째 정답 보기
+- 두 번째 정답 보기
+
+답: 첫 번째 정답 보기이다. / 두 번째 정답 보기이다.
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    codes = {issue.code for issue in result.issues}
+    assert "answer_inline_slash_separator" in codes

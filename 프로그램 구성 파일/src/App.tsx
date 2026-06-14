@@ -10,6 +10,7 @@ import {
   Info,
   Moon,
   Power,
+  RefreshCw,
   RotateCcw,
   Shuffle,
   Sun,
@@ -143,6 +144,7 @@ function App() {
   const [textScale, setTextScale] = useState(initialSession.textScale ?? defaultTextScale)
   const [glareLevel, setGlareLevel] = useState(initialSession.glareLevel ?? defaultGlareLevel)
   const [choiceShuffleSeed, setChoiceShuffleSeed] = useState(0)
+  const [refreshingStudySet, setRefreshingStudySet] = useState(false)
   const [confirmShutdown, setConfirmShutdown] = useState(false)
   const [confirmShuffle, setConfirmShuffle] = useState(false)
   const [showQuestionPicker, setShowQuestionPicker] = useState(false)
@@ -243,6 +245,27 @@ function App() {
     },
     [dirty, loadStudySet],
   )
+
+  const reloadStudySet = useCallback(async () => {
+    if (!selectedStudySetId || refreshingStudySet) return
+    if (dirty && !window.confirm('저장하지 않은 Markdown 변경을 버리고 문제 데이터를 다시 읽을까요?')) return
+
+    setRefreshingStudySet(true)
+    setError('')
+    try {
+      const nextPayload = await fetchStudySet(selectedStudySetId)
+      lastSeenRef.current = session.currentQuestion?.id ?? ''
+      setPayload(nextPayload)
+      setMarkdownDraft(nextPayload.markdown)
+      setSavedMarkdown(nextPayload.markdown)
+      setStudysets(await fetchStudySets())
+      await refreshValidation()
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : '문제 데이터를 다시 읽지 못했습니다.')
+    } finally {
+      setRefreshingStudySet(false)
+    }
+  }, [dirty, refreshValidation, refreshingStudySet, selectedStudySetId, session.currentQuestion?.id])
 
   const saveMarkdown = useCallback(async () => {
     if (!selectedStudySetId) return
@@ -591,6 +614,15 @@ function App() {
             disabled={!session.total}
           >
             {progressText}
+          </button>
+          <button
+            type="button"
+            className="side-control-button"
+            title="문제 데이터 다시 읽기"
+            onClick={() => void reloadStudySet()}
+            disabled={!selectedStudySetId || refreshingStudySet}
+          >
+            <RefreshCw size={18} />
           </button>
           <button
             type="button"
