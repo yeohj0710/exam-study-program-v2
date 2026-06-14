@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { Question } from '../types'
 import { MarkdownContent } from './MarkdownContent'
 
@@ -15,7 +15,7 @@ export function QuestionView({
   const answerRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!question) return
     if (!mountedRef.current) {
       mountedRef.current = true
@@ -24,15 +24,10 @@ export function QuestionView({
 
     const target = showAnswer ? answerRef.current : headingRef.current
     if (!target) return
-    const scrollToTarget = () => {
-      target.scrollIntoView({ behavior: 'smooth', block: showAnswer ? 'center' : 'start' })
-    }
-    const firstTimer = window.setTimeout(scrollToTarget, 40)
-    const secondTimer = window.setTimeout(scrollToTarget, 320)
-    return () => {
-      window.clearTimeout(firstTimer)
-      window.clearTimeout(secondTimer)
-    }
+    const animationFrame = window.requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'auto', block: 'start' })
+    })
+    return () => window.cancelAnimationFrame(animationFrame)
   }, [choiceShuffleKey, question, showAnswer])
 
   if (!question) {

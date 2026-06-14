@@ -204,11 +204,17 @@ button:disabled {
 }
 
 .study-main {
+  --study-bottom-spacer: clamp(220px, 32vh, 420px);
   min-width: 0;
   height: 100vh;
   overflow: auto;
-  padding: 22px 118px 104px;
-  scroll-padding-bottom: 132px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  padding: clamp(96px, 14vh, 168px) 118px clamp(240px, 28vh, 340px);
+  scroll-padding-top: clamp(80px, 12vh, 136px);
+  scroll-padding-bottom: clamp(180px, 24vh, 280px);
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -221,12 +227,13 @@ button:disabled {
 
 .question-view,
 .error-banner {
+  width: 100%;
   max-width: 1080px;
   margin-inline: auto;
 }
 
 .study-control-rail {
-  position: absolute;
+  position: fixed;
   z-index: 25;
   top: 22px;
   right: 24px;
@@ -326,6 +333,13 @@ button:disabled {
   background: transparent;
   box-shadow: none;
   text-align: center;
+}
+
+.question-view::after {
+  content: "";
+  display: block;
+  height: var(--study-bottom-spacer);
+  pointer-events: none;
 }
 
 .question-view.empty {
@@ -494,7 +508,7 @@ button:disabled {
   margin: 22px auto 0;
   padding-top: 20px;
   border-top: 1px solid var(--border);
-  scroll-margin-block: 132px;
+  scroll-margin-block: 0;
 }
 
 .answer-section .markdown-content {
@@ -917,8 +931,10 @@ kbd {
 
   .study-main,
   .final-shell:not(.with-set-panel) .study-main {
-    padding: 76px 76px 22px;
-    scroll-padding-bottom: 24px;
+    --study-bottom-spacer: 260px;
+    padding: 96px 76px 220px;
+    scroll-padding-top: 82px;
+    scroll-padding-bottom: 180px;
   }
 
   .app-rail {
