@@ -21,8 +21,8 @@ Pick one.
     assert len(result.questions) == 1
     question = result.questions[0]
     assert question.id == "sample-001"
-    assert question.title == "What starts a question?"
-    assert "Pick one." in question.prompt_markdown
+    assert question.title == "Question 1"
+    assert question.prompt_markdown.startswith("What starts a question?\n\nPick one.")
     assert "- # Question" in question.prompt_markdown
     assert question.answer_markdown == "# Question"
     assert question.note_markdown == ""
@@ -38,7 +38,8 @@ def test_parse_short_answer_without_choices():
     result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
 
     assert len(result.questions) == 1
-    assert result.questions[0].prompt_markdown == ""
+    assert result.questions[0].title == "Question 1"
+    assert result.questions[0].prompt_markdown == "Source file format?"
     assert result.questions[0].answer_markdown == "Markdown"
 
 

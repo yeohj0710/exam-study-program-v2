@@ -352,6 +352,16 @@ button:disabled {
   border-color: transparent;
 }
 
+.question-scroll-anchor {
+  height: 1px;
+  margin-top: -1px;
+  scroll-margin-top: 0;
+}
+
+.question-scroll-anchor .question-anchor {
+  display: none;
+}
+
 .question-heading {
   display: flex;
   justify-content: center;
@@ -411,6 +421,10 @@ button:disabled {
   margin: 8px auto;
   max-width: 820px;
   overflow-wrap: anywhere;
+}
+
+.markdown-content strong {
+  font-weight: 900;
 }
 
 .markdown-content h1,
@@ -518,6 +532,10 @@ button:disabled {
 
 .answer-section .markdown-content * {
   color: var(--study-readable-text);
+}
+
+.answer-section .markdown-content strong {
+  color: var(--danger);
 }
 
 .study-composer {

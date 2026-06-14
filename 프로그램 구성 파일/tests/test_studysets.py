@@ -25,12 +25,12 @@ def test_read_and_save_preserve_user_facing_korean_file_names(tmp_path):
     studysets_root = tmp_path / "문제 데이터"
     studysets_root.mkdir()
     studyset_id = "의약화학 기말고사"
-    markdown = "# 문제 제목\n\n답: 정답\n"
+    markdown = "# 문제\n\n문제 텍스트\n\n답: 정답\n"
     (studysets_root / f"{studyset_id}.md").write_text(markdown, encoding="utf-8")
 
     assert read_studyset(studysets_root, studyset_id) == markdown
 
-    updated = "# 다음 문제\n\n답: 다음 정답\n"
+    updated = "# 문제\n\n다음 문제\n\n답: 다음 정답\n"
     save_studyset(studysets_root, studyset_id, updated)
 
     assert (studysets_root / f"{studyset_id}.md").read_text(encoding="utf-8") == updated

@@ -11,7 +11,7 @@ export function QuestionView({
   showAnswer: boolean
   choiceShuffleKey: string
 }) {
-  const headingRef = useRef<HTMLElement | null>(null)
+  const headingRef = useRef<HTMLDivElement | null>(null)
   const answerRef = useRef<HTMLElement | null>(null)
   const mountedRef = useRef(false)
 
@@ -40,10 +40,9 @@ export function QuestionView({
 
   return (
     <article className={question.progress.memorized ? 'question-view memorized' : 'question-view'}>
-      <header className="question-heading" ref={headingRef}>
+      <div className="question-scroll-anchor" ref={headingRef} aria-hidden="true">
         <span className="question-anchor" title={`문제 ${question.ordinal}`} aria-label={`문제 ${question.ordinal}`} />
-        <h1>{question.title}</h1>
-      </header>
+      </div>
 
       {question.progress.memorized && <div className="state-chip">암기 완료</div>}
       {question.issues.length > 0 && <div className="state-chip warn">{question.issues.length}개 확인 필요</div>}

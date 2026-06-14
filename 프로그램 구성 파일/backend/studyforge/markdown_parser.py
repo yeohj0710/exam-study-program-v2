@@ -8,6 +8,7 @@ from .final_models import MarkdownParseResult, Question, ValidationIssue
 QUESTION_RE = re.compile(r"^#\s+(?P<title>.+?)\s*$")
 QUESTION_ID_RE = re.compile(r"<!--\s*sf:id:\s*(?P<id>[-A-Za-z0-9_:.]+)\s*-->")
 ANSWER_RE = re.compile(r"^(?:답|정답)\s*:\s*(?P<answer>.*)$", re.IGNORECASE)
+GENERIC_QUESTION_HEADING_RE = re.compile(r"^(?:question|q|문제|문항)\s*\d*$", re.IGNORECASE)
 
 
 def _strip_blank_edges(lines: list[str]) -> str:
@@ -26,6 +27,10 @@ def _asset_paths(markdown: str) -> list[str]:
 
 def _question_starts(lines: list[str]) -> list[int]:
     return [index for index, line in enumerate(lines) if QUESTION_RE.match(line)]
+
+
+def _is_generic_question_heading(title: str) -> bool:
+    return bool(GENERIC_QUESTION_HEADING_RE.match(title.strip()))
 
 
 def insert_missing_question_ids(markdown: str, *, studyset_id: str) -> str:
@@ -61,7 +66,8 @@ def parse_studyset_markdown(
         end = starts[ordinal] if ordinal < len(starts) else len(lines)
         heading = lines[start]
         match = QUESTION_RE.match(heading)
-        title = match.group("title").strip() if match else f"Question {ordinal}"
+        heading_text = match.group("title").strip() if match else ""
+        title = f"Question {ordinal}"
         block = lines[start + 1 : end]
 
         question_id = ""
@@ -77,8 +83,14 @@ def parse_studyset_markdown(
         answer_lines: list[str] = []
         has_answer = False
         section = "prompt"
+        parse_lines = content_lines
+        if heading_text and not _is_generic_question_heading(heading_text):
+            rest_lines = content_lines[:]
+            while rest_lines and not rest_lines[0].strip():
+                rest_lines.pop(0)
+            parse_lines = [heading_text, "", *rest_lines]
 
-        for line in content_lines:
+        for line in parse_lines:
             answer_match = ANSWER_RE.match(line)
             if answer_match:
                 section = "answer"
@@ -104,7 +116,7 @@ def parse_studyset_markdown(
             prompt_markdown=_strip_blank_edges(prompt_lines),
             answer_markdown=_strip_blank_edges(answer_lines),
             note_markdown="",
-            asset_paths=_asset_paths("\n".join(content_lines)),
+            asset_paths=_asset_paths("\n".join(parse_lines)),
         )
         _append_asset_issues(question, result, asset_root, line_number=start + 1)
 

@@ -38,6 +38,16 @@ import { useStudySession } from './hooks/useStudySession'
 import type { QuestionProgress, StudySet, StudySetPayload, ThemeMode, ValidationReport } from './types'
 
 const sessionKey = 'exam-study.session.v1'
+const defaultTextScale = 0.9
+const minTextScale = 0.76
+const maxTextScale = 1.14
+const defaultGlareLevel = 0.46
+const maxGlareLevel = 1.2
+const textScaleStep = 0.08
+const glareStep = 0.1
+const defaultSidePanelWidth = 640
+const minSidePanelWidth = 300
+const maxSidePanelWidth = 640
 
 type SessionState = {
   selectedStudySetId: string
@@ -68,9 +78,13 @@ function readSession(): Partial<SessionState> {
       showInfo: typeof parsed.showInfo === 'boolean' ? parsed.showInfo : false,
       themeMode: parsed.themeMode === 'dark' || parsed.themeMode === 'light' ? parsed.themeMode : undefined,
       setPanelWidth: typeof parsed.setPanelWidth === 'number' ? parsed.setPanelWidth : 280,
-      sidePanelWidth: typeof parsed.sidePanelWidth === 'number' ? parsed.sidePanelWidth : 380,
-      textScale: typeof parsed.textScale === 'number' ? parsed.textScale : 0.9,
-      glareLevel: typeof parsed.glareLevel === 'number' ? parsed.glareLevel : 0.46,
+      sidePanelWidth:
+        typeof parsed.sidePanelWidth === 'number'
+          ? clamp(parsed.sidePanelWidth, minSidePanelWidth, maxSidePanelWidth)
+          : defaultSidePanelWidth,
+      textScale: typeof parsed.textScale === 'number' ? clamp(parsed.textScale, minTextScale, maxTextScale) : defaultTextScale,
+      glareLevel:
+        typeof parsed.glareLevel === 'number' ? clamp(parsed.glareLevel, 0, maxGlareLevel) : defaultGlareLevel,
     }
   } catch {
     return {}
@@ -95,7 +109,11 @@ function applyProgress(payload: StudySetPayload | null, questionId: string, prog
   if (!payload) return payload
   return {
     ...payload,
-    questions: payload.questions.map((question) => (question.id === questionId ? { ...question, progress } : question)),
+    questions: payload.questions.map((question) =>
+      question.id === questionId && (question.progress.updated_at ?? 0) <= (progress.updated_at ?? 0)
+        ? { ...question, progress }
+        : question,
+    ),
   }
 }
 
@@ -119,11 +137,14 @@ function App() {
   const [showInfo, setShowInfo] = useState(initialSession.showInfo ?? false)
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialSession.themeMode ?? defaultTheme())
   const [setPanelWidth, setSetPanelWidth] = useState(initialSession.setPanelWidth ?? 280)
-  const [sidePanelWidth, setSidePanelWidth] = useState(initialSession.sidePanelWidth ?? 380)
-  const [textScale, setTextScale] = useState(initialSession.textScale ?? 0.9)
-  const [glareLevel, setGlareLevel] = useState(initialSession.glareLevel ?? 0.46)
+  const [sidePanelWidth, setSidePanelWidth] = useState(
+    initialSession.showEditor ? maxSidePanelWidth : (initialSession.sidePanelWidth ?? defaultSidePanelWidth),
+  )
+  const [textScale, setTextScale] = useState(initialSession.textScale ?? defaultTextScale)
+  const [glareLevel, setGlareLevel] = useState(initialSession.glareLevel ?? defaultGlareLevel)
   const [choiceShuffleSeed, setChoiceShuffleSeed] = useState(0)
   const [confirmShutdown, setConfirmShutdown] = useState(false)
+  const [confirmShuffle, setConfirmShuffle] = useState(false)
   const [showQuestionPicker, setShowQuestionPicker] = useState(false)
   const lastSeenRef = useRef('')
 
@@ -261,7 +282,8 @@ function App() {
     if (!question) return
     const progress = await patchQuestionProgress(question.id, 'memorized')
     setPayload((current) => applyProgress(current, question.id, progress))
-  }, [session.currentQuestion])
+    session.nextQuestion()
+  }, [session])
 
   const restoreCurrent = useCallback(async () => {
     const question = session.currentQuestion
@@ -271,11 +293,11 @@ function App() {
   }, [session.currentQuestion])
 
   const changeTextScale = useCallback((delta: number) => {
-    setTextScale((value) => Math.round(clamp(value + delta, 0.76, 1.14) * 100) / 100)
+    setTextScale((value) => Math.round(clamp(value + delta, minTextScale, maxTextScale) * 100) / 100)
   }, [])
 
   const changeGlareLevel = useCallback((delta: number) => {
-    setGlareLevel((value) => Math.round(clamp(value + delta, 0, 0.92) * 100) / 100)
+    setGlareLevel((value) => Math.round(clamp(value + delta, 0, maxGlareLevel) * 100) / 100)
   }, [])
 
   const beginSetPanelResize = useCallback(
@@ -302,7 +324,7 @@ function App() {
       const startX = event.clientX
       const startWidth = sidePanelWidth
       function onMove(moveEvent: MouseEvent) {
-        setSidePanelWidth(clamp(startWidth - (moveEvent.clientX - startX), 300, 640))
+        setSidePanelWidth(clamp(startWidth - (moveEvent.clientX - startX), minSidePanelWidth, maxSidePanelWidth))
       }
       function onUp() {
         window.removeEventListener('mousemove', onMove)
@@ -313,6 +335,15 @@ function App() {
     },
     [sidePanelWidth],
   )
+
+  const toggleMarkdownEditor = useCallback(() => {
+    setShowEditor((value) => {
+      const nextValue = !value
+      if (nextValue) setSidePanelWidth(maxSidePanelWidth)
+      return nextValue
+    })
+    setShowInfo(false)
+  }, [])
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -328,8 +359,7 @@ function App() {
       }
       if (modifier && key === 'e') {
         event.preventDefault()
-        setShowEditor((value) => !value)
-        setShowInfo(false)
+        toggleMarkdownEditor()
         return
       }
       if (modifier && key === 'i') {
@@ -340,32 +370,37 @@ function App() {
       }
       if (modifier && (key === '-' || key === '_')) {
         event.preventDefault()
-        changeTextScale(-0.08)
+        changeTextScale(-textScaleStep)
         return
       }
       if (modifier && (key === '=' || key === '+')) {
         event.preventDefault()
-        changeTextScale(0.08)
+        changeTextScale(textScaleStep)
         return
       }
       if (modifier && key === '0') {
         event.preventDefault()
-        setTextScale(0.9)
+        setTextScale(defaultTextScale)
         return
       }
       if (event.altKey && key === '[') {
         event.preventDefault()
-        changeGlareLevel(-0.1)
+        changeGlareLevel(glareStep)
         return
       }
       if (event.altKey && key === ']') {
         event.preventDefault()
-        changeGlareLevel(0.1)
+        changeGlareLevel(-glareStep)
         return
       }
       if (key === 'escape' && confirmShutdown) {
         event.preventDefault()
         setConfirmShutdown(false)
+        return
+      }
+      if (key === 'escape' && confirmShuffle) {
+        event.preventDefault()
+        setConfirmShuffle(false)
         return
       }
       if (key === 'escape' && showQuestionPicker) {
@@ -407,15 +442,18 @@ function App() {
     changeGlareLevel,
     changeTextScale,
     confirmShutdown,
+    confirmShuffle,
     memorizeCurrent,
     restoreCurrent,
     session,
     showQuestionPicker,
     toggleAnswer,
+    toggleMarkdownEditor,
   ])
 
   const progressText = session.total ? `${session.safeCursor + 1} / ${session.total}` : '0 / 0'
   const issues = payload?.issues ?? []
+  const brightnessPercent = Math.round(clamp(1 - glareLevel / maxGlareLevel, 0, 1) * 100)
 
   return (
     <StudyWorkspace
@@ -445,10 +483,7 @@ function App() {
             type="button"
             className={showEditor ? 'rail-button active' : 'rail-button'}
             title="Markdown (Ctrl+E)"
-            onClick={() => {
-              setShowEditor((value) => !value)
-              setShowInfo(false)
-            }}
+            onClick={toggleMarkdownEditor}
           >
             <Edit3 size={19} />
           </button>
@@ -467,26 +502,26 @@ function App() {
             <button
               type="button"
               className="rail-button compact"
-              title={`글자 작게 (Ctrl+-) · ${Math.round(textScale * 100)}%`}
-              onClick={() => changeTextScale(-0.08)}
-            >
-              <ZoomOut size={17} />
-            </button>
-            <button
-              type="button"
-              className="rail-button compact"
               title={`글자 크게 (Ctrl+=) · ${Math.round(textScale * 100)}%`}
-              onClick={() => changeTextScale(0.08)}
+              onClick={() => changeTextScale(textScaleStep)}
             >
               <ZoomIn size={17} />
             </button>
-          </div>
-          <div className="rail-tool-pair" aria-label="눈부심 조절">
             <button
               type="button"
               className="rail-button compact"
-              title={`밝기 + (Alt+[) · ${Math.round(glareLevel * 100)}%`}
-              onClick={() => changeGlareLevel(-0.1)}
+              title={`글자 작게 (Ctrl+-) · ${Math.round(textScale * 100)}%`}
+              onClick={() => changeTextScale(-textScaleStep)}
+            >
+              <ZoomOut size={17} />
+            </button>
+          </div>
+          <div className="rail-tool-pair" aria-label="밝기 조절">
+            <button
+              type="button"
+              className="rail-button compact"
+              title={`밝기 높이기 (Alt+]) · ${brightnessPercent}%`}
+              onClick={() => changeGlareLevel(-glareStep)}
             >
               <span className="rail-mark">+</span>
               <SunMedium size={17} />
@@ -494,8 +529,8 @@ function App() {
             <button
               type="button"
               className="rail-button compact"
-              title={`밝기 - (Alt+]) · ${Math.round(glareLevel * 100)}%`}
-              onClick={() => changeGlareLevel(0.1)}
+              title={`밝기 낮추기 (Alt+[) · ${brightnessPercent}%`}
+              onClick={() => changeGlareLevel(glareStep)}
             >
               <span className="rail-mark">-</span>
               <SunDim size={17} />
@@ -555,7 +590,13 @@ function App() {
           >
             {progressText}
           </button>
-          <button type="button" className="side-control-button" title="문제 섞기" onClick={session.reshuffle} disabled={!session.total}>
+          <button
+            type="button"
+            className="side-control-button"
+            title="문제 섞기"
+            onClick={() => setConfirmShuffle(true)}
+            disabled={!session.total}
+          >
             <Shuffle size={18} />
           </button>
         </section>
@@ -663,6 +704,35 @@ function App() {
               </button>
               <button type="button" className="composer-button danger-action" onClick={() => void shutdownApp()}>
                 종료
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {confirmShuffle && (
+        <div className="confirm-layer" role="presentation" onMouseDown={() => setConfirmShuffle(false)}>
+          <section
+            className="confirm-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label="문제 섞기 확인"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <p>문제 순서를 섞을까요?</p>
+            <div>
+              <button type="button" className="composer-button" onClick={() => setConfirmShuffle(false)}>
+                취소
+              </button>
+              <button
+                type="button"
+                className="composer-button danger-action"
+                onClick={() => {
+                  session.reshuffle()
+                  setConfirmShuffle(false)
+                }}
+              >
+                섞기
               </button>
             </div>
           </section>

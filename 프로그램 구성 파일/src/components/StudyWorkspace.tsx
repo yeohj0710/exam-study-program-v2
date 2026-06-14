@@ -38,10 +38,10 @@ export function StudyWorkspace({
   ]
     .filter(Boolean)
     .join(' ')
-  const readableText = themeMode === 'dark' ? Math.round(220 - glareLevel * 58) : 25
-  const imageBrightness = Math.max(0.42, 1 - glareLevel * 0.56)
-  const imageContrast = Math.max(0.72, 1 - glareLevel * 0.16)
-  const imageSaturate = Math.max(0.72, 1 - glareLevel * 0.18)
+  const readableText = themeMode === 'dark' ? Math.max(112, Math.round(222 - glareLevel * 90)) : 25
+  const imageBrightness = Math.max(0.25, 1 - glareLevel * 0.62)
+  const imageContrast = Math.max(0.62, 1 - glareLevel * 0.22)
+  const imageSaturate = Math.max(0.58, 1 - glareLevel * 0.22)
 
   return (
     <main

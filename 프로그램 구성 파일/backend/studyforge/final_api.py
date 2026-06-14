@@ -5,6 +5,7 @@ from binascii import Error as Base64Error
 from dataclasses import asdict
 import os
 from pathlib import Path
+from threading import Lock
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException
@@ -39,6 +40,7 @@ ASSET_ROOT = DATA_ROOT / "assets"
 FINAL_PROGRESS_PATH = DATA_ROOT / "progress.json"
 
 router = APIRouter()
+_progress_lock = Lock()
 
 
 class StudySetCreateRequest(BaseModel):
@@ -133,22 +135,24 @@ def validation_report() -> dict[str, object]:
 
 @router.patch("/api/questions/{question_id}/progress")
 def patch_question_progress(question_id: str, request: QuestionProgressRequest) -> dict[str, object]:
-    progress = load_final_progress(FINAL_PROGRESS_PATH)
-    if request.action == "seen":
-        entry = record_seen(progress, question_id)
-    elif request.action == "reveal":
-        entry = record_reveal(progress, question_id)
-    else:
-        entry = mark_memorized(progress, question_id)
-    save_final_progress(FINAL_PROGRESS_PATH, progress)
+    with _progress_lock:
+        progress = load_final_progress(FINAL_PROGRESS_PATH)
+        if request.action == "seen":
+            entry = record_seen(progress, question_id)
+        elif request.action == "reveal":
+            entry = record_reveal(progress, question_id)
+        else:
+            entry = mark_memorized(progress, question_id)
+        save_final_progress(FINAL_PROGRESS_PATH, progress)
     return {"progress": asdict(entry)}
 
 
 @router.delete("/api/questions/{question_id}/progress")
 def delete_question_progress(question_id: str) -> dict[str, object]:
-    progress = load_final_progress(FINAL_PROGRESS_PATH)
-    entry = restore_question(progress, question_id)
-    save_final_progress(FINAL_PROGRESS_PATH, progress)
+    with _progress_lock:
+        progress = load_final_progress(FINAL_PROGRESS_PATH)
+        entry = restore_question(progress, question_id)
+        save_final_progress(FINAL_PROGRESS_PATH, progress)
     return {"progress": asdict(entry)}
 
 
