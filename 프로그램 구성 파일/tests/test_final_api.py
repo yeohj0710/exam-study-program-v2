@@ -185,3 +185,19 @@ def test_validation_endpoint_includes_final_studysets_without_legacy_library(tmp
     assert payload["final"]["studyset_count"] == 1
     assert payload["final"]["question_count"] == 1
     assert payload["final"]["issues"][0]["code"] == "missing_answer"
+
+
+def test_source_open_endpoint_opens_pdf_at_page(tmp_path, monkeypatch):
+    source = tmp_path / "예방약학.pdf"
+    source.write_bytes(b"%PDF-1.4\n")
+    opened: list[str] = []
+    monkeypatch.setattr(final_api.webbrowser, "open", lambda url: opened.append(url) or True)
+    client = TestClient(api.app)
+
+    response = client.post("/api/source/open", json={"reference": f"{source} p.12"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["path"] == str(source)
+    assert payload["page"] == 12
+    assert opened == [f"{source.as_uri()}#page=12"]

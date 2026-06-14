@@ -1,4 +1,11 @@
-import type { AssetUploadResponse, QuestionProgress, StudySet, StudySetPayload, ValidationReport } from './types'
+import type {
+  AssetUploadResponse,
+  QuestionProgress,
+  SourceOpenResponse,
+  StudySet,
+  StudySetPayload,
+  ValidationReport,
+} from './types'
 
 async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init)
@@ -76,6 +83,14 @@ export async function restoreQuestionProgress(questionId: string): Promise<Quest
 
 export async function fetchValidation(): Promise<ValidationReport> {
   return requestJson<ValidationReport>('/api/validation')
+}
+
+export async function openSourceReference(reference: string): Promise<SourceOpenResponse> {
+  return requestJson<SourceOpenResponse>('/api/source/open', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reference }),
+  })
 }
 
 export async function shutdownApp(): Promise<void> {

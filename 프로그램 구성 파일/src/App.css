@@ -563,6 +563,48 @@ button:disabled {
   color: var(--muted);
 }
 
+.source-section {
+  max-width: 860px;
+  margin: 14px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: calc(11px * var(--study-text-scale));
+}
+
+.source-section > span {
+  font-weight: 850;
+}
+
+.source-section > div {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source-button {
+  max-width: min(520px, calc(100vw - 220px));
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: inherit;
+  font-weight: 750;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .study-composer {
   margin-top: auto;
   display: flex;

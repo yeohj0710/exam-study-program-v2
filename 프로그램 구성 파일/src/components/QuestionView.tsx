@@ -1,6 +1,63 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { openSourceReference } from '../api'
 import type { Question } from '../types'
 import { MarkdownContent } from './MarkdownContent'
+
+function sourceItems(markdown: string) {
+  return markdown
+    .split(/\r?\n/)
+    .flatMap((line) =>
+      line
+        .replace(/^(?:출처|reference|source)\s*[:：]\s*/i, '')
+        .split(/\s+\+\s+/)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    )
+}
+
+function sourceLabel(reference: string) {
+  const pathMatch = reference.match(/[A-Za-z]:\\([^+\n\r,]+?\.(?:pdf|pptx?|docx?|hwp|hwpx|png|jpe?g|webp))/i)
+  const pageMatch = reference.match(/(?:p|page|쪽|페이지|slide|슬라이드)\.?\s*\d+/i)
+  const fileName = pathMatch?.[1].split(/\\+/).pop()
+  return [fileName ?? reference, pageMatch?.[0]].filter(Boolean).join(' · ')
+}
+
+function SourceReferences({ markdown }: { markdown: string }) {
+  const [opening, setOpening] = useState('')
+  const items = sourceItems(markdown)
+  if (!items.length) return null
+
+  async function open(reference: string) {
+    setOpening(reference)
+    try {
+      await openSourceReference(reference)
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : '출처를 열 수 없습니다.')
+    } finally {
+      setOpening('')
+    }
+  }
+
+  return (
+    <section className="source-section" aria-label="출처">
+      <span>출처</span>
+      <div>
+        {items.map((item, index) => (
+          <button
+            type="button"
+            className="source-button"
+            key={`${item}-${index}`}
+            title={item}
+            disabled={opening === item}
+            onClick={() => void open(item)}
+          >
+            {sourceLabel(item)}
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 export function QuestionView({
   question,
@@ -50,9 +107,12 @@ export function QuestionView({
       {question.prompt_markdown && <MarkdownContent markdown={question.prompt_markdown} shuffleChoicesKey={choiceShuffleKey} />}
 
       {showAnswer && (
-        <section className="answer-section" ref={answerRef}>
-          <MarkdownContent markdown={question.answer_markdown} />
-        </section>
+        <>
+          <section className="answer-section" ref={answerRef}>
+            <MarkdownContent markdown={question.answer_markdown} />
+          </section>
+          {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}
+        </>
       )}
     </article>
   )

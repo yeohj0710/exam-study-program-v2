@@ -5,8 +5,10 @@ from binascii import Error as Base64Error
 from dataclasses import asdict
 import os
 from pathlib import Path
+import re
 from threading import Lock
 from typing import Literal
+import webbrowser
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -61,6 +63,17 @@ class QuestionProgressRequest(BaseModel):
     action: Literal["seen", "reveal", "memorized"]
 
 
+class SourceOpenRequest(BaseModel):
+    reference: str = Field(min_length=1, max_length=2000)
+
+
+SOURCE_PATH_RE = re.compile(
+    r"(?P<path>[A-Za-z]:\\[^+\n\r,]+?\.(?:pdf|pptx?|docx?|hwp|hwpx|png|jpe?g|webp))",
+    re.IGNORECASE,
+)
+SOURCE_PAGE_RE = re.compile(r"(?:p|page|쪽|페이지|slide|슬라이드)\.?\s*(?P<page>\d+)", re.IGNORECASE)
+
+
 @router.get("/api/studysets")
 def get_studysets() -> dict[str, object]:
     return {"studysets": [asdict(item) for item in list_studysets(STUDYSETS_ROOT)]}
@@ -113,6 +126,17 @@ def get_studyset_questions(studyset_id: str) -> dict[str, object]:
         "questions": _questions_payload(parsed.questions),
         "issues": [asdict(issue) for issue in parsed.issues],
     }
+
+
+@router.post("/api/source/open")
+def post_source_open(request: SourceOpenRequest) -> dict[str, object]:
+    target, page = _resolve_source_reference(request.reference)
+    url = target.as_uri()
+    if target.suffix.lower() == ".pdf" and page:
+        url = f"{url}#page={page}"
+    if not webbrowser.open(url):
+        raise HTTPException(status_code=500, detail="Source could not be opened.")
+    return {"ok": True, "path": str(target), "page": page}
 
 
 def validation_report() -> dict[str, object]:
@@ -186,3 +210,20 @@ def _questions_payload(questions) -> list[dict[str, object]]:
 
 def _data_root() -> Path:
     return ASSET_ROOT.parent
+
+
+def _resolve_source_reference(reference: str) -> tuple[Path, int | None]:
+    path_match = SOURCE_PATH_RE.search(reference)
+    if not path_match:
+        raise HTTPException(status_code=400, detail="Source reference must include a full local file path.")
+
+    target = Path(path_match.group("path").strip().strip('"'))
+    if not target.exists() or not target.is_file():
+        raise HTTPException(status_code=404, detail="Source file not found.")
+
+    page = None
+    page_text = reference[path_match.end() : path_match.end() + 80]
+    page_match = SOURCE_PAGE_RE.search(page_text)
+    if page_match:
+        page = int(page_match.group("page"))
+    return target, page

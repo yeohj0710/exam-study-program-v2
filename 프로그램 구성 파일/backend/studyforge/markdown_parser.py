@@ -8,6 +8,7 @@ from .final_models import MarkdownParseResult, Question, ValidationIssue
 QUESTION_RE = re.compile(r"^#\s+(?P<title>.+?)\s*$")
 QUESTION_ID_RE = re.compile(r"<!--\s*sf:id:\s*(?P<id>[-A-Za-z0-9_:.]+)\s*-->")
 ANSWER_RE = re.compile(r"^(?:답|정답)\s*:\s*(?P<answer>.*)$", re.IGNORECASE)
+SOURCE_RE = re.compile(r"^(?:출처|reference|source)\s*[:：]", re.IGNORECASE)
 GENERIC_QUESTION_HEADING_RE = re.compile(r"^(?:question|q|문제|문항)\s*\d*$", re.IGNORECASE)
 
 
@@ -81,6 +82,7 @@ def parse_studyset_markdown(
 
         prompt_lines: list[str] = []
         answer_lines: list[str] = []
+        source_lines: list[str] = []
         has_answer = False
         section = "prompt"
         parse_lines = content_lines
@@ -101,7 +103,10 @@ def parse_studyset_markdown(
                 continue
 
             if section == "answer":
-                answer_lines.append(line)
+                if SOURCE_RE.match(line.strip()):
+                    source_lines.append(line)
+                else:
+                    answer_lines.append(line)
             else:
                 prompt_lines.append(line)
 
@@ -115,6 +120,7 @@ def parse_studyset_markdown(
             title=title,
             prompt_markdown=_strip_blank_edges(prompt_lines),
             answer_markdown=_strip_blank_edges(answer_lines),
+            source_markdown=_strip_blank_edges(source_lines),
             note_markdown="",
             asset_paths=_asset_paths("\n".join(parse_lines)),
         )

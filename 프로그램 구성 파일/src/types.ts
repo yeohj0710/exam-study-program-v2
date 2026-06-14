@@ -24,6 +24,7 @@ export type Question = {
   title: string
   prompt_markdown: string
   answer_markdown: string
+  source_markdown: string
   note_markdown: string
   asset_paths: string[]
   issues: ValidationIssue[]
@@ -70,4 +71,10 @@ export type AssetUploadResponse = {
   markdown: string
   path: string
   sha1: string
+}
+
+export type SourceOpenResponse = {
+  ok: boolean
+  path: string
+  page?: number | null
 }

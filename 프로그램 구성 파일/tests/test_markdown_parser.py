@@ -43,6 +43,23 @@ def test_parse_short_answer_without_choices():
     assert result.questions[0].answer_markdown == "Markdown"
 
 
+def test_source_lines_are_separated_from_answer_markdown():
+    markdown = """# 문제
+<!-- sf:id: source-question -->
+
+표도상구균 독소형 식중독은 어느 쪽에 가까운가?
+
+답: 독소형 식중독
+출처: C:\\자료\\예방약학.pdf p.12 + C:\\자료\\기출.pdf p.3
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    question = result.questions[0]
+    assert question.answer_markdown == "독소형 식중독"
+    assert question.source_markdown == "출처: C:\\자료\\예방약학.pdf p.12 + C:\\자료\\기출.pdf p.3"
+
+
 def test_insert_missing_question_ids_places_comment_after_hash_heading():
     markdown = """# First question
 
