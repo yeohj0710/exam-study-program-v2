@@ -12,3 +12,14 @@ def test_inline_answer_source_has_spacing_from_answer_text():
 
     assert "margin-top:" in block
     assert "padding-top:" in block
+    assert "border-top:" not in block
+
+
+def test_source_section_has_no_divider_line():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    selector = ".source-section"
+    start = css.index(selector)
+    block = css[start : css.index("}", start)]
+
+    assert "margin:" in block
+    assert "border-top:" not in block
