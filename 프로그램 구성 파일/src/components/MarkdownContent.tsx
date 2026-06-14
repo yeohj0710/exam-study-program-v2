@@ -7,10 +7,17 @@ function imageUrl(path: string) {
 }
 
 function renderInline(text: string) {
-  const parts = text.split(/(\*\*[^*]+?\*\*)/g)
+  const parts = text.split(/(\*\*[^*]+?\*\*|==[^=]+?==)/g)
   return parts.map((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={index}>{part.slice(2, -2)}</strong>
+    }
+    if (part.startsWith('==') && part.endsWith('==')) {
+      return (
+        <mark className="markdown-highlight" key={index}>
+          {part.slice(2, -2)}
+        </mark>
+      )
     }
     return part
   })

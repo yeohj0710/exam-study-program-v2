@@ -427,6 +427,14 @@ button:disabled {
   font-weight: 900;
 }
 
+.markdown-content .markdown-highlight {
+  padding: 0 0.12em;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  color: var(--study-readable-text);
+  font-weight: 900;
+}
+
 .markdown-content .markdown-source {
   margin-top: 10px;
   color: var(--muted);
@@ -543,6 +551,11 @@ button:disabled {
 }
 
 .answer-section .markdown-content strong {
+  color: var(--danger);
+}
+
+.answer-section .markdown-content .markdown-highlight {
+  background: color-mix(in srgb, var(--danger) 18%, var(--surface-soft));
   color: var(--danger);
 }
 
