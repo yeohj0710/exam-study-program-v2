@@ -201,3 +201,25 @@ def test_source_open_endpoint_opens_pdf_at_page(tmp_path, monkeypatch):
     assert payload["path"] == str(source)
     assert payload["page"] == 12
     assert opened == [f"{source.as_uri()}#page=12"]
+
+
+def test_source_resolve_endpoint_returns_browser_file_url(tmp_path):
+    source = tmp_path / "예방약학.pdf"
+    content = b"%PDF-1.4\nsource"
+    source.write_bytes(content)
+    client = TestClient(api.app)
+
+    resolve_response = client.post("/api/source/resolve", json={"reference": f"{source} p.12"})
+
+    assert resolve_response.status_code == 200
+    payload = resolve_response.json()
+    assert payload["path"] == str(source)
+    assert payload["page"] == 12
+    assert payload["url"].startswith("/api/source/file?path=")
+    assert payload["url"].endswith("#page=12")
+
+    file_url = payload["url"].split("#", 1)[0]
+    file_response = client.get(file_url)
+
+    assert file_response.status_code == 200
+    assert file_response.content == content

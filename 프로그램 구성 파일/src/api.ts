@@ -86,7 +86,7 @@ export async function fetchValidation(): Promise<ValidationReport> {
 }
 
 export async function openSourceReference(reference: string): Promise<SourceOpenResponse> {
-  return requestJson<SourceOpenResponse>('/api/source/open', {
+  return requestJson<SourceOpenResponse>('/api/source/resolve', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ reference }),

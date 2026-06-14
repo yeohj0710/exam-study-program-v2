@@ -8,9 +8,11 @@ from pathlib import Path
 import re
 from threading import Lock
 from typing import Literal
+from urllib.parse import quote
 import webbrowser
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from .asset_manager import save_image_asset
@@ -139,6 +141,19 @@ def post_source_open(request: SourceOpenRequest) -> dict[str, object]:
     return {"ok": True, "path": str(target), "page": page}
 
 
+@router.post("/api/source/resolve")
+def post_source_resolve(request: SourceOpenRequest) -> dict[str, object]:
+    target, page = _resolve_source_reference(request.reference)
+    return {"ok": True, "path": str(target), "page": page, "url": _source_file_url(target, page)}
+
+
+@router.get("/api/source/file")
+def get_source_file(path: str) -> FileResponse:
+    target = _validate_source_file(Path(path))
+    media_type = "application/pdf" if target.suffix.lower() == ".pdf" else None
+    return FileResponse(target, media_type=media_type)
+
+
 def validation_report() -> dict[str, object]:
     studysets = list_studysets(STUDYSETS_ROOT)
     issues = []
@@ -213,17 +228,31 @@ def _data_root() -> Path:
 
 
 def _resolve_source_reference(reference: str) -> tuple[Path, int | None]:
-    path_match = SOURCE_PATH_RE.search(reference)
+    normalized = re.sub(r"\s*\r?\n\s*", " ", reference)
+    path_match = SOURCE_PATH_RE.search(normalized)
     if not path_match:
         raise HTTPException(status_code=400, detail="Source reference must include a full local file path.")
 
-    target = Path(path_match.group("path").strip().strip('"'))
-    if not target.exists() or not target.is_file():
-        raise HTTPException(status_code=404, detail="Source file not found.")
+    target = _validate_source_file(Path(path_match.group("path").strip().strip('"')))
 
     page = None
-    page_text = reference[path_match.end() : path_match.end() + 80]
+    page_text = normalized[path_match.end() : path_match.end() + 80]
     page_match = SOURCE_PAGE_RE.search(page_text)
     if page_match:
         page = int(page_match.group("page"))
     return target, page
+
+
+def _validate_source_file(target: Path) -> Path:
+    if not target.exists() or not target.is_file():
+        raise HTTPException(status_code=404, detail="Source file not found.")
+    if target.suffix.lower() not in {".pdf", ".ppt", ".pptx", ".doc", ".docx", ".hwp", ".hwpx", ".png", ".jpg", ".jpeg", ".webp"}:
+        raise HTTPException(status_code=400, detail="Unsupported source file type.")
+    return target
+
+
+def _source_file_url(target: Path, page: int | None) -> str:
+    url = f"/api/source/file?path={quote(str(target))}"
+    if target.suffix.lower() == ".pdf" and page:
+        url = f"{url}#page={page}"
+    return url

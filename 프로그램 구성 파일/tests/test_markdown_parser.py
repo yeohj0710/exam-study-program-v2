@@ -60,6 +60,24 @@ def test_source_lines_are_separated_from_answer_markdown():
     assert question.source_markdown == "출처: C:\\자료\\예방약학.pdf p.12 + C:\\자료\\기출.pdf p.3"
 
 
+def test_wrapped_source_lines_stay_out_of_answer_markdown():
+    markdown = """# 문제
+<!-- sf:id: wrapped-source -->
+
+자료 출처가 줄바꿈된 문제
+
+답: 정답
+출처: G:\\내 드라이브\\과목\\6.1.
+ 영양과 건강.pdf p.24
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    question = result.questions[0]
+    assert question.answer_markdown == "정답"
+    assert question.source_markdown == "출처: G:\\내 드라이브\\과목\\6.1.\n 영양과 건강.pdf p.24"
+
+
 def test_insert_missing_question_ids_places_comment_after_hash_heading():
     markdown = """# First question
 

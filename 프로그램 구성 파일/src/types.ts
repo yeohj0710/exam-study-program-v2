@@ -77,4 +77,5 @@ export type SourceOpenResponse = {
   ok: boolean
   path: string
   page?: number | null
+  url?: string
 }

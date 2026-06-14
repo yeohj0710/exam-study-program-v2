@@ -5,6 +5,7 @@ import { MarkdownContent } from './MarkdownContent'
 
 function sourceItems(markdown: string) {
   return markdown
+    .replace(/\s*\r?\n\s*/g, ' ')
     .split(/\r?\n/)
     .flatMap((line) =>
       line
@@ -30,7 +31,9 @@ function SourceReferences({ markdown }: { markdown: string }) {
   async function open(reference: string) {
     setOpening(reference)
     try {
-      await openSourceReference(reference)
+      const source = await openSourceReference(reference)
+      if (!source.url) throw new Error('출처 URL을 만들 수 없습니다.')
+      window.open(source.url, '_blank', 'noopener,noreferrer')
     } catch (error) {
       window.alert(error instanceof Error ? error.message : '출처를 열 수 없습니다.')
     } finally {

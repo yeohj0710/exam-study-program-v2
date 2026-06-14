@@ -85,6 +85,7 @@ def parse_studyset_markdown(
         source_lines: list[str] = []
         has_answer = False
         section = "prompt"
+        in_source = False
         parse_lines = content_lines
         if heading_text and not _is_generic_question_heading(heading_text):
             rest_lines = content_lines[:]
@@ -96,6 +97,7 @@ def parse_studyset_markdown(
             answer_match = ANSWER_RE.match(line)
             if answer_match:
                 section = "answer"
+                in_source = False
                 has_answer = True
                 first_answer = answer_match.group("answer").strip()
                 if first_answer:
@@ -104,7 +106,13 @@ def parse_studyset_markdown(
 
             if section == "answer":
                 if SOURCE_RE.match(line.strip()):
+                    in_source = True
                     source_lines.append(line)
+                elif in_source and line.strip():
+                    source_lines.append(line)
+                elif in_source:
+                    in_source = False
+                    answer_lines.append(line)
                 else:
                     answer_lines.append(line)
             else:
