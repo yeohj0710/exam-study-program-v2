@@ -427,6 +427,14 @@ button:disabled {
   font-weight: 900;
 }
 
+.markdown-content .markdown-source {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: calc(12px * var(--study-text-scale));
+  line-height: 1.45;
+  font-weight: 650;
+}
+
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3 {
@@ -536,6 +544,10 @@ button:disabled {
 
 .answer-section .markdown-content strong {
   color: var(--danger);
+}
+
+.answer-section .markdown-content .markdown-source {
+  color: var(--muted);
 }
 
 .study-composer {

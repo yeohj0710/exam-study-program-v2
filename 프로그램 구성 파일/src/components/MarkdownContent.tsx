@@ -49,6 +49,13 @@ function renderLine(line: string, key: string) {
     return <MarkdownImage key={key} alt={image[1]} path={image[2]} />
   }
   if (!normalized.trim()) return <div className="markdown-space" key={key} />
+  if (/^(?:출처|reference|source)\s*[:：]/i.test(normalized)) {
+    return (
+      <p className="markdown-source" key={key}>
+        {renderInline(normalized)}
+      </p>
+    )
+  }
   if (normalized.startsWith('### ')) return <h3 key={key}>{renderInline(normalized.slice(4))}</h3>
   if (normalized.startsWith('## ')) return <h2 key={key}>{renderInline(normalized.slice(3))}</h2>
   if (normalized.startsWith('# ')) return <h1 key={key}>{renderInline(normalized.slice(2))}</h1>
