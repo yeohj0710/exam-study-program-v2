@@ -565,17 +565,21 @@ button:disabled {
 
 .source-section {
   max-width: 860px;
-  margin: 14px auto 0;
+  margin: 34px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   color: var(--muted);
   font-size: calc(11px * var(--study-text-scale));
 }
 
 .source-section > span {
   font-weight: 850;
+  letter-spacing: 0;
+  opacity: 0.78;
 }
 
 .source-section > div {
