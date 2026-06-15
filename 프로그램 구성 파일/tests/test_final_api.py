@@ -1,8 +1,10 @@
 from base64 import b64encode
 import threading
 import time
+from urllib.parse import unquote
 
 from fastapi.testclient import TestClient
+import fitz
 
 from studyforge import api, final_api
 from studyforge.final_progress import load_final_progress
@@ -223,3 +225,40 @@ def test_source_resolve_endpoint_returns_browser_file_url(tmp_path):
 
     assert file_response.status_code == 200
     assert file_response.content == content
+
+
+def test_studyset_pdf_endpoint_returns_clean_downloadable_pdf(tmp_path, monkeypatch):
+    studysets_root = tmp_path / "문제 데이터"
+    monkeypatch.setattr(final_api, "DATA_ROOT", studysets_root)
+    monkeypatch.setattr(final_api, "STUDYSETS_ROOT", studysets_root)
+    monkeypatch.setattr(final_api, "ASSET_ROOT", studysets_root / "assets")
+    monkeypatch.setattr(final_api, "FINAL_PROGRESS_PATH", studysets_root / "progress.json")
+    client = TestClient(api.app)
+    client.post("/api/studysets", json={"title": "medchem final"})
+    markdown = """# 문제
+
+다음 중 **정답**을 고르시오.
+
+- 보기 A
+- 보기 B
+
+답: ==보기 A==
+출처: 강의자료.pdf p.3
+"""
+    client.put("/api/studysets/medchem-final", json={"markdown": markdown})
+
+    response = client.get("/api/studysets/medchem-final/pdf")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/pdf")
+    assert "medchem-final_문답.pdf" in unquote(response.headers["content-disposition"])
+    assert response.content.startswith(b"%PDF")
+    document = fitz.open(stream=response.content, filetype="pdf")
+    text = "\n".join(page.get_text() for page in document)
+    assert "medchem-final" in text
+    assert "Q1" in text
+    assert "다음 중 정답을 고르시오." in text
+    assert "보기 A" in text
+    assert "출처: 강의자료.pdf p.3" in text
+    assert "**" not in text
+    assert "==" not in text

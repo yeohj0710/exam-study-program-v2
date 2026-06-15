@@ -41,6 +41,30 @@ export async function saveStudySet(studysetId: string, markdown: string): Promis
   })
 }
 
+export async function exportStudySetPdf(studysetId: string): Promise<{ blob: Blob; filename: string }> {
+  const response = await fetch(`/api/studysets/${encodeURIComponent(studysetId)}/pdf`)
+  if (!response.ok) {
+    const detail = await response.text()
+    throw new Error(detail || response.statusText)
+  }
+  const filename = filenameFromDisposition(response.headers.get('content-disposition'), `${studysetId}_문답.pdf`)
+  return { blob: await response.blob(), filename }
+}
+
+function filenameFromDisposition(header: string | null, fallback: string) {
+  if (!header) return fallback
+  const encoded = header.match(/filename\*=utf-8''([^;]+)/i)
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded[1])
+    } catch {
+      return fallback
+    }
+  }
+  const quoted = header.match(/filename="?([^";]+)"?/i)
+  return quoted?.[1] ?? fallback
+}
+
 export async function uploadStudySetAsset(
   studysetId: string,
   contentBase64: string,

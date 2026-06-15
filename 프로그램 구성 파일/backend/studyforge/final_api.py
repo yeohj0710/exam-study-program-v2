@@ -26,6 +26,7 @@ from .final_progress import (
     save_final_progress,
 )
 from .markdown_parser import parse_studyset_markdown
+from .studyset_pdf import export_studyset_pdf
 from .studysets import create_studyset, list_studysets, read_studyset, save_studyset
 
 PROJECT_ROOT = Path(os.environ.get("STUDYFORGE_APP_ROOT", Path(__file__).resolve().parents[2]))
@@ -130,6 +131,26 @@ def get_studyset_questions(studyset_id: str) -> dict[str, object]:
     }
 
 
+@router.get("/api/studysets/{studyset_id}/pdf")
+def get_studyset_pdf(studyset_id: str) -> FileResponse:
+    markdown = _read_or_404(studyset_id)
+    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+    try:
+        output_path = export_studyset_pdf(
+            studyset_id=studyset_id,
+            questions=parsed.questions,
+            output_path=_pdf_export_path(studyset_id),
+            asset_root=_data_root(),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return FileResponse(
+        output_path,
+        media_type="application/pdf",
+        filename=f"{studyset_id}_문답.pdf",
+    )
+
+
 @router.post("/api/source/open")
 def post_source_open(request: SourceOpenRequest) -> dict[str, object]:
     target, page = _resolve_source_reference(request.reference)
@@ -225,6 +246,10 @@ def _questions_payload(questions) -> list[dict[str, object]]:
 
 def _data_root() -> Path:
     return ASSET_ROOT.parent
+
+
+def _pdf_export_path(studyset_id: str) -> Path:
+    return DATA_ROOT / "exports" / f"{studyset_id}_문답.pdf"
 
 
 def _resolve_source_reference(reference: str) -> tuple[Path, int | None]:

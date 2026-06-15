@@ -3,6 +3,7 @@ import type { MouseEvent as ReactMouseEvent } from 'react'
 import {
   Check,
   ChevronRight,
+  Download,
   Edit3,
   Eye,
   EyeOff,
@@ -23,6 +24,7 @@ import {
   fetchStudySet,
   fetchStudySets,
   fetchValidation,
+  exportStudySetPdf,
   patchQuestionProgress,
   restoreQuestionProgress,
   saveStudySet,
@@ -118,6 +120,17 @@ function applyProgress(payload: StudySetPayload | null, questionId: string, prog
   }
 }
 
+function downloadBlob(blob: Blob, filename: string) {
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
@@ -145,6 +158,7 @@ function App() {
   const [glareLevel, setGlareLevel] = useState(initialSession.glareLevel ?? defaultGlareLevel)
   const [choiceShuffleSeed, setChoiceShuffleSeed] = useState(0)
   const [refreshingStudySet, setRefreshingStudySet] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
   const [confirmShutdown, setConfirmShutdown] = useState(false)
   const [confirmShuffle, setConfirmShuffle] = useState(false)
   const [showQuestionPicker, setShowQuestionPicker] = useState(false)
@@ -277,6 +291,23 @@ function App() {
     setStudysets(await fetchStudySets())
     await refreshValidation()
   }, [markdownDraft, refreshValidation, selectedStudySetId])
+
+  const exportPdf = useCallback(async () => {
+    if (!selectedStudySetId || exportingPdf) return
+    setExportingPdf(true)
+    setError('')
+    try {
+      if (dirty) {
+        await saveMarkdown()
+      }
+      const { blob, filename } = await exportStudySetPdf(selectedStudySetId)
+      downloadBlob(blob, filename)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'PDF를 만들지 못했습니다.')
+    } finally {
+      setExportingPdf(false)
+    }
+  }, [dirty, exportingPdf, saveMarkdown, selectedStudySetId])
 
   const uploadImage = useCallback(
     async (file: File) => {
@@ -446,6 +477,11 @@ function App() {
         setShowQuestionPicker(true)
         return
       }
+      if (key === 'p' && selectedStudySetId && !exportingPdf) {
+        event.preventDefault()
+        void exportPdf()
+        return
+      }
       if (key === 'f5' && selectedStudySetId && !refreshingStudySet) {
         event.preventDefault()
         void reloadStudySet()
@@ -484,6 +520,8 @@ function App() {
     changeTextScale,
     confirmShutdown,
     confirmShuffle,
+    exportingPdf,
+    exportPdf,
     memorizeCurrent,
     refreshingStudySet,
     reloadStudySet,
@@ -633,6 +671,15 @@ function App() {
             disabled={!session.total}
           >
             {progressText}
+          </button>
+          <button
+            type="button"
+            className="side-control-button"
+            title="PDF 내보내기 (P)"
+            onClick={() => void exportPdf()}
+            disabled={!selectedStudySetId || exportingPdf}
+          >
+            <Download size={18} />
           </button>
           <button
             type="button"

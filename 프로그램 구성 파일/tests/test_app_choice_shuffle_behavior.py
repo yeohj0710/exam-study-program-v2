@@ -32,14 +32,31 @@ def test_right_study_controls_have_keyboard_shortcuts_and_tooltips():
     source = APP_TSX.read_text(encoding="utf-8")
 
     assert 'title="문제 목록 (L)"' in source
+    assert 'title="PDF 내보내기 (P)"' in source
     assert 'title="문제 데이터 다시 읽기 (F5)"' in source
     assert 'title="문제 섞기 (S)"' in source
     assert "if (key === 'l' && session.total) {" in source
     assert "setShowQuestionPicker(true)" in source
+    assert "if (key === 'p' && selectedStudySetId && !exportingPdf) {" in source
+    assert "void exportPdf()" in source
     assert "if (key === 'f5' && selectedStudySetId && !refreshingStudySet) {" in source
     assert "void reloadStudySet()" in source
     assert "if (key === 's' && session.total) {" in source
     assert "setConfirmShuffle(true)" in source
+
+
+def test_pdf_export_saves_dirty_markdown_before_downloading():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    assert "Download" in source
+    assert "exportStudySetPdf" in source
+    assert "const [exportingPdf, setExportingPdf] = useState(false)" in source
+    assert "const exportPdf = useCallback" in source
+    export_section = source[source.index("const exportPdf = useCallback") : source.index("const uploadImage = useCallback")]
+    assert "if (dirty) {" in export_section
+    assert "await saveMarkdown()" in export_section
+    assert "await exportStudySetPdf(selectedStudySetId)" in export_section
+    assert "downloadBlob(blob, filename)" in export_section
 
 
 def test_changed_question_set_reconciles_existing_order_and_cursor():
