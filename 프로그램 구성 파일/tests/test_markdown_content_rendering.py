@@ -35,3 +35,12 @@ def test_failed_markdown_image_can_be_retried_manually():
     assert 'type="button"' in source
     assert 'className="image-retry-button"' in source
     assert "다시 불러오기" in source
+
+
+def test_answer_mode_has_dedicated_explanation_label_rendering():
+    source = MARKDOWN_CONTENT.read_text(encoding="utf-8")
+
+    assert "answerMode" in source
+    assert "ANSWER_CALLOUT_RE" in source
+    assert "markdown-answer-label" in source
+    assert "stripLeadingAnswerPrefix={stripLeadingAnswerPrefix}" not in source

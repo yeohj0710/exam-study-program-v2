@@ -2,6 +2,19 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CSS_PATH = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "App.css"
+INDEX_CSS_PATH = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "index.css"
+
+
+def compact_media_css(css: str) -> str:
+    start = css.find("@media (max-width: 920px)")
+    return "" if start == -1 else css[start:]
+
+
+def optional_block(css: str, selector: str) -> str:
+    if selector not in css:
+        return ""
+    start = css.index(selector)
+    return css[start : css.index("}", start)]
 
 
 def test_inline_answer_source_has_spacing_from_answer_text():
@@ -163,12 +176,38 @@ def test_right_rail_blends_inside_open_side_panel_without_inner_divider():
     assert "display: none;" in before_block
 
 
-def test_mobile_side_panel_takes_priority_over_right_rail():
+def test_compact_width_keeps_three_column_shell_when_panels_are_open():
     css = CSS_PATH.read_text(encoding="utf-8")
-    media_start = css.index("@media (max-width: 920px)")
-    media_css = css[media_start:]
-    selector = ".final-shell.with-side-panel .study-control-rail {"
-    side_start = media_css.index(selector)
-    side_block = media_css[side_start : media_css.index("}", side_start)]
+    media_css = compact_media_css(css)
 
-    assert "display: none;" in side_block
+    assert "grid-template-columns: minmax(0, 1fr);" not in media_css
+    assert "--study-main-min-width:" in css
+    assert (
+        "width: max(100vw, calc(var(--rail-space) + var(--set-panel-width) + "
+        "var(--study-main-min-width) + var(--side-panel-width)));"
+    ) in css
+
+
+def test_compact_width_can_scroll_to_preserved_side_columns():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    index_css = INDEX_CSS_PATH.read_text(encoding="utf-8")
+
+    assert "max-width: 100vw;" not in css
+    assert "overflow-x: auto;" in index_css
+    assert "overflow-y: hidden;" in index_css
+
+
+def test_compact_width_keeps_side_panels_in_normal_grid_flow():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    media_css = compact_media_css(css)
+    panel_block = optional_block(media_css, ".set-panel-shell,\n  .side-panel-shell {")
+
+    assert "position: fixed;" not in panel_block
+
+
+def test_compact_width_keeps_right_rail_visible_with_open_side_panel():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    media_css = compact_media_css(css)
+    side_block = optional_block(media_css, ".final-shell.with-side-panel .study-control-rail {")
+
+    assert "display: none;" not in side_block

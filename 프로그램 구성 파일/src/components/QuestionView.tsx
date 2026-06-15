@@ -323,7 +323,7 @@ function RevealedPrompt({ promptMarkdown, answerMarkdown }: { promptMarkdown: st
 
 function RevealedAnswer({ promptMarkdown, answerMarkdown }: { promptMarkdown: string; answerMarkdown: string }) {
   const review = classifyChoicesForReveal(promptMarkdown, answerMarkdown)
-  if (!review) return <MarkdownContent markdown={answerMarkdown} stripLeadingAnswerPrefix />
+  if (!review) return <MarkdownContent markdown={answerMarkdown} stripLeadingAnswerPrefix answerMode />
 
   return <RevealedChoiceReview review={review} showCorrections />
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 const CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：])|\d{1,2}\s+)\s*/
 const ANSWER_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：]))\s*/
+const ANSWER_CALLOUT_RE = /^\[(정답|해설|핵심|근거|오답정리)\]\s*(.*)$/
 const maxImageLoadRetries = 2
 const retryDelayMs = 650
 
@@ -62,7 +63,7 @@ function trimEmptyEdges(block: string[]) {
   return block.slice(start, end)
 }
 
-function renderLine(line: string, key: string, stripLeadingAnswerPrefix = false) {
+function renderLine(line: string, key: string, stripLeadingAnswerPrefix = false, answerMode = false) {
   const normalized = line.trimStart()
   const image = normalized.match(/^!\[([^\]]*)]\(([^)]+)\)\s*$/)
   if (image) {
@@ -73,6 +74,16 @@ function renderLine(line: string, key: string, stripLeadingAnswerPrefix = false)
     return (
       <p className="markdown-source" key={key}>
         {renderInline(normalized)}
+      </p>
+    )
+  }
+  const answerCallout = answerMode ? normalized.match(ANSWER_CALLOUT_RE) : null
+  if (answerCallout) {
+    const [, label, body] = answerCallout
+    return (
+      <p className="markdown-answer-label" key={key}>
+        <span>{label}</span>
+        {body ? <span> {renderInline(body)}</span> : null}
       </p>
     )
   }
@@ -144,12 +155,12 @@ function renderChoiceBlock(block: string[], key: string) {
   )
 }
 
-function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAnswerPrefix = false) {
+function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAnswerPrefix = false, answerMode = false) {
   const output = []
   let index = 0
   while (index < lines.length) {
     if (!isChoiceStart(lines[index])) {
-      output.push(renderLine(lines[index], `${index}-${lines[index]}`, stripLeadingAnswerPrefix))
+      output.push(renderLine(lines[index], `${index}-${lines[index]}`, stripLeadingAnswerPrefix, answerMode))
       index += 1
       continue
     }
@@ -176,11 +187,13 @@ export function MarkdownContent({
   markdown,
   shuffleChoicesKey,
   stripLeadingAnswerPrefix,
+  answerMode,
 }: {
   markdown: string
   shuffleChoicesKey?: string
   stripLeadingAnswerPrefix?: boolean
+  answerMode?: boolean
 }) {
   const lines = markdown.split(/\r?\n/)
-  return <div className="markdown-content">{renderLines(lines, shuffleChoicesKey, stripLeadingAnswerPrefix)}</div>
+  return <div className="markdown-content">{renderLines(lines, shuffleChoicesKey, stripLeadingAnswerPrefix, answerMode)}</div>
 }
