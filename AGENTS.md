@@ -77,6 +77,14 @@ Memorization-oriented Markdown cleanup:
 - Remove visual clutter before finishing: repeated wording, redundant filler, slash-joined explanations, awkward inline parentheticals, accidental choice labels, and raw Markdown tokens that do not help recall.
 - Preserve the standard rhythm: question text, optional clean choices, `답:` with the direct answer first, short supporting lines only when needed, then `출처:` and source images.
 - In visible choices, keep wording parallel and uncluttered. Do not add emphasis, answer hints, source notes, or explanatory asides inside choices.
+- For multiple-choice or "choose all" cards, the answer area should briefly correct the wrong choices when the distractors test specific pairings, categories, mechanisms, or exceptions.
+- Keep wrong-choice corrections compact and parallel, usually `wrong pairing -> correct pairing` or `choice keyword -> correct fact`; do not write long prose for each option.
+- When every option is a term-to-category or term-to-function pairing, list the relevant mappings in the same format so the card is easy to memorize.
+- For factual multiple-choice explanations, prefer explicit O/X review lines: correct statements first, then wrong statements. Write wrong items as `X original wrong sentence -> corrected fact` so the user sees both the trap and the fix.
+- Keep revealed-answer ordering deterministic: hidden choices may be shuffled, but revealed choices and answer explanations should group O items before X items while preserving original order inside each group.
+- When regrouping revealed problem choices, keep the visible choice sentences as normal plain choices. Do not inject O/X badges, colors, corrections, or explanation text into the problem-choice area; only the order changes.
+- Revealed problem-choice regrouping may change O/X order, but must not rewrite the original choice sentence. Put correction text only in the revealed answer review.
+- Use blue/red visual treatment for revealed O/X review UI, with compact badges and spacing for wrapped lines. Do not rely on divider lines to distinguish one-line and two-line choices.
 - If a screenshot fix changes only one flawed phrase, still reread the whole question block and lightly tidy nearby answer formatting when it is messy.
 - Do not over-polish by inventing new facts, mnemonics, or explanations not grounded in the cited source. Clean structure and wording, not the evidence.
 

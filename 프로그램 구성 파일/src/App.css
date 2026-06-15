@@ -10,6 +10,8 @@
   --accent: #00856f;
   --accent-soft: #dcefeb;
   --danger: #b93838;
+  --answer-correct: #1d5fc1;
+  --answer-incorrect: #c33a36;
 }
 
 .theme-dark {
@@ -24,6 +26,8 @@
   --accent: #20c5a7;
   --accent-soft: #14332e;
   --danger: #ff7770;
+  --answer-correct: #74aeff;
+  --answer-incorrect: #ff7770;
 }
 
 #root {
@@ -491,6 +495,87 @@ button:disabled {
 .markdown-choice p {
   margin: 2px auto;
   font-weight: 500;
+}
+
+.revealed-choice-list {
+  width: min(760px, calc(100% - 20px));
+  margin: 12px auto 0;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+
+.revealed-choice {
+  --choice-review-color: var(--muted);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 11px;
+  padding: 10px 13px 10px 11px;
+  border: 1px solid color-mix(in srgb, var(--choice-review-color) 34%, var(--border));
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--choice-review-color) 7%, var(--surface-soft));
+  box-shadow: inset 3px 0 0 var(--choice-review-color);
+  color: var(--study-readable-text);
+}
+
+.revealed-choice.correct {
+  --choice-review-color: var(--answer-correct);
+}
+
+.revealed-choice.incorrect {
+  --choice-review-color: var(--answer-incorrect);
+}
+
+.revealed-choice-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--choice-review-color) 15%, var(--surface));
+  color: var(--choice-review-color);
+  font-size: calc(13px * var(--study-text-scale));
+  font-weight: 950;
+  line-height: 1;
+}
+
+.revealed-choice-body {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.revealed-choice-text,
+.revealed-choice-correction {
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+  line-break: strict;
+}
+
+.revealed-choice-text {
+  color: var(--choice-review-color);
+  font-size: calc(16px * var(--study-text-scale));
+  line-height: 1.45;
+  font-weight: 800;
+}
+
+.revealed-choice-correction {
+  color: var(--study-readable-text);
+  font-size: calc(14px * var(--study-text-scale));
+  line-height: 1.48;
+  font-weight: 700;
+}
+
+.revealed-choice.incorrect .revealed-choice-correction {
+  color: var(--answer-incorrect);
+}
+
+.answer-section .revealed-choice-list {
+  margin-top: 0;
 }
 
 .markdown-space {
