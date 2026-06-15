@@ -5,6 +5,9 @@ import { MarkdownContent } from './MarkdownContent'
 
 const SOURCE_LINE_RE = /^(?:출처|reference|source)\s*[:：]\s*/i
 const IMAGE_LINE_RE = /^!\[[^\]]*]\([^)]+\)\s*$/
+const IMAGE_PATH_RE = /!\[[^\]]*]\(([^)]+)\)/g
+const SOURCE_PAGE_TOKEN_RE = /(?:p|page|쪽|페이지|slide|슬라이드)\.?\s*(\d+)/i
+const SOURCE_PAGE_IMAGE_RE = (page: string) => new RegExp(`source-p0*${page}(?:\\D|$)`, 'i')
 const PROMPT_CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)、:：-]?|\(?\d{1,2}\)?\s*(?:번)?[.)、:：-]?)\s*/
 const ANSWER_LABEL_RE = /^(?:답|answer)\s*[:：]\s*/i
 const EXPLICIT_REVIEW_RE = /^([Oo0○Xx×✕])\s*[:.)、-]?\s*(.+)$/
@@ -379,12 +382,43 @@ function sourceLabel(reference: string) {
   return [fileName ?? reference, pageMatch?.[0]].filter(Boolean).join(' · ')
 }
 
+function isLocalFileReference(reference: string) {
+  return /^[a-zA-Z]:\\/.test(reference) || /^\\\\/.test(reference)
+}
+
+function sourceAssetUrl(path: string) {
+  if (/^[a-zA-Z]:\\/.test(path)) return `/api/external-asset?path=${encodeURIComponent(path)}`
+  if (path.startsWith('assets/')) return `/${path.split('/').map(encodeURIComponent).join('/')}`
+  return path
+}
+
+function sourceReferenceFallbackUrl(reference: string, evidenceMarkdown: string) {
+  if (isLocalFileReference(reference)) return ''
+
+  const imagePaths = Array.from(evidenceMarkdown.matchAll(IMAGE_PATH_RE), (match) => match[1]).filter(Boolean)
+  if (!imagePaths.length) return ''
+
+  const page = reference.match(SOURCE_PAGE_TOKEN_RE)?.[1]
+  if (page) {
+    const matchingPath = imagePaths.find((path) => SOURCE_PAGE_IMAGE_RE(page).test(path))
+    if (matchingPath) return sourceAssetUrl(matchingPath)
+  }
+
+  return imagePaths.length === 1 ? sourceAssetUrl(imagePaths[0]) : ''
+}
+
 function SourceReferences({ markdown }: { markdown: string }) {
   const [opening, setOpening] = useState('')
   const { references: items, evidenceMarkdown } = splitSourceMarkdown(markdown)
   if (!items.length && !evidenceMarkdown) return null
 
   async function open(reference: string) {
+    const fallbackUrl = sourceReferenceFallbackUrl(reference, evidenceMarkdown)
+    if (fallbackUrl) {
+      window.open(fallbackUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
+
     setOpening(reference)
     try {
       const source = await openSourceReference(reference)

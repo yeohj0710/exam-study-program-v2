@@ -11,3 +11,13 @@ def test_source_references_render_evidence_markdown_below_source_buttons():
     assert "sourceEvidenceMarkdown" in source
     assert 'className="source-evidence"' in source
     assert "<MarkdownContent markdown={evidenceMarkdown}" in source
+
+
+def test_relative_source_references_open_matching_evidence_image():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+
+    assert "sourceReferenceFallbackUrl" in source
+    assert "isLocalFileReference" in source
+    assert "source-p0*" in source
+    assert "if (fallbackUrl) {" in source
+    assert "window.open(fallbackUrl, '_blank', 'noopener,noreferrer')" in source
