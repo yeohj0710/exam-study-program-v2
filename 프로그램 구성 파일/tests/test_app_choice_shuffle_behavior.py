@@ -45,6 +45,40 @@ def test_right_study_controls_have_keyboard_shortcuts_and_tooltips():
     assert "setConfirmShuffle(true)" in source
 
 
+def test_default_theme_is_dark_until_user_session_overrides_it():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    default_theme_section = source[source.index("function defaultTheme") : source.index("function readSession")]
+
+    assert "return 'dark'" in default_theme_section
+    assert "prefers-color-scheme" not in default_theme_section
+    assert "const [themeMode, setThemeMode] = useState<ThemeMode>(initialSession.themeMode ?? defaultTheme())" in source
+
+
+def test_glare_controls_render_only_in_dark_mode():
+    source = APP_TSX.read_text(encoding="utf-8")
+    rail_section = source[source.index("rail={") : source.index("setPanel={")]
+
+    assert "{themeMode === 'dark' && (" in rail_section
+    assert 'aria-label="밝기 조절"' in rail_section
+    assert "changeGlareLevel(-glareStep)" in rail_section
+    assert "changeGlareLevel(glareStep)" in rail_section
+    assert "event.altKey && themeMode === 'dark' && key === '['" in source
+    assert "event.altKey && themeMode === 'dark' && key === ']'" in source
+
+
+def test_shutdown_control_is_replaced_by_passive_fullscreen_hint():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    assert "Power" not in source
+    assert "shutdownApp" not in source
+    assert "confirmShutdown" not in source
+    assert "setConfirmShutdown" not in source
+    assert 'className="rail-fullscreen-hint"' in source
+    assert 'title="전체화면 (F11)"' in source
+    assert "<Maximize2" in source
+
+
 def test_pdf_export_saves_dirty_markdown_before_downloading():
     source = APP_TSX.read_text(encoding="utf-8")
 

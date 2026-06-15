@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { openSourceReference } from '../api'
 import type { Question } from '../types'
 import { MarkdownContent } from './MarkdownContent'
@@ -314,7 +314,11 @@ function RevealedPrompt({ promptMarkdown, answerMarkdown }: { promptMarkdown: st
     .filter(Boolean)
     .join('\n')
 
-  return <MarkdownContent markdown={groupedPromptMarkdown} />
+  return (
+    <div className="revealed-prompt">
+      <MarkdownContent markdown={groupedPromptMarkdown} />
+    </div>
+  )
 }
 
 function RevealedAnswer({ promptMarkdown, answerMarkdown }: { promptMarkdown: string; answerMarkdown: string }) {
@@ -432,25 +436,6 @@ export function QuestionView({
   showAnswer: boolean
   choiceShuffleKey: string
 }) {
-  const headingRef = useRef<HTMLDivElement | null>(null)
-  const answerRef = useRef<HTMLElement | null>(null)
-  const mountedRef = useRef(false)
-
-  useLayoutEffect(() => {
-    if (!question) return
-    if (!mountedRef.current) {
-      mountedRef.current = true
-      return
-    }
-
-    const target = showAnswer ? answerRef.current : headingRef.current
-    if (!target) return
-    const animationFrame = window.requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: 'auto', block: 'start' })
-    })
-    return () => window.cancelAnimationFrame(animationFrame)
-  }, [choiceShuffleKey, question, showAnswer])
-
   if (!question) {
     return (
       <article className="question-view empty">
@@ -461,7 +446,7 @@ export function QuestionView({
 
   return (
     <article className={question.progress.memorized ? 'question-view memorized' : 'question-view'}>
-      <div className="question-scroll-anchor" ref={headingRef} aria-hidden="true">
+      <div className="question-scroll-anchor" aria-hidden="true">
         <span className="question-anchor" title={`문제 ${question.ordinal}`} aria-label={`문제 ${question.ordinal}`} />
       </div>
 
@@ -477,7 +462,7 @@ export function QuestionView({
 
       {showAnswer && (
         <>
-          <section className="answer-section" ref={answerRef}>
+          <section className="answer-section">
             <RevealedAnswer promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />
           </section>
           {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}

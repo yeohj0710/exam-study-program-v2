@@ -51,6 +51,8 @@ button:disabled {
 
 .final-shell {
   --rail-space: 86px;
+  --edge-rail-width: 72px;
+  --edge-rail-peek: 8px;
   --set-panel-width: 280px;
   --side-panel-width: 380px;
   position: relative;
@@ -82,17 +84,59 @@ button:disabled {
 .app-rail {
   position: absolute;
   z-index: 30;
-  inset: 18px auto 18px 14px;
+  top: 18px;
+  bottom: 18px;
+  left: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
-  width: 56px;
-  pointer-events: none;
+  width: var(--edge-rail-width);
+  opacity: 0.62;
+  pointer-events: auto;
+  transform: translateX(calc(-1 * (var(--edge-rail-width) - var(--edge-rail-peek))));
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.app-rail:hover,
+.app-rail:focus-within {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .brand-button,
-.rail-button {
+.rail-button,
+.rail-fullscreen-hint {
   pointer-events: auto;
+}
+
+.app-rail::before,
+.study-control-rail::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  width: var(--edge-rail-peek);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 26%, transparent);
+  pointer-events: none;
+}
+
+.app-rail::before {
+  right: 0;
+}
+
+.study-control-rail::before {
+  left: 0;
+}
+
+.app-rail:hover::before,
+.app-rail:focus-within::before,
+.study-control-rail:hover::before,
+.study-control-rail:focus-within::before {
+  opacity: 0;
 }
 
 .brand-button {
@@ -134,6 +178,26 @@ button:disabled {
 
 .rail-button.danger:hover {
   color: var(--danger);
+}
+
+.rail-fullscreen-hint {
+  pointer-events: auto;
+  width: 52px;
+  min-height: 34px;
+  margin-top: 4px;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1;
+  user-select: none;
+}
+
+.rail-fullscreen-hint kbd {
+  font: inherit;
+  letter-spacing: 0;
 }
 
 .rail-tool-pair {
@@ -240,18 +304,29 @@ button:disabled {
   position: fixed;
   z-index: 25;
   top: 22px;
-  right: 24px;
+  right: 0;
   bottom: 18px;
-  width: 72px;
+  width: var(--edge-rail-width);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  pointer-events: none;
+  opacity: 0.62;
+  pointer-events: auto;
+  transform: translateX(calc(var(--edge-rail-width) - var(--edge-rail-peek)));
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
 }
 
 .final-shell.with-side-panel .study-control-rail {
-  right: calc(var(--side-panel-width) + 20px);
+  right: var(--side-panel-width);
+}
+
+.study-control-rail:hover,
+.study-control-rail:focus-within {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .study-set-summary {
@@ -495,6 +570,10 @@ button:disabled {
 .markdown-choice p {
   margin: 2px auto;
   font-weight: 500;
+}
+
+.revealed-prompt .markdown-choice:first-of-type {
+  margin-top: 22px;
 }
 
 .revealed-choice-list {
@@ -1172,6 +1251,13 @@ kbd {
     width: auto;
     max-width: calc(100vw - 20px);
     overflow-x: auto;
+    opacity: 1;
+    transform: none;
+  }
+
+  .app-rail::before,
+  .study-control-rail::before {
+    display: none;
   }
 
   .rail-button.bottom {
@@ -1188,6 +1274,8 @@ kbd {
     right: 10px;
     bottom: 12px;
     width: 58px;
+    opacity: 1;
+    transform: none;
   }
 
   .progress-pill {

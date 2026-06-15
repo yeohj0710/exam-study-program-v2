@@ -45,3 +45,23 @@ def test_revealed_choice_review_marks_correct_and_incorrect_without_dividers():
     assert "--choice-review-color: var(--answer-incorrect);" in incorrect_block
     assert "gap:" in list_block
     assert "border-top:" not in list_block
+
+
+def test_revealed_prompt_keeps_same_question_to_choice_breathing_room():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+    css = CSS_PATH.read_text(encoding="utf-8")
+
+    assert 'className="revealed-prompt"' in source
+
+    selector = ".revealed-prompt .markdown-choice:first-of-type"
+    start = css.index(selector)
+    block = css[start : css.index("}", start)]
+
+    assert "margin-top:" in block
+
+
+def test_answer_reveal_toggle_does_not_force_scroll_position():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+
+    assert "scrollIntoView" not in source
+    assert "answerRef" not in source

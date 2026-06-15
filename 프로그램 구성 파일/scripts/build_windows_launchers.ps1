@@ -95,6 +95,8 @@ if (Test-Path -LiteralPath $PyInstaller) {
         --specpath (Join-Path $AppDir "build") `
         --paths (Join-Path $AppDir "backend") `
         --icon $IconPath `
+        --collect-submodules "reportlab" `
+        --collect-data "reportlab" `
         --exclude-module pytest `
         --exclude-module pandas `
         --exclude-module matplotlib `

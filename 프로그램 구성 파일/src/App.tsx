@@ -9,8 +9,8 @@ import {
   EyeOff,
   FileText,
   Info,
+  Maximize2,
   Moon,
-  Power,
   RefreshCw,
   RotateCcw,
   Shuffle,
@@ -28,7 +28,6 @@ import {
   patchQuestionProgress,
   restoreQuestionProgress,
   saveStudySet,
-  shutdownApp,
   uploadStudySetAsset,
 } from './api'
 import './App.css'
@@ -65,8 +64,7 @@ type SessionState = {
 }
 
 function defaultTheme(): ThemeMode {
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'dark'
 }
 
 function readSession(): Partial<SessionState> {
@@ -159,7 +157,6 @@ function App() {
   const [choiceShuffleSeed, setChoiceShuffleSeed] = useState(0)
   const [refreshingStudySet, setRefreshingStudySet] = useState(false)
   const [exportingPdf, setExportingPdf] = useState(false)
-  const [confirmShutdown, setConfirmShutdown] = useState(false)
   const [confirmShuffle, setConfirmShuffle] = useState(false)
   const [showQuestionPicker, setShowQuestionPicker] = useState(false)
   const lastSeenRef = useRef('')
@@ -440,19 +437,14 @@ function App() {
         setTextScale(defaultTextScale)
         return
       }
-      if (event.altKey && key === '[') {
+      if (event.altKey && themeMode === 'dark' && key === '[') {
         event.preventDefault()
         changeGlareLevel(glareStep)
         return
       }
-      if (event.altKey && key === ']') {
+      if (event.altKey && themeMode === 'dark' && key === ']') {
         event.preventDefault()
         changeGlareLevel(-glareStep)
-        return
-      }
-      if (key === 'escape' && confirmShutdown) {
-        event.preventDefault()
-        setConfirmShutdown(false)
         return
       }
       if (key === 'escape' && confirmShuffle) {
@@ -518,7 +510,6 @@ function App() {
   }, [
     changeGlareLevel,
     changeTextScale,
-    confirmShutdown,
     confirmShuffle,
     exportingPdf,
     exportPdf,
@@ -529,6 +520,7 @@ function App() {
     selectedStudySetId,
     session,
     showQuestionPicker,
+    themeMode,
     toggleAnswer,
     toggleMarkdownEditor,
   ])
@@ -598,26 +590,28 @@ function App() {
               <ZoomOut size={17} />
             </button>
           </div>
-          <div className="rail-tool-pair" aria-label="밝기 조절">
-            <button
-              type="button"
-              className="rail-button compact"
-              title={`밝기 높이기 (Alt+]) · ${brightnessPercent}%`}
-              onClick={() => changeGlareLevel(-glareStep)}
-            >
-              <span className="rail-mark">+</span>
-              <SunMedium size={17} />
-            </button>
-            <button
-              type="button"
-              className="rail-button compact"
-              title={`밝기 낮추기 (Alt+[) · ${brightnessPercent}%`}
-              onClick={() => changeGlareLevel(glareStep)}
-            >
-              <span className="rail-mark">-</span>
-              <SunDim size={17} />
-            </button>
-          </div>
+          {themeMode === 'dark' && (
+            <div className="rail-tool-pair" aria-label="밝기 조절">
+              <button
+                type="button"
+                className="rail-button compact"
+                title={`밝기 높이기 (Alt+]) · ${brightnessPercent}%`}
+                onClick={() => changeGlareLevel(-glareStep)}
+              >
+                <span className="rail-mark">+</span>
+                <SunMedium size={17} />
+              </button>
+              <button
+                type="button"
+                className="rail-button compact"
+                title={`밝기 낮추기 (Alt+[) · ${brightnessPercent}%`}
+                onClick={() => changeGlareLevel(glareStep)}
+              >
+                <span className="rail-mark">-</span>
+                <SunDim size={17} />
+              </button>
+            </div>
+          )}
           <button
             type="button"
             className="rail-button bottom"
@@ -626,16 +620,10 @@ function App() {
           >
             {themeMode === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
-          <button
-            type="button"
-            className="rail-button danger"
-            title="종료"
-            onClick={() => {
-              setConfirmShutdown(true)
-            }}
-          >
-            <Power size={19} />
-          </button>
+          <div className="rail-fullscreen-hint" title="전체화면 (F11)" aria-label="전체화면 (F11)">
+            <Maximize2 size={14} />
+            <kbd>F11</kbd>
+          </div>
         </aside>
       }
       setPanel={
@@ -781,28 +769,6 @@ function App() {
                   {index + 1}
                 </button>
               ))}
-            </div>
-          </section>
-        </div>
-      )}
-
-      {confirmShutdown && (
-        <div className="confirm-layer" role="presentation" onMouseDown={() => setConfirmShutdown(false)}>
-          <section
-            className="confirm-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-label="프로그램 종료 확인"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <p>프로그램을 종료할까요?</p>
-            <div>
-              <button type="button" className="composer-button" onClick={() => setConfirmShutdown(false)}>
-                취소
-              </button>
-              <button type="button" className="composer-button danger-action" onClick={() => void shutdownApp()}>
-                종료
-              </button>
             </div>
           </section>
         </div>

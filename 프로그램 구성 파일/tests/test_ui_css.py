@@ -93,3 +93,40 @@ def test_right_study_controls_are_minimal_until_hovered():
         block = css[start : css.index("}", start)]
         assert "border-color: var(--border);" in block
         assert "background: var(--surface);" in block
+
+
+def test_edge_rails_peek_until_hover_or_focus():
+    css = CSS_PATH.read_text(encoding="utf-8")
+
+    app_start = css.index(".app-rail {")
+    app_block = css[app_start : css.index("}", app_start)]
+    controls_start = css.index(".study-control-rail {")
+    controls_block = css[controls_start : css.index("}", controls_start)]
+
+    assert "--edge-rail-width:" in css
+    assert "--edge-rail-peek:" in css
+    assert "left: 0;" in app_block
+    assert "right: 0;" in controls_block
+    assert "width: var(--edge-rail-width);" in app_block
+    assert "width: var(--edge-rail-width);" in controls_block
+    assert "transform: translateX(calc(-1 * (var(--edge-rail-width) - var(--edge-rail-peek))));" in app_block
+    assert "transform: translateX(calc(var(--edge-rail-width) - var(--edge-rail-peek)));" in controls_block
+
+    for selector in [
+        ".app-rail:hover,\n.app-rail:focus-within",
+        ".study-control-rail:hover,\n.study-control-rail:focus-within",
+    ]:
+        start = css.index(selector)
+        block = css[start : css.index("}", start)]
+        assert "transform: translateX(0);" in block
+
+    assert ".app-rail::before,\n.study-control-rail::before" in css
+
+
+def test_right_rail_uses_left_edge_spacing_when_side_panel_is_open():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    side_start = css.index(".final-shell.with-side-panel .study-control-rail")
+    side_block = css[side_start : css.index("}", side_start)]
+
+    assert "right: var(--side-panel-width);" in side_block
+    assert "right: calc(var(--side-panel-width) + 20px);" not in side_block
