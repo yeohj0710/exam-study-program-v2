@@ -463,6 +463,9 @@ export function QuestionView({
       {showAnswer && (
         <>
           <section className="answer-section">
+            <p className="markdown-answer-label primary">
+              <span>답</span>
+            </p>
             <RevealedAnswer promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />
           </section>
           {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}

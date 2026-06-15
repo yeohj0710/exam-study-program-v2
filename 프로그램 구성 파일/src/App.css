@@ -829,6 +829,11 @@ button:disabled {
   color: inherit;
 }
 
+.answer-section .markdown-answer-label.primary {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
 .answer-section .markdown-content .markdown-source {
   margin-top: 28px;
   padding-top: 14px;

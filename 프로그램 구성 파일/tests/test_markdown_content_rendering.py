@@ -44,3 +44,11 @@ def test_answer_mode_has_dedicated_explanation_label_rendering():
     assert "ANSWER_CALLOUT_RE" in source
     assert "markdown-answer-label" in source
     assert "stripLeadingAnswerPrefix={stripLeadingAnswerPrefix}" not in source
+
+
+def test_question_view_has_dedicated_answer_label_before_answer_body():
+    question_view = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "components" / "QuestionView.tsx"
+    source = question_view.read_text(encoding="utf-8")
+
+    assert "markdown-answer-label primary" in source
+    assert "<span>답</span>" in source
