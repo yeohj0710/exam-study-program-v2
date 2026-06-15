@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
@@ -15,7 +15,7 @@
         padding: 32px 18px;
       }
       main {
-        max-width: 860px;
+        max-width: 880px;
         margin: 0 auto;
         background: #fbfbf8;
         border: 1px solid #d7d8d3;
@@ -23,7 +23,8 @@
         padding: 30px;
       }
       h1,
-      h2 {
+      h2,
+      h3 {
         margin: 0;
         line-height: 1.25;
       }
@@ -31,8 +32,12 @@
         font-size: 30px;
       }
       h2 {
-        margin-top: 28px;
-        font-size: 20px;
+        margin-top: 30px;
+        font-size: 21px;
+      }
+      h3 {
+        margin-top: 18px;
+        font-size: 17px;
       }
       p,
       li {
@@ -54,7 +59,7 @@
         padding: 14px;
       }
       .lead {
-        color: #727879;
+        color: #586061;
       }
       .box {
         border: 1px solid #d7d8d3;
@@ -62,61 +67,107 @@
         background: #f4f4f1;
         padding: 14px 16px;
       }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+      }
+      .card {
+        border: 1px solid #d7d8d3;
+        border-radius: 8px;
+        background: #fff;
+        padding: 14px 16px;
+      }
+      @media (max-width: 640px) {
+        body {
+          padding: 14px;
+        }
+        main {
+          padding: 20px;
+        }
+      }
     </style>
   </head>
   <body>
     <main>
       <h1>Exam Study Program 사용설명서</h1>
-      <p class="lead">Markdown 문제 데이터로 시험 문항을 섞어서 암기하는 로컬 프로그램입니다.</p>
+      <p class="lead">시험 자료를 문제 데이터로 바꾸고, 로컬 화면에서 정답을 가리며 반복 암기하는 프로그램입니다.</p>
 
       <h2>1. 실행</h2>
       <ol>
-        <li><code>시험 자료 암기 프로그램.exe</code>를 실행합니다.</li>
-        <li>종료할 때는 왼쪽 아래 전원 버튼을 누르고 확인합니다.</li>
-        <li>전체화면은 브라우저 기본 단축키 <kbd>F11</kbd>을 사용합니다.</li>
+        <li><code>시험 자료 암기 프로그램.exe</code>를 더블클릭합니다.</li>
+        <li>브라우저에 Exam Study 화면이 열리면 왼쪽 목록에서 공부할 문제 세트를 고릅니다.</li>
+        <li>공부를 끝낼 때는 열린 Exam Study 브라우저 창을 닫습니다.</li>
       </ol>
+      <p>exe가 막히면 <code>시험 자료 암기 프로그램.cmd</code>를 실행합니다.</p>
 
-      <h2>2. 데이터 위치</h2>
-      <div class="box"><code>C:\dev\exam-study-program\문제 데이터</code></div>
-      <p>이 폴더의 <code>.md</code> 파일이 문제 세트입니다. 파일명이 과목명처럼 표시됩니다.</p>
+      <h2>2. 문제 데이터 만들기</h2>
+      <p>
+        문제 양식은 사람이 외울 필요가 없습니다. <code>문제 데이터 작성 프롬프트.txt</code>를 로컬 PC에서
+        파일을 읽을 수 있는 AI에 넣고, 마지막에 시험 자료 폴더 경로만 붙이면 됩니다.
+      </p>
+      <ol>
+        <li><code>문제 데이터 작성 프롬프트.txt</code>를 엽니다.</li>
+        <li>파일 내용을 전부 복사해서 Codex, Claude Code 같은 로컬 작업 가능한 AI에 붙여넣습니다.</li>
+        <li>프롬프트 맨 마지막 <code>시험범위 자료 경로:</code> 아래에 자료 폴더 경로만 붙여넣습니다.</li>
+      </ol>
+      <pre><code>시험범위 자료 경로:
+G:\내 드라이브\과목명\기말고사 범위 자료</code></pre>
+      <p>
+        AI가 과목명, 시험명, 저장 위치, 문제 수를 스스로 판단합니다. 결과 Markdown은
+        <code>문제 데이터</code> 폴더에, 이미지는 <code>문제 데이터\assets</code> 아래에 저장됩니다.
+      </p>
+      <p>새 문제 데이터를 만든 뒤에는 앱에서 <kbd>F5</kbd>를 누르거나 새로고침 버튼을 눌러 다시 읽습니다.</p>
 
-      <h2>3. Markdown 형식</h2>
-      <pre><code># 문제
+      <h2>3. 더 좋은 문제를 뽑는 팁</h2>
+      <div class="grid">
+        <section class="card">
+          <h3>기출이 제일 중요</h3>
+          <p>기출, 복원 문제, 족보, 예상문제가 있으면 자료 폴더에 같이 넣습니다. 문제 유형과 함정까지 가장 잘 알려 줍니다.</p>
+        </section>
+        <section class="card">
+          <h3>시험 유형을 알려주기</h3>
+          <p>단답형, O/X, 객관식, 빈칸, 짧은 서술형, 계산 문제처럼 실제 시험 형식을 구체적으로 적으면 좋습니다.</p>
+        </section>
+        <section class="card">
+          <h3>출제자 힌트 넣기</h3>
+          <p>교수님이 강조한 말, 빨간 글씨, 별표, 반복 설명, 비교표, 예외 조건처럼 시험에 가까운 힌트를 적습니다.</p>
+        </section>
+        <section class="card">
+          <h3>좋은 레퍼런스 주기</h3>
+          <p>이전에 잘 만든 정리자료나 문제 세트가 있으면 참고용으로 알려줍니다. 현재 문제의 출처는 현재 시험범위 자료 안에서만 잡습니다.</p>
+        </section>
+      </div>
 
-실제 문제 텍스트를 바로 적습니다.
-
-- 보기 A
-  여러 줄 보기도 가능합니다.
-  ![그림 설명](assets/과목명/example.png)
-
-- 보기 B
-
-답: **정답 내용**
-출처: 강의자료.pdf p.12
-![정답 그림](assets/과목명/answer.png)</code></pre>
-      <ul>
-        <li>문항은 <code># 문제</code> 구분선으로 시작하고, 실제 문제 텍스트는 그 아래에 바로 씁니다.</li>
-        <li>답을 유추하게 만드는 문제 제목은 쓰지 않습니다.</li>
-        <li>보기는 없어도 되고, 필요할 때만 <code>- 보기</code>로 씁니다.</li>
-        <li>보기 다음 줄들은 다음 <code>- 보기</code> 전까지 같은 보기로 묶입니다.</li>
-        <li>답은 <code>답:</code> 또는 <code>정답:</code>으로 시작합니다.</li>
-        <li>답안의 핵심 단어는 <code>**굵게**</code>로 표시할 수 있고, 답안 영역에서는 강조색으로 보입니다.</li>
-        <li>가능하면 답안에 <code>출처:</code>를 함께 적습니다.</li>
-        <li>그림 이름은 화면에 표시되지 않고 툴팁으로만 남습니다.</li>
-      </ul>
-
-      <h2>4. 조작</h2>
+      <h2>4. 공부 조작</h2>
       <ul>
         <li><kbd>J</kbd> 또는 <kbd>Space</kbd>: 정답 보기/숨기기</li>
         <li><kbd>K</kbd> 또는 <kbd>→</kbd>: 다음 문제</li>
-        <li><kbd>1</kbd>: 암기 완료</li>
+        <li><kbd>1</kbd>: 암기 완료로 넘기기</li>
         <li><kbd>R</kbd>: 암기 완료 복구</li>
-        <li><kbd>Ctrl+B</kbd>: 문제 데이터 패널</li>
-        <li><kbd>Ctrl+E</kbd>: Markdown 편집 패널</li>
-        <li><kbd>Ctrl+I</kbd>: 검증 패널</li>
-        <li><kbd>Ctrl+-</kbd>, <kbd>Ctrl+=</kbd>, <kbd>Ctrl+0</kbd>: 글자 크기 조절/초기화</li>
-        <li><kbd>Alt+[</kbd>, <kbd>Alt+]</kbd>: 다크모드 눈부심 조절</li>
+        <li><kbd>S</kbd>: 문제 순서 섞기</li>
+        <li><kbd>L</kbd>: 문제 번호 목록 열기</li>
+        <li><kbd>/</kbd>: 문제 데이터 검색</li>
+        <li><kbd>P</kbd>: 전체 문답 PDF 내보내기</li>
+        <li><kbd>F5</kbd>: 문제 데이터 다시 읽기</li>
+        <li><kbd>F11</kbd>: 브라우저 전체화면</li>
       </ul>
+
+      <h2>5. 패널과 편집</h2>
+      <ul>
+        <li><kbd>Ctrl+B</kbd>: 문제 데이터 패널 열기/닫기</li>
+        <li><kbd>Ctrl+E</kbd>: Markdown 편집 패널 열기/닫기</li>
+        <li><kbd>Ctrl+I</kbd>: 검증 패널 열기/닫기</li>
+        <li><kbd>Ctrl+-</kbd>, <kbd>Ctrl+=</kbd>, <kbd>Ctrl+0</kbd>: 글자 크기 조절/초기화</li>
+        <li>다크모드에서 <kbd>Alt+[</kbd>, <kbd>Alt+]</kbd>: 화면 밝기 조절</li>
+      </ul>
+      <p>Markdown 편집 패널에서는 현재 문제 데이터를 바로 수정하고 저장할 수 있습니다. 검증 패널은 빠진 답, 깨진 이미지, 형식 문제를 보여줍니다.</p>
+
+      <h2>6. PDF 내보내기</h2>
+      <div class="box">
+        <p><strong>문답 PDF</strong>: 문제, 답, 출처, 출처 이미지를 포함한 자세한 PDF입니다.</p>
+        <p><strong>5분 문답 PDF</strong>: 시험 직전 훑기용으로 문제와 핵심 답만 모은 짧은 PDF입니다.</p>
+      </div>
     </main>
   </body>
 </html>
