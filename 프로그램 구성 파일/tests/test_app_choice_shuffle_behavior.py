@@ -20,11 +20,26 @@ def test_manual_reload_button_refetches_current_studyset_without_reshuffling():
     assert "RefreshCw" in source
     assert "const reloadStudySet = useCallback" in source
     assert "await fetchStudySet(selectedStudySetId)" in source
-    assert "문제 데이터 다시 읽기" in source
-    assert "lastSeenRef.current = session.currentQuestion?.id ?? ''" in source
+    assert "문제 데이터 다시 읽기 (F5)" in source
+    assert "const currentQuestionId = session.currentQuestion?.id ?? ''" in source
+    assert "lastSeenRef.current = currentQuestionId" in source
     assert "setRefreshingStudySet(false)" in source
     reload_section = source[source.index("const reloadStudySet = useCallback") : source.index("const saveMarkdown = useCallback")]
     assert "session.reshuffle()" not in reload_section
+
+
+def test_right_study_controls_have_keyboard_shortcuts_and_tooltips():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    assert 'title="문제 목록 (L)"' in source
+    assert 'title="문제 데이터 다시 읽기 (F5)"' in source
+    assert 'title="문제 섞기 (S)"' in source
+    assert "if (key === 'l' && session.total) {" in source
+    assert "setShowQuestionPicker(true)" in source
+    assert "if (key === 'f5' && selectedStudySetId && !refreshingStudySet) {" in source
+    assert "void reloadStudySet()" in source
+    assert "if (key === 's' && session.total) {" in source
+    assert "setConfirmShuffle(true)" in source
 
 
 def test_changed_question_set_reconciles_existing_order_and_cursor():

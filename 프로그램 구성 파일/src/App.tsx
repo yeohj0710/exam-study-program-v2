@@ -151,6 +151,7 @@ function App() {
   const lastSeenRef = useRef('')
 
   const session = useStudySession(selectedStudySetId, payload?.questions ?? [])
+  const currentQuestionId = session.currentQuestion?.id ?? ''
   const dirty = markdownDraft !== savedMarkdown
   const showSidePanel = showEditor || showInfo
 
@@ -254,7 +255,7 @@ function App() {
     setError('')
     try {
       const nextPayload = await fetchStudySet(selectedStudySetId)
-      lastSeenRef.current = session.currentQuestion?.id ?? ''
+      lastSeenRef.current = currentQuestionId
       setPayload(nextPayload)
       setMarkdownDraft(nextPayload.markdown)
       setSavedMarkdown(nextPayload.markdown)
@@ -265,7 +266,7 @@ function App() {
     } finally {
       setRefreshingStudySet(false)
     }
-  }, [dirty, refreshValidation, refreshingStudySet, selectedStudySetId, session.currentQuestion?.id])
+  }, [currentQuestionId, dirty, refreshValidation, refreshingStudySet, selectedStudySetId])
 
   const saveMarkdown = useCallback(async () => {
     if (!selectedStudySetId) return
@@ -440,6 +441,21 @@ function App() {
         window.setTimeout(() => document.querySelector<HTMLInputElement>('[data-studyset-search]')?.focus(), 0)
         return
       }
+      if (key === 'l' && session.total) {
+        event.preventDefault()
+        setShowQuestionPicker(true)
+        return
+      }
+      if (key === 'f5' && selectedStudySetId && !refreshingStudySet) {
+        event.preventDefault()
+        void reloadStudySet()
+        return
+      }
+      if (key === 's' && session.total) {
+        event.preventDefault()
+        setConfirmShuffle(true)
+        return
+      }
       if (key === 'j' || key === ' ') {
         event.preventDefault()
         void toggleAnswer()
@@ -469,7 +485,10 @@ function App() {
     confirmShutdown,
     confirmShuffle,
     memorizeCurrent,
+    refreshingStudySet,
+    reloadStudySet,
     restoreCurrent,
+    selectedStudySetId,
     session,
     showQuestionPicker,
     toggleAnswer,
@@ -609,7 +628,7 @@ function App() {
           <button
             type="button"
             className="progress-pill progress-button"
-            title="문제 목록"
+            title="문제 목록 (L)"
             onClick={() => setShowQuestionPicker(true)}
             disabled={!session.total}
           >
@@ -618,7 +637,7 @@ function App() {
           <button
             type="button"
             className="side-control-button"
-            title="문제 데이터 다시 읽기"
+            title="문제 데이터 다시 읽기 (F5)"
             onClick={() => void reloadStudySet()}
             disabled={!selectedStudySetId || refreshingStudySet}
           >
@@ -627,7 +646,7 @@ function App() {
           <button
             type="button"
             className="side-control-button"
-            title="문제 섞기"
+            title="문제 섞기 (S)"
             onClick={() => setConfirmShuffle(true)}
             disabled={!session.total}
           >

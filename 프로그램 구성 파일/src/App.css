@@ -299,10 +299,14 @@ button:disabled {
   padding: 0;
   color: var(--muted);
   font-weight: 800;
+  border-color: transparent;
+  background: transparent;
 }
 
-.progress-button:hover {
-  border-color: var(--accent);
+.progress-button:hover,
+.progress-button:focus-visible {
+  border-color: var(--border);
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -319,10 +323,14 @@ button:disabled {
   width: 52px;
   justify-content: center;
   padding: 0;
+  border-color: transparent;
+  background: transparent;
 }
 
-.side-control-button:hover {
-  border-color: var(--accent);
+.side-control-button:hover,
+.side-control-button:focus-visible {
+  border-color: var(--border);
+  background: var(--surface);
 }
 
 .question-view {
@@ -661,14 +669,14 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 0;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  background: transparent;
   color: var(--text);
   font-weight: 900;
   white-space: nowrap;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(16px);
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .composer-button:first-child {
@@ -681,9 +689,10 @@ button:disabled {
   color: var(--accent);
 }
 
-.composer-button:hover {
-  border-color: var(--accent);
-  background: var(--surface-strong);
+.composer-button:hover,
+.composer-button:focus-visible {
+  border-color: var(--border);
+  background: var(--surface);
 }
 
 .composer-button.danger-action {
