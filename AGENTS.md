@@ -42,6 +42,47 @@ Important implementation paths:
 - `프로그램 구성 파일\scripts\build_windows_launchers.ps1`: exe/icon rebuild.
 - `프로그램 구성 파일\dist\`: built frontend committed for distribution.
 - `프로그램 구성 파일\data\library.json`: generated study library.
+- `문제 데이터\`: user-facing Markdown study/question sets and their assets.
+
+## Exam Study Markdown Data Work
+
+When the user asks to create, extend, repair, or polish Exam Study Markdown data, do not rely on this file alone. First open and follow:
+- `시험공부자료 MD 작성 프롬프트.txt`
+- `프로그램 구성 파일\prompts\시험공부자료 MD 작성 상세 프롬프트.txt`
+- `프로그램 구성 파일\prompts\시험공부자료 MD 작성 실패사례와 처리원칙.txt`
+- `프로그램 구성 파일\prompts\시험공부자료 MD 작성 품질 규정집.txt`
+
+Use those files whenever the request mentions any of these, even indirectly:
+- 시험공부자료, 문제 데이터, Markdown 문제, 정리자료, 암기자료, 문제셋, 출처 이미지, 기출 복원.
+- "이 문항 고쳐줘", "보기 이상함", "풀이 개선", "더 외우기 좋게", or similar feedback about an Exam Study card.
+- A screenshot of the Exam Study app or exported question view.
+
+For new Markdown data:
+- Save final Markdown directly under `문제 데이터`.
+- Save images under `문제 데이터\assets\<Markdown 파일명>\...`.
+- Use only the user-provided exam-scope path for question facts and `출처:` lines.
+- Follow the prompt files and quality rulebook before writing any final data.
+
+For existing Markdown data edits:
+- First identify the target Markdown under `문제 데이터` and read the surrounding question block.
+- Preserve the existing problem count unless the user explicitly asks to add or remove questions.
+- Keep every edited question with `답:` and `출처:` lines and keep asset links relative.
+- Re-run parser/tests or a focused structural check before reporting completion.
+
+For screenshot-based study-card fixes:
+- Inspect visible clues: card number, subject/course text, question wording, answer wording, `출처:` line, source image filename/path, and visible asset names.
+- Search `문제 데이터\*.md` for distinctive question or answer text from the screenshot.
+- If exact text search fails, search by subject name, source file name, page number, or visible keywords.
+- If exactly one Markdown question block is confidently identified, edit that block according to the prompt files and quality rulebook.
+- If multiple candidates match or the target cannot be identified from the screenshot, ask the user for the Markdown filename or one more identifying clue before editing.
+- Do not invent source facts from the screenshot. Use the existing Markdown and the source files already cited by that question when content must be corrected.
+
+Common quality failures to prevent:
+- Shuffled choices containing labels/numbers such as `- ㄱ.`, `- ①`, or `- 5.`.
+- Answers/explanations referring to removed choice labels such as `답: ㄱ, ㄴ`, `ㄴ은`, or `ㄷ은`.
+- Emphasis inside visible choices, such as `**...**` or `==...==`, that reveals the answer before reveal.
+- Multiple answer or explanation sentences joined with ` / ` instead of line breaks.
+- Existing set edits that accidentally change the number of `# 문제` blocks.
 
 ## Current UI Decisions
 
@@ -100,24 +141,24 @@ Regression fixed here:
 
 ## Build And Verification
 
-Use PowerShell from `C:\dev\exam-study-program`.
+Use PowerShell from `C:\dev\exam-study-program-v2`.
 
 Frontend:
 ```powershell
-cd "C:\dev\exam-study-program\프로그램 구성 파일"
+cd "C:\dev\exam-study-program-v2\프로그램 구성 파일"
 npm run lint
 npm run build
 ```
 
 Backend tests:
 ```powershell
-cd "C:\dev\exam-study-program\프로그램 구성 파일"
+cd "C:\dev\exam-study-program-v2\프로그램 구성 파일"
 python -m pytest
 ```
 
 Windows launchers:
 ```powershell
-cd "C:\dev\exam-study-program"
+cd "C:\dev\exam-study-program-v2"
 powershell -NoProfile -ExecutionPolicy Bypass -File "프로그램 구성 파일\scripts\build_windows_launchers.ps1"
 ```
 
@@ -142,7 +183,7 @@ Windows Explorer may cache exe icons. If icon changes appear stale, refresh Expl
 
 ## GitHub Deployment
 
-Remote: `https://github.com/yeohj0710/studyforge.git`
+Remote: `https://github.com/yeohj0710/exam-study-program-v2.git`
 
 Deployment for this project currently means committing and pushing the runnable Windows distribution to `main`, including:
 - root exe when rebuilt,
