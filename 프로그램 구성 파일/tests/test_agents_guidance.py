@@ -22,6 +22,10 @@ def test_agents_routes_exam_study_markdown_work_to_prompt_files():
         "`ㄴ은`",
         "`**...**`",
         "` / `",
+        "Memorization-oriented Markdown cleanup",
+        "one idea per line",
+        "Do not turn answers into long paragraphs",
+        "Remove visual clutter before finishing",
     ]
     for phrase in required_phrases:
         assert phrase in agents

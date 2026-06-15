@@ -69,6 +69,17 @@ For existing Markdown data edits:
 - Keep every edited question with `답:` and `출처:` lines and keep asset links relative.
 - Re-run parser/tests or a focused structural check before reporting completion.
 
+Memorization-oriented Markdown cleanup:
+- Treat every edit as a study-screen readability edit, not just a factual patch.
+- Make the edited block clean, compact, and easy to memorize when rendered in the app.
+- Keep one idea per line when an answer or explanation contains multiple facts, exceptions, examples, or cause-effect links.
+- Do not turn answers into long paragraphs. Split dense explanations into short answer lines, but do not add arbitrary labels such as `핵심:`, `요약:`, or `암기포인트:`.
+- Remove visual clutter before finishing: repeated wording, redundant filler, slash-joined explanations, awkward inline parentheticals, accidental choice labels, and raw Markdown tokens that do not help recall.
+- Preserve the standard rhythm: question text, optional clean choices, `답:` with the direct answer first, short supporting lines only when needed, then `출처:` and source images.
+- In visible choices, keep wording parallel and uncluttered. Do not add emphasis, answer hints, source notes, or explanatory asides inside choices.
+- If a screenshot fix changes only one flawed phrase, still reread the whole question block and lightly tidy nearby answer formatting when it is messy.
+- Do not over-polish by inventing new facts, mnemonics, or explanations not grounded in the cited source. Clean structure and wording, not the evidence.
+
 For screenshot-based study-card fixes:
 - Inspect visible clues: card number, subject/course text, question wording, answer wording, `출처:` line, source image filename/path, and visible asset names.
 - Search `문제 데이터\*.md` for distinctive question or answer text from the screenshot.
