@@ -92,6 +92,14 @@ Memorization-oriented Markdown cleanup:
 - If a screenshot fix changes only one flawed phrase, still reread the whole question block and lightly tidy nearby answer formatting when it is messy.
 - Do not over-polish by inventing new facts, mnemonics, or explanations not grounded in the cited source. Clean structure and wording, not the evidence.
 
+Last-minute PDF export:
+- Keep the existing full `문답 PDF` as the detailed export with questions, answers, source text, and source images.
+- The `5분 문답 PDF` is a separate cram export for the currently selected dataset. It should contain only compact question prompts and direct answer facts.
+- Do not include source images, `출처:` lines, long explanations, wrong-choice prose, or source-page screenshots in the `5분 문답 PDF`.
+- For O/X review answers, include only the O items as direct answer facts. Strip `//` support text and `->` corrections from the cram export.
+- If a correct answer is represented as an `O 아래 조합` block, include the following bullet mappings as the answer facts.
+- The cram export is for the final 5 minutes before an exam; prefer density, scanability, and deterministic dataset order over rich explanation.
+
 For screenshot-based study-card fixes:
 - Inspect visible clues: card number, subject/course text, question wording, answer wording, `출처:` line, source image filename/path, and visible asset names.
 - Search `문제 데이터\*.md` for distinctive question or answer text from the screenshot.

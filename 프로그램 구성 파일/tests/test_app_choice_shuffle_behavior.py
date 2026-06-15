@@ -93,6 +93,20 @@ def test_pdf_export_saves_dirty_markdown_before_downloading():
     assert "downloadBlob(blob, filename)" in export_section
 
 
+def test_cram_pdf_export_saves_dirty_markdown_before_downloading():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    assert "exportStudySetCramPdf" in source
+    assert "const [exportingCramPdf, setExportingCramPdf] = useState(false)" in source
+    assert "const exportCramPdf = useCallback" in source
+    assert 'title="5분 문답 PDF"' in source
+    export_section = source[source.index("const exportCramPdf = useCallback") : source.index("const uploadImage = useCallback")]
+    assert "if (dirty) {" in export_section
+    assert "await saveMarkdown()" in export_section
+    assert "await exportStudySetCramPdf(selectedStudySetId)" in export_section
+    assert "downloadBlob(blob, filename)" in export_section
+
+
 def test_changed_question_set_reconciles_existing_order_and_cursor():
     source = SESSION_HOOK.read_text(encoding="utf-8")
 

@@ -24,6 +24,7 @@ import {
   fetchStudySet,
   fetchStudySets,
   fetchValidation,
+  exportStudySetCramPdf,
   exportStudySetPdf,
   patchQuestionProgress,
   restoreQuestionProgress,
@@ -157,6 +158,7 @@ function App() {
   const [choiceShuffleSeed, setChoiceShuffleSeed] = useState(0)
   const [refreshingStudySet, setRefreshingStudySet] = useState(false)
   const [exportingPdf, setExportingPdf] = useState(false)
+  const [exportingCramPdf, setExportingCramPdf] = useState(false)
   const [confirmShuffle, setConfirmShuffle] = useState(false)
   const [showQuestionPicker, setShowQuestionPicker] = useState(false)
   const lastSeenRef = useRef('')
@@ -305,6 +307,23 @@ function App() {
       setExportingPdf(false)
     }
   }, [dirty, exportingPdf, saveMarkdown, selectedStudySetId])
+
+  const exportCramPdf = useCallback(async () => {
+    if (!selectedStudySetId || exportingCramPdf) return
+    setExportingCramPdf(true)
+    setError('')
+    try {
+      if (dirty) {
+        await saveMarkdown()
+      }
+      const { blob, filename } = await exportStudySetCramPdf(selectedStudySetId)
+      downloadBlob(blob, filename)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : '5분 문답 PDF를 만들지 못했습니다.')
+    } finally {
+      setExportingCramPdf(false)
+    }
+  }, [dirty, exportingCramPdf, saveMarkdown, selectedStudySetId])
 
   const uploadImage = useCallback(
     async (file: File) => {
@@ -668,6 +687,15 @@ function App() {
             disabled={!selectedStudySetId || exportingPdf}
           >
             <Download size={18} />
+          </button>
+          <button
+            type="button"
+            className="side-control-button"
+            title="5분 문답 PDF"
+            onClick={() => void exportCramPdf()}
+            disabled={!selectedStudySetId || exportingCramPdf}
+          >
+            <FileText size={18} />
           </button>
           <button
             type="button"

@@ -13,3 +13,12 @@ def test_frontend_api_exports_studyset_pdf_blob_with_filename():
     assert "await response.blob()" in source
     assert "content-disposition" in source
     assert "filename" in source
+
+
+def test_frontend_api_exports_cram_pdf_blob_with_filename():
+    source = API_TS.read_text(encoding="utf-8")
+
+    assert "export async function exportStudySetCramPdf" in source
+    assert "`/api/studysets/${encodeURIComponent(studysetId)}/cram-pdf`" in source
+    assert "5분문답.pdf" in source
+    assert "await response.blob()" in source

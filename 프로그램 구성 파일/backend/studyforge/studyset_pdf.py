@@ -69,6 +69,38 @@ def export_studyset_pdf(
     return output_path
 
 
+def export_cram_studyset_pdf(
+    *,
+    studyset_id: str,
+    questions: list[Question],
+    output_path: Path,
+) -> Path:
+    if not questions:
+        raise ValueError("studyset cram PDF export requires at least one item in questions.")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fonts = _register_fonts()
+    styles = _cram_styles(fonts["regular"], fonts["bold"])
+    doc = SimpleDocTemplate(
+        str(output_path),
+        pagesize=A5,
+        rightMargin=10 * mm,
+        leftMargin=10 * mm,
+        topMargin=10 * mm,
+        bottomMargin=12 * mm,
+        title=f"{studyset_id} 5분 문답",
+        author="Exam Study Program",
+    )
+
+    story = _build_cram_story(studyset_id, questions, styles)
+    doc.build(
+        story,
+        onFirstPage=lambda canvas, document: _draw_footer(canvas, document, studyset_id, fonts["regular"]),
+        onLaterPages=lambda canvas, document: _draw_footer(canvas, document, studyset_id, fonts["regular"]),
+    )
+    return output_path
+
+
 def _build_story(
     studyset_id: str,
     questions: list[Question],
@@ -94,6 +126,26 @@ def _build_story(
             story.append(Spacer(1, 5))
             story.append(Paragraph("출처", styles["source_label"]))
             story.extend(_render_markdown_block(question.source_markdown, asset_root, styles, style_name="source"))
+    return story
+
+
+def _build_cram_story(
+    studyset_id: str,
+    questions: list[Question],
+    styles: dict[str, ParagraphStyle],
+) -> list:
+    story: list = [
+        Paragraph(_inline_markup(studyset_id), styles["title"]),
+        Paragraph(f"{len(questions)}문항 5분 문답 PDF", styles["subtitle"]),
+        Spacer(1, 5),
+    ]
+    for question in questions:
+        prompt = _cram_prompt(question.prompt_markdown)
+        answers = _cram_answers(question.answer_markdown)
+        story.append(Paragraph(f"Q{question.ordinal}. {_inline_markup(prompt)}", styles["cram_question"]))
+        for answer in answers:
+            story.append(Paragraph(_inline_markup(answer), styles["cram_answer"]))
+        story.append(Spacer(1, 2.5))
     return story
 
 
@@ -127,6 +179,80 @@ def _render_markdown_block(
         elif not image_found:
             flowables.append(_paragraph(line, styles, style_name))
     return flowables
+
+
+def _cram_prompt(markdown: str) -> str:
+    lines: list[str] = []
+    for raw_line in markdown.replace("\r\n", "\n").replace("\r", "\n").split("\n"):
+        line = _plain_text(raw_line)
+        if not line:
+            continue
+        if IMAGE_RE.search(line) or line.startswith("출처:"):
+            continue
+        if LIST_MARKER_RE.match(line):
+            break
+        lines.append(line)
+        if len(" ".join(lines)) >= 220:
+            break
+    prompt = " ".join(lines).strip()
+    if len(prompt) > 260:
+        prompt = prompt[:257].rstrip() + "..."
+    return prompt or "문항"
+
+
+def _cram_answers(markdown: str) -> list[str]:
+    answers: list[str] = []
+    include_following_choices = False
+    for raw_line in markdown.replace("\r\n", "\n").replace("\r", "\n").split("\n"):
+        line = _plain_text(raw_line)
+        if not line:
+            include_following_choices = False
+            continue
+        if IMAGE_RE.search(line) or line.startswith("출처:"):
+            include_following_choices = False
+            continue
+        if line.startswith(("해설:", "정정:")):
+            include_following_choices = False
+            continue
+        if _is_answer_instruction(line):
+            include_following_choices = False
+            continue
+        if line.startswith("X "):
+            include_following_choices = False
+            continue
+        if line.startswith("O "):
+            answer = _direct_answer_text(line[2:].strip())
+            include_following_choices = answer.endswith("아래 조합")
+            if answer and not include_following_choices:
+                answers.append(answer)
+            continue
+        if LIST_MARKER_RE.match(line) and include_following_choices:
+            answers.append(LIST_MARKER_RE.sub("", line).strip())
+            continue
+        if not answers:
+            answer = _direct_answer_text(line)
+            if answer:
+                answers.append(answer)
+        include_following_choices = False
+    return answers or ["답 없음"]
+
+
+def _is_answer_instruction(text: str) -> bool:
+    normalized = text.replace(" ", "")
+    return normalized in {"아래표시보기", "아래보기", "아래표시", "보기참조"}
+
+
+def _direct_answer_text(text: str) -> str:
+    text = text.split("//", 1)[0].split("->", 1)[0].strip()
+    text = text.removeprefix("답:").removeprefix("정답:").strip()
+    return text
+
+
+def _plain_text(text: str) -> str:
+    text = COMMENT_RE.sub("", text).strip()
+    text = HEADING_RE.sub("", text).strip()
+    text = INLINE_TOKEN_RE.sub(lambda match: match.group(2), text)
+    return text.replace("`", "").strip()
 
 
 def _paragraph(line: str, styles: dict[str, ParagraphStyle], style_name: str) -> Paragraph:
@@ -302,6 +428,55 @@ def _styles(font_regular: str, font_bold: str) -> dict[str, ParagraphStyle]:
             leading=10,
             textColor=colors.HexColor(ACCENT),
             spaceAfter=3,
+        ),
+    }
+
+
+def _cram_styles(font_regular: str, font_bold: str) -> dict[str, ParagraphStyle]:
+    base = getSampleStyleSheet()
+    return {
+        "title": ParagraphStyle(
+            "StudyCramPdfTitle",
+            parent=base["Title"],
+            fontName=font_bold,
+            fontSize=14,
+            leading=17,
+            textColor=colors.HexColor(TEXT),
+            alignment=TA_CENTER,
+            spaceAfter=1,
+        ),
+        "subtitle": ParagraphStyle(
+            "StudyCramPdfSubtitle",
+            parent=base["BodyText"],
+            fontName=font_regular,
+            fontSize=7.8,
+            leading=9.5,
+            textColor=colors.HexColor(MUTED),
+            alignment=TA_CENTER,
+            spaceAfter=5,
+        ),
+        "cram_question": ParagraphStyle(
+            "StudyCramPdfQuestion",
+            parent=base["BodyText"],
+            fontName=font_bold,
+            fontSize=8.7,
+            leading=11.3,
+            textColor=colors.HexColor(TEXT),
+            leftIndent=0,
+            firstLineIndent=0,
+            spaceBefore=2.5,
+            spaceAfter=1.5,
+        ),
+        "cram_answer": ParagraphStyle(
+            "StudyCramPdfAnswer",
+            parent=base["BodyText"],
+            fontName=font_regular,
+            fontSize=8.35,
+            leading=10.8,
+            textColor=colors.HexColor(ACCENT),
+            leftIndent=9,
+            firstLineIndent=-5,
+            spaceAfter=0.8,
         ),
     }
 

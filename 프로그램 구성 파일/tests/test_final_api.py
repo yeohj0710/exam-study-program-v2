@@ -262,3 +262,42 @@ def test_studyset_pdf_endpoint_returns_clean_downloadable_pdf(tmp_path, monkeypa
     assert "출처: 강의자료.pdf p.3" in text
     assert "**" not in text
     assert "==" not in text
+
+
+def test_studyset_cram_pdf_endpoint_returns_last_minute_pdf(tmp_path, monkeypatch):
+    studysets_root = tmp_path / "문제 데이터"
+    monkeypatch.setattr(final_api, "DATA_ROOT", studysets_root)
+    monkeypatch.setattr(final_api, "STUDYSETS_ROOT", studysets_root)
+    monkeypatch.setattr(final_api, "ASSET_ROOT", studysets_root / "assets")
+    monkeypatch.setattr(final_api, "FINAL_PROGRESS_PATH", studysets_root / "progress.json")
+    client = TestClient(api.app)
+    client.post("/api/studysets", json={"title": "pharmacy final"})
+    markdown = """# 문제
+
+건강기능식품 원료 연결로 옳은 것을 모두 고르시오.
+
+- 코엔자임Q10은 항산화와 항고혈압에 연결된다.
+- 밀크씨슬은 전립선 건강에 연결된다.
+
+답: 아래 표시 보기
+O 코엔자임Q10은 항산화와 항고혈압에 연결된다. // CoQ10은 isoprenoid 계열이다.
+X 밀크씨슬은 전립선 건강에 연결된다. -> 밀크씨슬은 간 건강 개선과 연결된다.
+출처: 강의자료.pdf p.405
+"""
+    client.put("/api/studysets/pharmacy-final", json={"markdown": markdown})
+
+    response = client.get("/api/studysets/pharmacy-final/cram-pdf")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/pdf")
+    assert "pharmacy-final_5분문답.pdf" in unquote(response.headers["content-disposition"])
+    assert response.content.startswith(b"%PDF")
+    document = fitz.open(stream=response.content, filetype="pdf")
+    text = "\n".join(page.get_text() for page in document)
+    assert "pharmacy-final" in text
+    assert "Q1." in text
+    assert "건강기능식품 원료 연결로 옳은 것을 모두 고르시오." in text
+    assert "코엔자임Q10은 항산화와 항고혈압에 연결된다." in text
+    assert "밀크씨슬은 전립선 건강" not in text
+    assert "출처" not in text
+    assert "강의자료.pdf" not in text
