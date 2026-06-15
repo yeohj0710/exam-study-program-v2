@@ -4,7 +4,6 @@ from pathlib import Path
 
 from .final_models import StudySet
 from .hashing import slugify
-from .markdown_parser import parse_studyset_markdown
 
 
 def _studyset_path(studysets_root: Path, studyset_id: str) -> Path:
@@ -43,15 +42,11 @@ def list_studysets(studysets_root: Path) -> list[StudySet]:
 
 
 def _studyset_from_path(path: Path) -> StudySet:
-    markdown = path.read_text(encoding="utf-8")
     slug = path.stem
-    parsed = parse_studyset_markdown(markdown, studyset_id=slug, asset_root=None)
     return StudySet(
         id=slug,
         title=slug,
         slug=slug,
         path=str(path),
         updated_at=path.stat().st_mtime,
-        question_count=len(parsed.questions),
-        issue_count=len(parsed.issues),
     )

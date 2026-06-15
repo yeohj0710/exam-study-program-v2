@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：])|\d{1,2}\s+)\s*/
 const ANSWER_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：]))\s*/
+const maxImageLoadRetries = 2
+const retryDelayMs = 650
 
 function imageUrl(path: string) {
   if (/^[a-zA-Z]:\\/.test(path)) return `/api/external-asset?path=${encodeURIComponent(path)}`
@@ -83,14 +85,41 @@ function renderLine(line: string, key: string, stripLeadingAnswerPrefix = false)
 
 function MarkdownImage({ alt, path }: { alt: string; path: string }) {
   const [failed, setFailed] = useState(false)
+  const [retryRequest, setRetryRequest] = useState(0)
+  const [retryToken, setRetryToken] = useState(0)
   const src = imageUrl(path)
+  const retrySrc = retryToken ? `${src}${src.includes('?') ? '&' : '?'}retry=${retryToken}` : src
   const title = alt || path
+
+  useEffect(() => {
+    if (!retryRequest) return undefined
+    const timer = window.setTimeout(() => {
+      setRetryToken((value) => value + 1)
+    }, retryDelayMs)
+    return () => window.clearTimeout(timer)
+  }, [retryRequest])
+
+  function retryImage() {
+    setFailed(false)
+    setRetryToken((value) => value + 1)
+  }
+
+  function handleImageError() {
+    if (retryToken >= maxImageLoadRetries) {
+      setFailed(true)
+      return
+    }
+    setRetryRequest((value) => value + 1)
+  }
 
   if (failed) {
     return (
       <figure className="markdown-image broken" title={path}>
         <div>
           <strong>이미지를 불러올 수 없습니다.</strong>
+          <button type="button" className="image-retry-button" onClick={retryImage}>
+            다시 불러오기
+          </button>
         </div>
       </figure>
     )
@@ -98,7 +127,7 @@ function MarkdownImage({ alt, path }: { alt: string; path: string }) {
 
   return (
     <figure className="markdown-image" title={title}>
-      <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+      <img src={retrySrc} alt={alt} loading="lazy" onError={handleImageError} />
     </figure>
   )
 }

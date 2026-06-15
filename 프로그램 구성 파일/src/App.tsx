@@ -119,6 +119,19 @@ function applyProgress(payload: StudySetPayload | null, questionId: string, prog
   }
 }
 
+function mergeStudySetPayloadMetadata(studysets: StudySet[], payload: StudySetPayload) {
+  return studysets.map((studyset) =>
+    studyset.id === payload.id
+      ? {
+          ...studyset,
+          title: payload.title,
+          question_count: payload.questions.length,
+          issue_count: payload.issues.length,
+        }
+      : studyset,
+  )
+}
+
 function downloadBlob(blob: Blob, filename: string) {
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
@@ -137,7 +150,7 @@ function clamp(value: number, min: number, max: number) {
 function App() {
   const [initialSession] = useState<Partial<SessionState>>(() => readSession())
   const [studysets, setStudysets] = useState<StudySet[]>([])
-  const [selectedStudySetId, setSelectedStudySetId] = useState(initialSession.selectedStudySetId ?? '')
+  const [selectedStudySetId, setSelectedStudySetId] = useState('')
   const [payload, setPayload] = useState<StudySetPayload | null>(null)
   const [markdownDraft, setMarkdownDraft] = useState('')
   const [savedMarkdown, setSavedMarkdown] = useState('')
@@ -145,7 +158,7 @@ function App() {
   const [search, setSearch] = useState('')
   const [, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [showSetPanel, setShowSetPanel] = useState(initialSession.showSetPanel ?? false)
+  const [showSetPanel, setShowSetPanel] = useState(true)
   const [showEditor, setShowEditor] = useState(initialSession.showEditor ?? false)
   const [showInfo, setShowInfo] = useState(initialSession.showInfo ?? false)
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialSession.themeMode ?? defaultTheme())
@@ -162,29 +175,87 @@ function App() {
   const [confirmShuffle, setConfirmShuffle] = useState(false)
   const [showQuestionPicker, setShowQuestionPicker] = useState(false)
   const lastSeenRef = useRef('')
+  const selectedStudySetIdRef = useRef('')
+  const dirtyRef = useRef(false)
+  const preloadRunRef = useRef(0)
+  const preloadedPayloadsRef = useRef(new Map<string, StudySetPayload>())
 
   const session = useStudySession(selectedStudySetId, payload?.questions ?? [])
   const currentQuestionId = session.currentQuestion?.id ?? ''
   const dirty = markdownDraft !== savedMarkdown
   const showSidePanel = showEditor || showInfo
 
-  const refreshValidation = useCallback(async () => {
+  useEffect(() => {
+    selectedStudySetIdRef.current = selectedStudySetId
+  }, [selectedStudySetId])
+
+  useEffect(() => {
+    dirtyRef.current = dirty
+  }, [dirty])
+
+  const refreshValidation = useCallback(async (studysetId?: string) => {
+    if (!studysetId) {
+      setValidation(null)
+      return
+    }
     try {
-      setValidation(await fetchValidation())
+      setValidation(await fetchValidation(studysetId))
     } catch {
       setValidation(null)
     }
   }, [])
 
+  const preloadStudySets = useCallback(
+    async (studysetsToLoad: StudySet[]) => {
+      const runId = preloadRunRef.current + 1
+      preloadRunRef.current = runId
+
+      for (const studyset of studysetsToLoad) {
+        if (preloadRunRef.current !== runId) return
+        try {
+          const nextPayload = await fetchStudySet(studyset.id)
+          if (preloadRunRef.current !== runId) return
+
+          preloadedPayloadsRef.current.set(nextPayload.id, nextPayload)
+          setStudysets((current) => mergeStudySetPayloadMetadata(current, nextPayload))
+
+          const currentSelection = selectedStudySetIdRef.current
+          const shouldAutoDisplay = !currentSelection && !dirtyRef.current
+          const shouldRefreshCurrent = currentSelection === nextPayload.id && !dirtyRef.current
+
+          if (shouldAutoDisplay || shouldRefreshCurrent) {
+            if (shouldAutoDisplay) {
+              selectedStudySetIdRef.current = nextPayload.id
+              setSelectedStudySetId(nextPayload.id)
+            }
+            setPayload(nextPayload)
+            setMarkdownDraft(nextPayload.markdown)
+            setSavedMarkdown(nextPayload.markdown)
+            lastSeenRef.current = ''
+            void refreshValidation(nextPayload.id)
+          }
+        } catch {
+          // Keep the app usable when one dataset is malformed or temporarily unavailable.
+        }
+        await new Promise((resolve) => window.setTimeout(resolve, 0))
+      }
+    },
+    [refreshValidation],
+  )
+
   const loadStudySet = useCallback(
     async (studysetId: string) => {
-      const nextPayload = await fetchStudySet(studysetId)
+      selectedStudySetIdRef.current = studysetId
+      const cachedPayload = preloadedPayloadsRef.current.get(studysetId)
+      const nextPayload = cachedPayload ?? (await fetchStudySet(studysetId))
+      preloadedPayloadsRef.current.set(studysetId, nextPayload)
       setPayload(nextPayload)
       setMarkdownDraft(nextPayload.markdown)
       setSavedMarkdown(nextPayload.markdown)
       setSelectedStudySetId(studysetId)
+      setStudysets((current) => mergeStudySetPayloadMetadata(current, nextPayload))
       lastSeenRef.current = ''
-      await refreshValidation()
+      await refreshValidation(studysetId)
     },
     [refreshValidation],
   )
@@ -195,22 +266,21 @@ function App() {
     try {
       const nextStudysets = await fetchStudySets()
       setStudysets(nextStudysets)
-      const preferred =
-        nextStudysets.find((item) => item.id === initialSession.selectedStudySetId)?.id ?? nextStudysets[0]?.id ?? ''
-      if (preferred) {
-        await loadStudySet(preferred)
-      } else {
-        setPayload(null)
-        setMarkdownDraft('')
-        setSavedMarkdown('')
-        await refreshValidation()
-      }
+      preloadedPayloadsRef.current.clear()
+      setPayload(null)
+      setMarkdownDraft('')
+      setSavedMarkdown('')
+      setSelectedStudySetId('')
+      selectedStudySetIdRef.current = ''
+      setShowSetPanel(true)
+      setValidation(null)
+      window.setTimeout(() => void preloadStudySets(nextStudysets), 0)
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : '문제 데이터를 불러오지 못했습니다.')
     } finally {
       setLoading(false)
     }
-  }, [initialSession.selectedStudySetId, loadStudySet, refreshValidation])
+  }, [preloadStudySets])
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -268,12 +338,13 @@ function App() {
     setError('')
     try {
       const nextPayload = await fetchStudySet(selectedStudySetId)
+      preloadedPayloadsRef.current.set(selectedStudySetId, nextPayload)
       lastSeenRef.current = currentQuestionId
       setPayload(nextPayload)
       setMarkdownDraft(nextPayload.markdown)
       setSavedMarkdown(nextPayload.markdown)
-      setStudysets(await fetchStudySets())
-      await refreshValidation()
+      setStudysets(mergeStudySetPayloadMetadata(await fetchStudySets(), nextPayload))
+      await refreshValidation(selectedStudySetId)
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : '문제 데이터를 다시 읽지 못했습니다.')
     } finally {
@@ -284,11 +355,12 @@ function App() {
   const saveMarkdown = useCallback(async () => {
     if (!selectedStudySetId) return
     const nextPayload = await saveStudySet(selectedStudySetId, markdownDraft)
+    preloadedPayloadsRef.current.set(selectedStudySetId, nextPayload)
     setPayload(nextPayload)
     setMarkdownDraft(nextPayload.markdown)
     setSavedMarkdown(nextPayload.markdown)
-    setStudysets(await fetchStudySets())
-    await refreshValidation()
+    setStudysets(mergeStudySetPayloadMetadata(await fetchStudySets(), nextPayload))
+    await refreshValidation(selectedStudySetId)
   }, [markdownDraft, refreshValidation, selectedStudySetId])
 
   const exportPdf = useCallback(async () => {
@@ -331,7 +403,7 @@ function App() {
       if (!file.type.startsWith('image/')) throw new Error('이미지 파일만 추가할 수 있습니다.')
       const contentBase64 = await fileToBase64(file)
       const saved = await uploadStudySetAsset(selectedStudySetId, contentBase64, file.type, file.name || 'image')
-      await refreshValidation()
+      await refreshValidation(selectedStudySetId)
       return saved.markdown
     },
     [refreshValidation, selectedStudySetId],
@@ -566,7 +638,7 @@ function App() {
           </div>
           <button
             type="button"
-            className="rail-button"
+            className={showSetPanel ? 'rail-button active' : 'rail-button'}
             title="문제 데이터 (Ctrl+B)"
             onClick={() => setShowSetPanel((value) => !value)}
           >

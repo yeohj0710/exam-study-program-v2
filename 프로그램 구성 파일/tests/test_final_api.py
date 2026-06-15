@@ -189,6 +189,44 @@ def test_validation_endpoint_includes_final_studysets_without_legacy_library(tmp
     assert payload["final"]["issues"][0]["code"] == "missing_answer"
 
 
+def test_validation_endpoint_can_scope_final_report_to_selected_studyset(tmp_path, monkeypatch):
+    studysets_root = tmp_path / "문제 데이터"
+    studysets_root.mkdir()
+    (studysets_root / "selected.md").write_text(
+        "# Question\n\nPrompt\n\n답: Answer\n",
+        encoding="utf-8",
+    )
+    (studysets_root / "unselected.md").write_text(
+        "# No answer\n<!-- sf:id: no-answer -->\n",
+        encoding="utf-8",
+    )
+    original_parse = final_api.parse_studyset_markdown
+
+    def parse_selected_only(markdown, *, studyset_id, asset_root):
+        if studyset_id == "unselected":
+            raise AssertionError("selected validation should not parse unselected studysets")
+        return original_parse(markdown, studyset_id=studyset_id, asset_root=asset_root)
+
+    monkeypatch.setattr(api, "LIBRARY_PATH", tmp_path / "missing-library.json")
+    monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")
+    monkeypatch.setattr(api, "PROGRESS_PATH", tmp_path / "progress.json")
+    monkeypatch.setattr(api, "LEGACY_ASSET_ROOT", tmp_path / "legacy-assets")
+    monkeypatch.setattr(api, "ASSET_ROOT", studysets_root / "assets")
+    monkeypatch.setattr(final_api, "STUDYSETS_ROOT", studysets_root)
+    monkeypatch.setattr(final_api, "ASSET_ROOT", studysets_root / "assets")
+    monkeypatch.setattr(final_api, "FINAL_PROGRESS_PATH", studysets_root / "progress.json")
+    monkeypatch.setattr(final_api, "parse_studyset_markdown", parse_selected_only)
+    client = TestClient(api.app)
+
+    response = client.get("/api/validation?studyset_id=selected")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["final"]["studyset_count"] == 1
+    assert payload["final"]["question_count"] == 1
+    assert payload["final"]["issues"] == []
+
+
 def test_source_open_endpoint_opens_pdf_at_page(tmp_path, monkeypatch):
     source = tmp_path / "예방약학.pdf"
     source.write_bytes(b"%PDF-1.4\n")

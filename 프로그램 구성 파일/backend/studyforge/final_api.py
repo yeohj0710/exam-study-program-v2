@@ -194,8 +194,8 @@ def get_source_file(path: str) -> FileResponse:
     return FileResponse(target, media_type=media_type)
 
 
-def validation_report() -> dict[str, object]:
-    studysets = list_studysets(STUDYSETS_ROOT)
+def validation_report(studyset_id: str | None = None) -> dict[str, object]:
+    studysets = [_studyset_for_validation(studyset_id)] if studyset_id else list_studysets(STUDYSETS_ROOT)
     issues = []
     question_count = 0
     for studyset in studysets:
@@ -210,6 +210,14 @@ def validation_report() -> dict[str, object]:
         "issue_count": len(issues),
         "issues": issues,
     }
+
+
+def _studyset_for_validation(studyset_id: str):
+    path = (STUDYSETS_ROOT / f"{studyset_id}.md").resolve()
+    root = STUDYSETS_ROOT.resolve()
+    if not path.is_relative_to(root) or not path.exists():
+        raise FileNotFoundError(studyset_id)
+    return next(item for item in list_studysets(STUDYSETS_ROOT) if item.id == studyset_id)
 
 
 @router.patch("/api/questions/{question_id}/progress")

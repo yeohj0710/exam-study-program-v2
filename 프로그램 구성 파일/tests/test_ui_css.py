@@ -123,10 +123,52 @@ def test_edge_rails_peek_until_hover_or_focus():
     assert ".app-rail::before,\n.study-control-rail::before" in css
 
 
-def test_right_rail_uses_left_edge_spacing_when_side_panel_is_open():
+def test_left_rail_blends_into_open_set_panel_without_inner_divider():
     css = CSS_PATH.read_text(encoding="utf-8")
-    side_start = css.index(".final-shell.with-side-panel .study-control-rail")
-    side_block = css[side_start : css.index("}", side_start)]
+    selector = ".final-shell.with-set-panel .app-rail {"
+    start = css.index(selector)
+    block = css[start : css.index("}", start)]
+    before_selector = ".final-shell.with-set-panel .app-rail::before {"
+    before_start = css.index(before_selector)
+    before_block = css[before_start : css.index("}", before_start)]
 
-    assert "right: var(--side-panel-width);" in side_block
-    assert "right: calc(var(--side-panel-width) + 20px);" not in side_block
+    assert "top: 0;" in block
+    assert "bottom: 0;" in block
+    assert "width: var(--rail-space);" in block
+    assert "background: var(--surface);" in block
+    assert "border-right:" not in block
+    assert "opacity: 1;" in block
+    assert "transform: none;" in block
+    assert "display: none;" in before_block
+
+
+def test_right_rail_blends_inside_open_side_panel_without_inner_divider():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    side_start = css.index(".final-shell.with-side-panel .study-control-rail {")
+    side_block = css[side_start : css.index("}", side_start)]
+    panel_selector = ".final-shell.with-side-panel .editor-panel,\n.final-shell.with-side-panel .validation-panel {"
+    panel_start = css.index(panel_selector)
+    panel_block = css[panel_start : css.index("}", panel_start)]
+    before_selector = ".final-shell.with-side-panel .study-control-rail::before {"
+    before_start = css.index(before_selector)
+    before_block = css[before_start : css.index("}", before_start)]
+
+    assert "right: calc(var(--side-panel-width) - var(--rail-space));" in side_block
+    assert "width: var(--rail-space);" in side_block
+    assert "background: var(--surface);" in side_block
+    assert "border-right:" not in side_block
+    assert "opacity: 1;" in side_block
+    assert "transform: none;" in side_block
+    assert "padding-left: calc(var(--rail-space) + 22px);" in panel_block
+    assert "display: none;" in before_block
+
+
+def test_mobile_side_panel_takes_priority_over_right_rail():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    media_start = css.index("@media (max-width: 920px)")
+    media_css = css[media_start:]
+    selector = ".final-shell.with-side-panel .study-control-rail {"
+    side_start = media_css.index(selector)
+    side_block = media_css[side_start : media_css.index("}", side_start)]
+
+    assert "display: none;" in side_block

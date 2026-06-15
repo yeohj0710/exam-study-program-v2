@@ -6,6 +6,7 @@ $LauncherDir = Join-Path $AppDir "launcher"
 $IconPath = Join-Path $AppDir "public\exam-study.ico"
 $CoreExe = Join-Path $LauncherDir "ExamStudyCore.exe"
 $LegacyCoreExe = Join-Path $LauncherDir "StudyForgeCore.exe"
+$CoreBuildDistDir = Join-Path $AppDir "build\pyinstaller-dist"
 $BootstrapSource = Join-Path $LauncherDir "StudyForgeBootstrap.cs"
 $BootstrapName = -join ((0xC2DC, 0xD5D8, 0x0020, 0xC790, 0xB8CC, 0x0020, 0xC554, 0xAE30, 0x0020, 0xD504, 0xB85C, 0xADF8, 0xB7A8, 0x002E, 0x0065, 0x0078, 0x0065) | ForEach-Object { [char]$_ })
 $BootstrapExe = Join-Path $RepoRoot $BootstrapName
@@ -80,9 +81,10 @@ finally {
 }
 
 if (Test-Path -LiteralPath $PyInstaller) {
-    if (Test-Path -LiteralPath $CoreExe) {
-        Remove-Item -LiteralPath $CoreExe -Force
+    if (Test-Path -LiteralPath $CoreBuildDistDir) {
+        Remove-Item -LiteralPath $CoreBuildDistDir -Recurse -Force
     }
+    New-Item -ItemType Directory -Path $CoreBuildDistDir | Out-Null
 
     & $PyInstaller `
         --clean `
@@ -90,7 +92,7 @@ if (Test-Path -LiteralPath $PyInstaller) {
         --onefile `
         --noconsole `
         --name "ExamStudyCore" `
-        --distpath $LauncherDir `
+        --distpath $CoreBuildDistDir `
         --workpath (Join-Path $AppDir "build\pyinstaller") `
         --specpath (Join-Path $AppDir "build") `
         --paths (Join-Path $AppDir "backend") `
@@ -106,6 +108,12 @@ if (Test-Path -LiteralPath $PyInstaller) {
     if ($LASTEXITCODE -ne 0) {
         throw "PyInstaller failed"
     }
+
+    $BuiltCoreExe = Join-Path $CoreBuildDistDir "ExamStudyCore.exe"
+    if (-not (Test-Path -LiteralPath $BuiltCoreExe)) {
+        throw "Built core executable not found: $BuiltCoreExe"
+    }
+    Copy-Item -LiteralPath $BuiltCoreExe -Destination $CoreExe -Force
 }
 elseif (Test-Path -LiteralPath $LegacyCoreExe) {
     Move-Item -LiteralPath $LegacyCoreExe -Destination $CoreExe -Force

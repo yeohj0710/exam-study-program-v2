@@ -115,8 +115,11 @@ export async function restoreQuestionProgress(questionId: string): Promise<Quest
   return payload.progress
 }
 
-export async function fetchValidation(): Promise<ValidationReport> {
-  return requestJson<ValidationReport>('/api/validation')
+export async function fetchValidation(studysetId?: string): Promise<ValidationReport> {
+  const params = new URLSearchParams()
+  if (studysetId) params.set('studyset_id', studysetId)
+  const query = params.toString()
+  return requestJson<ValidationReport>(query ? `/api/validation?${query}` : '/api/validation')
 }
 
 export async function openSourceReference(reference: string): Promise<SourceOpenResponse> {

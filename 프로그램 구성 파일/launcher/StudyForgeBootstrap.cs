@@ -103,8 +103,7 @@ internal sealed class SplashForm : Form
 
     private static Icon LoadAppIcon()
     {
-        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string appDir = Path.Combine(baseDir, "\ud504\ub85c\uadf8\ub7a8 \uad6c\uc131 \ud30c\uc77c");
+        string appDir = ResolveAppDir();
         string[] candidates = new string[]
         {
             Path.Combine(appDir, "public", "exam-study.ico"),
@@ -137,6 +136,34 @@ internal sealed class SplashForm : Form
         }
     }
 
+    private static string ResolveAppDir()
+    {
+        string folderName = "\ud504\ub85c\uadf8\ub7a8 \uad6c\uc131 \ud30c\uc77c";
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        string currentDir = Directory.GetCurrentDirectory();
+        string[] candidates = new string[]
+        {
+            Path.Combine(baseDir, folderName),
+            Path.Combine(currentDir, folderName)
+        };
+
+        foreach (string candidate in candidates)
+        {
+            try
+            {
+                if (Directory.Exists(candidate))
+                {
+                    return Path.GetFullPath(candidate);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        return Path.Combine(baseDir, folderName);
+    }
+
     private async Task StartAndMonitorAsync()
     {
         if (launchStarted)
@@ -146,13 +173,18 @@ internal sealed class SplashForm : Form
         launchStarted = true;
 
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string appDir = Path.Combine(baseDir, "\ud504\ub85c\uadf8\ub7a8 \uad6c\uc131 \ud30c\uc77c");
+        string appDir = ResolveAppDir();
         string coreExe = Path.Combine(appDir, "launcher", "ExamStudyCore.exe");
 
         if (!File.Exists(coreExe))
         {
-            ShowError("\uc2e4\ud589 \ud30c\uc77c\uc744 \ucc3e\uc744 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.", coreExe);
-            return;
+            statusLabel.Text = "\uc2e4\ud589 \ud30c\uc77c\uc744 \uc900\ube44\ud558\uace0 \uc788\uc2b5\ub2c8\ub2e4.";
+            detailLabel.Text = coreExe;
+            if (!await WaitForFileAsync(coreExe, 20000))
+            {
+                ShowError("\uc2e4\ud589 \ud30c\uc77c\uc744 \ucc3e\uc744 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.", coreExe);
+                return;
+            }
         }
 
         string instanceId = InstanceId(appDir);
@@ -220,6 +252,20 @@ internal sealed class SplashForm : Form
 
             await Task.Delay(350);
         }
+    }
+
+    private async Task<bool> WaitForFileAsync(string path, int timeoutMilliseconds)
+    {
+        DateTime deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (File.Exists(path))
+            {
+                return true;
+            }
+            await Task.Delay(350);
+        }
+        return File.Exists(path);
     }
 
     private static void OpenUrl(int port)

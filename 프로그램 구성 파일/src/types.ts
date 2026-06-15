@@ -37,8 +37,8 @@ export type StudySet = {
   slug: string
   path: string
   updated_at: number
-  question_count: number
-  issue_count: number
+  question_count: number | null
+  issue_count: number | null
 }
 
 export type StudySetPayload = {

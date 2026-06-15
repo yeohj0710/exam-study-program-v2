@@ -106,6 +106,28 @@ button:disabled {
   transform: translateX(0);
 }
 
+.final-shell.with-set-panel .app-rail {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--rail-space);
+  box-sizing: border-box;
+  padding: 18px 0;
+  opacity: 1;
+  transform: none;
+  background: var(--surface);
+}
+
+.final-shell.with-set-panel .app-rail::before {
+  display: none;
+}
+
+.final-shell.with-set-panel .brand-button {
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+}
+
 .brand-button,
 .rail-button,
 .rail-fullscreen-hint {
@@ -320,7 +342,24 @@ button:disabled {
 }
 
 .final-shell.with-side-panel .study-control-rail {
-  right: var(--side-panel-width);
+  top: 0;
+  right: calc(var(--side-panel-width) - var(--rail-space));
+  bottom: 0;
+  width: var(--rail-space);
+  box-sizing: border-box;
+  padding: 22px 0 18px;
+  opacity: 1;
+  transform: none;
+  background: var(--surface);
+}
+
+.final-shell.with-side-panel .study-control-rail::before {
+  display: none;
+}
+
+.final-shell.with-side-panel .editor-panel,
+.final-shell.with-side-panel .validation-panel {
+  padding-left: calc(var(--rail-space) + 22px);
 }
 
 .study-control-rail:hover,
@@ -723,6 +762,24 @@ button:disabled {
 .markdown-image.broken span {
   color: var(--muted);
   font-size: 13px;
+}
+
+.image-retry-button {
+  justify-self: center;
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--danger) 46%, var(--border));
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: transparent;
+  color: var(--study-readable-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.image-retry-button:hover,
+.image-retry-button:focus-visible {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface));
 }
 
 .answer-section {
@@ -1268,14 +1325,17 @@ kbd {
     flex-direction: row;
   }
 
-  .study-control-rail,
-  .final-shell.with-side-panel .study-control-rail {
+  .study-control-rail {
     top: 76px;
     right: 10px;
     bottom: 12px;
     width: 58px;
     opacity: 1;
     transform: none;
+  }
+
+  .final-shell.with-side-panel .study-control-rail {
+    display: none;
   }
 
   .progress-pill {

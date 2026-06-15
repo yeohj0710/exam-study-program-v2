@@ -45,8 +45,8 @@ class StudySet:
     slug: str
     path: str
     updated_at: float
-    question_count: int = 0
-    issue_count: int = 0
+    question_count: int | None = None
+    issue_count: int | None = None
 
 
 @dataclass

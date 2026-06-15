@@ -104,7 +104,7 @@ def get_summary() -> dict[str, object]:
 
 
 @app.get("/api/validation")
-def get_validation() -> dict[str, object]:
+def get_validation(studyset_id: str | None = None) -> dict[str, object]:
     if LIBRARY_PATH.exists():
         report = validate_library(
             require_library(),
@@ -130,7 +130,10 @@ def get_validation() -> dict[str, object]:
             "legacy_cards_missing_answer_count": 0,
             "issues": [],
         }
-    final_report = final_api.validation_report()
+    try:
+        final_report = final_api.validation_report(studyset_id=studyset_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Studyset not found.") from exc
     payload["final"] = final_report
     payload["ok"] = bool(payload["ok"]) and bool(final_report["ok"])
     return payload

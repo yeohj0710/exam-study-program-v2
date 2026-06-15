@@ -45,7 +45,7 @@ export function StudySetPanel({
           >
             <FileText size={16} />
             <span>{studyset.title}</span>
-            <strong>{studyset.question_count}</strong>
+            <strong>{studyset.question_count ?? '...'}</strong>
           </button>
         ))}
       </nav>

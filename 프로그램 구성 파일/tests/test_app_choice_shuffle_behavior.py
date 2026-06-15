@@ -6,6 +6,12 @@ APP_TSX = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "App.tsx"
 SESSION_HOOK = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "hooks" / "useStudySession.ts"
 
 
+def section_between(source: str, start_marker: str, end_marker: str) -> str:
+    start = source.index(start_marker)
+    end = source.index(end_marker, start)
+    return source[start:end]
+
+
 def test_answer_reveal_does_not_reshuffle_choices_but_answer_hide_does():
     source = APP_TSX.read_text(encoding="utf-8")
 
@@ -26,6 +32,64 @@ def test_manual_reload_button_refetches_current_studyset_without_reshuffling():
     assert "setRefreshingStudySet(false)" in source
     reload_section = source[source.index("const reloadStudySet = useCallback") : source.index("const saveMarkdown = useCallback")]
     assert "session.reshuffle()" not in reload_section
+
+
+def test_startup_lists_studysets_before_background_loading_payloads():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    initialize_section = section_between(source, "const initializeStudySets = useCallback", "useEffect(() => {")
+
+    assert "await fetchStudySets()" in initialize_section
+    assert "setStudysets(nextStudysets)" in initialize_section
+    assert "void preloadStudySets(" in initialize_section
+    assert "await fetchStudySet(" not in initialize_section
+    assert "refreshValidation(" not in initialize_section
+
+
+def test_background_preload_loads_metadata_and_auto_displays_first_available_studyset():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    preload_section = section_between(source, "const preloadStudySets = useCallback", "const loadStudySet = useCallback")
+
+    assert "for (const studyset of studysetsToLoad)" in preload_section
+    assert "const nextPayload = await fetchStudySet(studyset.id)" in preload_section
+    assert "preloadedPayloadsRef.current.set(nextPayload.id, nextPayload)" in preload_section
+    assert "setStudysets((current) => mergeStudySetPayloadMetadata(current, nextPayload))" in preload_section
+    assert "const shouldAutoDisplay = !currentSelection && !dirtyRef.current" in preload_section
+    assert "selectedStudySetIdRef.current = nextPayload.id" in preload_section
+    assert "setSelectedStudySetId(nextPayload.id)" in preload_section
+    assert "setPayload(nextPayload)" in preload_section
+    assert "setMarkdownDraft(nextPayload.markdown)" in preload_section
+    assert "void refreshValidation(nextPayload.id)" in preload_section
+
+
+def test_manual_selection_uses_background_preloaded_payload_when_available():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    load_section = section_between(source, "const loadStudySet = useCallback", "const initializeStudySets = useCallback")
+
+    assert "const cachedPayload = preloadedPayloadsRef.current.get(studysetId)" in load_section
+    assert "const nextPayload = cachedPayload ?? (await fetchStudySet(studysetId))" in load_section
+    assert "selectedStudySetIdRef.current = studysetId" in load_section
+
+
+def test_startup_opens_dataset_drawer_until_a_dataset_is_selected():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    initialize_section = section_between(source, "const initializeStudySets = useCallback", "useEffect(() => {")
+
+    assert "const [showSetPanel, setShowSetPanel] = useState(true)" in source
+    assert "setSelectedStudySetId('')" in initialize_section
+    assert "setShowSetPanel(true)" in initialize_section
+
+
+def test_validation_refresh_is_scoped_to_selected_studyset():
+    source = APP_TSX.read_text(encoding="utf-8")
+
+    load_section = section_between(source, "const loadStudySet = useCallback", "const initializeStudySets = useCallback")
+
+    assert "refreshValidation(studysetId)" in load_section
+    assert "refreshValidation()" not in load_section
 
 
 def test_right_study_controls_have_keyboard_shortcuts_and_tooltips():
@@ -65,6 +129,14 @@ def test_glare_controls_render_only_in_dark_mode():
     assert "changeGlareLevel(glareStep)" in rail_section
     assert "event.altKey && themeMode === 'dark' && key === '['" in source
     assert "event.altKey && themeMode === 'dark' && key === ']'" in source
+
+
+def test_set_panel_rail_button_reflects_open_state():
+    source = APP_TSX.read_text(encoding="utf-8")
+    rail_section = source[source.index("rail={") : source.index("setPanel={")]
+
+    assert "className={showSetPanel ? 'rail-button active' : 'rail-button'}" in rail_section
+    assert "setShowSetPanel((value) => !value)" in rail_section
 
 
 def test_shutdown_control_is_replaced_by_passive_fullscreen_hint():

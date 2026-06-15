@@ -16,3 +16,22 @@ def test_choice_prefixes_are_stripped_before_rendering():
     assert "stripLeadingAnswerPrefix" in source
     assert "\\u2460-\\u2473" in source
     assert "\\d{1,2}" in source
+
+
+def test_markdown_images_retry_transient_load_failures():
+    source = MARKDOWN_CONTENT.read_text(encoding="utf-8")
+
+    assert "maxImageLoadRetries" in source
+    assert "retryDelayMs" in source
+    assert "setRetryToken((value) => value + 1)" in source
+    assert "setFailed(false)" in source
+    assert "window.setTimeout" in source
+    assert "window.clearTimeout" in source
+
+
+def test_failed_markdown_image_can_be_retried_manually():
+    source = MARKDOWN_CONTENT.read_text(encoding="utf-8")
+
+    assert 'type="button"' in source
+    assert 'className="image-retry-button"' in source
+    assert "다시 불러오기" in source
