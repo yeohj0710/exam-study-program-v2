@@ -8,6 +8,8 @@ const IMAGE_LINE_RE = /^!\[[^\]]*]\([^)]+\)\s*$/
 const PROMPT_CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)、:：-]?|\(?\d{1,2}\)?\s*(?:번)?[.)、:：-]?)\s*/
 const ANSWER_LABEL_RE = /^(?:답|answer)\s*[:：]\s*/i
 const EXPLICIT_REVIEW_RE = /^([Oo0○Xx×✕])\s*[:.)、-]?\s*(.+)$/
+const REVIEW_ARROW_RE = /\s*(?:->|=>|→|⇒)\s*/
+const REVIEW_NOTE_RE = /\s+\/\/\s+/
 const NEGATIVE_QUESTION_RE = /(옳지\s*않|틀린|잘못된|바르지\s*않|해당하지\s*않)/
 const TOKEN_RE = /[A-Za-z0-9가-힣]{2,}/g
 const STOP_TOKENS = new Set([
@@ -110,12 +112,21 @@ function answerLines(markdown: string) {
     .filter(Boolean)
 }
 
+function splitOnFirstDelimiter(value: string, delimiter: RegExp) {
+  const match = delimiter.exec(value)
+  if (!match || match.index < 0) return [value] as const
+
+  return [value.slice(0, match.index), value.slice(match.index + match[0].length)] as const
+}
+
 function parseExplicitReviewLine(line: string): ExplicitReviewItem | null {
   const match = line.match(EXPLICIT_REVIEW_RE)
   if (!match) return null
 
   const status: ChoiceReviewStatus = /[Oo0○]/.test(match[1]) ? 'correct' : 'incorrect'
-  const [text, correction] = match[2].split(/\s*(?:->|=>|→|⇒)\s*/, 2)
+  const body = match[2].trim()
+  const [text, correction] =
+    status === 'correct' ? splitOnFirstDelimiter(body, REVIEW_NOTE_RE) : splitOnFirstDelimiter(body, REVIEW_ARROW_RE)
   return {
     status,
     text: text.trim(),
@@ -208,6 +219,36 @@ function renderInlineReviewText(text: string) {
   })
 }
 
+function splitCorrectionForDisplay(correction: string) {
+  const trimmed = correction.trim()
+  const sentenceMatch = trimmed.match(/^(.+?[.!?。！？])\s+(.+)$/)
+  if (!sentenceMatch) {
+    return { fixedText: trimmed, noteText: '' }
+  }
+
+  return { fixedText: sentenceMatch[1], noteText: sentenceMatch[2] }
+}
+
+function RevealedChoiceSupplement({ status, supplement }: { status: ChoiceReviewStatus; supplement: string }) {
+  if (status === 'correct') {
+    return (
+      <div className="revealed-choice-explanation">
+        <p className="revealed-choice-note">{renderInlineReviewText(supplement)}</p>
+      </div>
+    )
+  }
+
+  const correction = supplement
+  const { fixedText, noteText } = splitCorrectionForDisplay(correction)
+
+  return (
+    <div className="revealed-choice-correction">
+      <p className="revealed-choice-fix">{renderInlineReviewText(fixedText)}</p>
+      {noteText ? <p className="revealed-choice-note">{renderInlineReviewText(noteText)}</p> : null}
+    </div>
+  )
+}
+
 function classifyChoicesForReveal(promptMarkdown: string, answerMarkdown: string): ChoiceReview | null {
   const { stemMarkdown, choices } = splitPromptChoices(promptMarkdown)
   if (choices.length < 2) return null
@@ -222,11 +263,12 @@ function classifyChoicesForReveal(promptMarkdown: string, answerMarkdown: string
     const explicitItem = explicitStatusForChoice(choice, explicitItems)
     const selected = choiceMatchesSelectedAnswer(choice, selectedAnswers)
     const status = explicitItem?.status ?? (negativeQuestion ? (selected ? 'incorrect' : 'correct') : selected ? 'correct' : 'incorrect')
+    const explicitSupplement = explicitItem?.correction ? [explicitItem.correction] : []
 
     return {
       ...choice,
       status,
-      corrections: status === 'incorrect' ? correctionsForChoice(choice, explanationLines, explicitItem?.correction) : [],
+      corrections: status === 'incorrect' ? correctionsForChoice(choice, explanationLines, explicitItem?.correction) : explicitSupplement,
     }
   })
 
@@ -248,11 +290,8 @@ function RevealedChoiceReview({ review, showCorrections = false }: { review: Cho
           <div className="revealed-choice-body">
             <p className="revealed-choice-text">{renderInlineReviewText(choice.text)}</p>
             {showCorrections &&
-              choice.status === 'incorrect' &&
               choice.corrections.map((correction) => (
-                <p className="revealed-choice-correction" key={correction}>
-                  {renderInlineReviewText(correction)}
-                </p>
+                <RevealedChoiceSupplement status={choice.status} supplement={correction} key={correction} />
               ))}
           </div>
         </div>

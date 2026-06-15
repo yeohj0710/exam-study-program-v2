@@ -81,6 +81,10 @@ Memorization-oriented Markdown cleanup:
 - Keep wrong-choice corrections compact and parallel, usually `wrong pairing -> correct pairing` or `choice keyword -> correct fact`; do not write long prose for each option.
 - When every option is a term-to-category or term-to-function pairing, list the relevant mappings in the same format so the card is easy to memorize.
 - For factual multiple-choice explanations, prefer explicit O/X review lines: correct statements first, then wrong statements. Write wrong items as `X original wrong sentence -> corrected fact` so the user sees both the trap and the fix.
+- For wrong O/X review items, the part after `->` must first give the corrected sentence or corrected mapping. If that alone leaves the trap unclear, add one short support sentence after it. Do not use visible labels such as `옳게 고치기:`, `해설:`, `핵심:`, or `정답 조합은`.
+- For correct O review items, normally add one short support line that explains why the statement is true in easier words. The support line should not merely repeat the choice.
+- Use `O original correct sentence // one short support sentence`; the renderer shows only the support sentence below the O card, not the delimiter.
+- Ground O/X corrections and support sentences in the cited course material or cited source image. Do not add general-knowledge explanations that are not supported by that question's `출처:`.
 - Keep revealed-answer ordering deterministic: hidden choices may be shuffled, but revealed choices and answer explanations should group O items before X items while preserving original order inside each group.
 - When regrouping revealed problem choices, keep the visible choice sentences as normal plain choices. Do not inject O/X badges, colors, corrections, or explanation text into the problem-choice area; only the order changes.
 - Revealed problem-choice regrouping may change O/X order, but must not rewrite the original choice sentence. Put correction text only in the revealed answer review.

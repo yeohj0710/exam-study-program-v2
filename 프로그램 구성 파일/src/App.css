@@ -545,11 +545,14 @@ button:disabled {
 .revealed-choice-body {
   min-width: 0;
   display: grid;
-  gap: 4px;
+  gap: 5px;
 }
 
 .revealed-choice-text,
-.revealed-choice-correction {
+.revealed-choice-correction,
+.revealed-choice-explanation,
+.revealed-choice-fix,
+.revealed-choice-note {
   margin: 0;
   overflow-wrap: break-word;
   word-break: keep-all;
@@ -564,14 +567,27 @@ button:disabled {
 }
 
 .revealed-choice-correction {
-  color: var(--study-readable-text);
+  display: grid;
+  gap: 2px;
   font-size: calc(14px * var(--study-text-scale));
   line-height: 1.48;
-  font-weight: 700;
 }
 
-.revealed-choice.incorrect .revealed-choice-correction {
-  color: var(--answer-incorrect);
+.revealed-choice-explanation {
+  display: grid;
+  gap: 2px;
+  font-size: calc(14px * var(--study-text-scale));
+  line-height: 1.48;
+}
+
+.revealed-choice-fix {
+  color: var(--answer-correct);
+  font-weight: 850;
+}
+
+.revealed-choice-note {
+  color: color-mix(in srgb, var(--study-readable-text) 80%, var(--muted));
+  font-weight: 650;
 }
 
 .answer-section .revealed-choice-list {
