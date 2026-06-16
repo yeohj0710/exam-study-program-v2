@@ -78,6 +78,25 @@
         background: #fff;
         padding: 14px 16px;
       }
+      .video-frame {
+        overflow: hidden;
+        aspect-ratio: 16 / 9;
+        border: 1px solid #d7d8d3;
+        border-radius: 8px;
+        background: #000;
+      }
+      .video-frame iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+      .video-link {
+        margin-top: 10px;
+      }
+      .video-link a {
+        color: #006d5d;
+        font-weight: 700;
+      }
       @media (max-width: 640px) {
         body {
           padding: 14px;
@@ -92,6 +111,18 @@
     <main>
       <h1>Exam Study Program 사용설명서</h1>
       <p class="lead">시험 자료를 문제 데이터로 바꾸고, 로컬 화면에서 정답을 가리며 반복 암기하는 프로그램입니다.</p>
+
+      <h2>시연 영상</h2>
+      <p>처음 쓰는 경우에는 아래 시연 영상을 먼저 보면 실행, 문제 데이터 선택, 정답 확인, PDF 내보내기 흐름을 한 번에 이해할 수 있습니다.</p>
+      <div class="video-frame">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/2bAfXyoOpfo"
+          title="Exam Study Program 시연 영상"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <p class="video-link"><a href="https://www.youtube.com/watch?v=2bAfXyoOpfo">YouTube에서 시연 영상 열기</a></p>
 
       <h2>1. 실행</h2>
       <ol>
