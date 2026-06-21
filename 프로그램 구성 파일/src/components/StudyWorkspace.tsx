@@ -11,6 +11,7 @@ export function StudyWorkspace({
   glareLevel,
   rail,
   setPanel,
+  studyControls,
   children,
   sidePanel,
   onSetPanelResizeStart,
@@ -25,6 +26,7 @@ export function StudyWorkspace({
   glareLevel: number
   rail: ReactNode
   setPanel: ReactNode
+  studyControls: ReactNode
   children: ReactNode
   sidePanel: ReactNode
   onSetPanelResizeStart: (event: MouseEvent<HTMLDivElement>) => void
@@ -67,10 +69,12 @@ export function StudyWorkspace({
           <div className="resize-handle right" onMouseDown={onSetPanelResizeStart} />
         </section>
       )}
+      {!showSidePanel && studyControls}
       <section className="study-main">{children}</section>
       {showSidePanel && (
         <section className="side-panel-shell">
           <div className="resize-handle left" onMouseDown={onSidePanelResizeStart} />
+          {studyControls}
           {sidePanel}
         </section>
       )}

@@ -65,3 +65,43 @@ def test_answer_reveal_toggle_does_not_force_scroll_position():
 
     assert "scrollIntoView" not in source
     assert "answerRef" not in source
+
+
+def test_question_view_renders_structured_explanation_sections():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+    types = (PROJECT_ROOT / "프로그램 구성 파일" / "src" / "types.ts").read_text(encoding="utf-8")
+    css = CSS_PATH.read_text(encoding="utf-8")
+
+    assert "explanation_markdown" in types
+    assert "choice_explanation_markdown" in types
+    assert "function StructuredAnswer" in source
+    assert "question.explanation_markdown" in source
+    assert "question.choice_explanation_markdown" in source
+    assert "배경 설명" in source
+    assert "보기 해설" in source
+    assert ".explanation-section" in css
+    assert ".choice-explanation-section" in css
+
+
+def test_explicit_choice_explanations_replace_duplicate_answer_label_and_render_first():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+
+    structured_start = source.index("function StructuredAnswer")
+    choice_explanation = source.index("<StructuredChoiceExplanation", structured_start)
+    background_explanation = source.index('<section className="explanation-section"', structured_start)
+
+    assert "function shouldShowPrimaryAnswerLabel" in source
+    assert "const shouldHideDirectAnswer" in source
+    assert "{!shouldHideDirectAnswer && (" in source
+    assert "{shouldShowPrimaryAnswerLabel(question) && (" in source
+    assert choice_explanation < background_explanation
+
+
+def test_structured_choice_explanations_only_render_explicit_review_items():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+
+    assert "explicitOnly" in source
+    structured_start = source.index("function StructuredChoiceExplanation")
+    structured_block = source[structured_start : source.index("function StructuredAnswer", structured_start)]
+
+    assert "explicitOnly: true" in structured_block

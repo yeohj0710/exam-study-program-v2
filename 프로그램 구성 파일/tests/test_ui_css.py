@@ -28,6 +28,53 @@ def test_inline_answer_source_has_spacing_from_answer_text():
     assert "border-top:" not in block
 
 
+def test_answer_hierarchy_has_answer_only_bullet_layout():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    content_selector = ".answer-section .markdown-content"
+    content_start = css.index(content_selector)
+    content_block = css[content_start : css.index("}", content_start)]
+    group_selector = ".answer-section .markdown-answer-group"
+    group_start = css.index(group_selector)
+    group_block = css[group_start : css.index("}", group_start)]
+    h3_selector = ".answer-section .markdown-answer-group h3"
+    bullet_selector = ".answer-section .markdown-content .markdown-answer-bullet"
+    bullet_start = css.index(bullet_selector)
+    bullet_block = css[bullet_start : css.index("}", bullet_start)]
+    bullet_text_selector = ".answer-section .markdown-content .markdown-answer-bullet > span:last-child"
+    bullet_text_start = css.index(bullet_text_selector)
+    bullet_text_block = css[bullet_text_start : css.index("}", bullet_text_start)]
+
+    h3_start = css.index(h3_selector)
+    h3_block = css[h3_start : css.index("}", h3_start)]
+
+    assert "text-align: center;" in content_block
+    assert "margin: 16px auto 10px;" in group_block
+    assert "justify-items: center;" in group_block
+    assert "text-align: center;" in group_block
+    assert "border-bottom:" in h3_block
+    assert "text-align: center;" in h3_block
+    assert "font-size:" in h3_block
+    assert "display: flex;" in bullet_block
+    assert "justify-content: center;" in bullet_block
+    assert "margin: 5px auto;" in bullet_block
+    assert "text-align: center;" in bullet_block
+    assert "text-align: center;" in bullet_text_block
+    assert "text-align: left;" not in group_block
+    assert "text-align: left;" not in bullet_block
+    assert ".markdown-choice" not in bullet_block
+
+
+def test_answer_callout_label_stays_centered_inside_answer_markdown():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    selector = ".answer-section .markdown-content .markdown-answer-label"
+    start = css.index(selector)
+    block = css[start : css.index("}", start)]
+
+    assert "margin-left: auto;" in block
+    assert "margin-right: auto;" in block
+    assert "text-align: center;" in block
+
+
 def test_source_section_has_no_divider_line():
     css = CSS_PATH.read_text(encoding="utf-8")
     selector = ".source-section"
@@ -36,6 +83,17 @@ def test_source_section_has_no_divider_line():
 
     assert "margin:" in block
     assert "border-top:" not in block
+
+
+def test_first_choice_explanation_does_not_create_second_answer_divider():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    selector = ".answer-section > .choice-explanation-section:first-child"
+    start = css.index(selector)
+    block = css[start : css.index("}", start)]
+
+    assert "margin-top: 0;" in block
+    assert "padding-top: 0;" in block
+    assert "border-top: 0;" in block
 
 
 def test_source_evidence_images_are_large_enough_to_read():
@@ -136,6 +194,21 @@ def test_edge_rails_peek_until_hover_or_focus():
     assert ".app-rail::before,\n.study-control-rail::before" in css
 
 
+def test_right_controls_are_workspace_anchored_not_viewport_fixed():
+    css = CSS_PATH.read_text(encoding="utf-8")
+
+    controls_start = css.index(".study-control-rail {")
+    controls_block = css[controls_start : css.index("}", controls_start)]
+    open_start = css.index(".final-shell.with-side-panel .study-control-rail {")
+    open_block = css[open_start : css.index("}", open_start)]
+
+    assert "position: absolute;" in controls_block
+    assert "position: fixed;" not in controls_block
+    assert "left: 0;" in open_block
+    assert "right: auto;" in open_block
+    assert "right: calc(var(--side-panel-width) - var(--rail-space));" not in open_block
+
+
 def test_left_rail_blends_into_open_set_panel_without_inner_divider():
     css = CSS_PATH.read_text(encoding="utf-8")
     selector = ".final-shell.with-set-panel .app-rail {"
@@ -166,7 +239,8 @@ def test_right_rail_blends_inside_open_side_panel_without_inner_divider():
     before_start = css.index(before_selector)
     before_block = css[before_start : css.index("}", before_start)]
 
-    assert "right: calc(var(--side-panel-width) - var(--rail-space));" in side_block
+    assert "left: 0;" in side_block
+    assert "right: auto;" in side_block
     assert "width: var(--rail-space);" in side_block
     assert "background: var(--surface);" in side_block
     assert "border-right:" not in side_block

@@ -9,6 +9,7 @@ QUESTION_RE = re.compile(r"^#\s+(?P<title>.+?)\s*$")
 QUESTION_ID_RE = re.compile(r"<!--\s*sf:id:\s*(?P<id>[-A-Za-z0-9_:.]+)\s*-->")
 ANSWER_RE = re.compile(r"^(?:답|정답)\s*:\s*(?P<answer>.*)$", re.IGNORECASE)
 SOURCE_RE = re.compile(r"^(?:출처|reference|source)\s*[:：]", re.IGNORECASE)
+ANSWER_SECTION_RE = re.compile(r"^\[(?P<label>[^\]]+)]\s*(?P<body>.*)$")
 GENERIC_QUESTION_HEADING_RE = re.compile(r"^(?:question|q|문제|문항)\s*\d*$", re.IGNORECASE)
 SHUFFLED_LABEL_CHOICE_RE = re.compile(r"^-\s+[ㄱ-ㅎ]\.\s+")
 LABEL_ONLY_ANSWER_RE = re.compile(r"^[ㄱ-ㅎ](?:\s*,\s*[ㄱ-ㅎ])*\s*$")
@@ -17,6 +18,23 @@ ANSWER_LABEL_REFERENCE_RE = re.compile(
 )
 ANSWER_LABEL_ITEM_SEPARATOR_RE = re.compile(r"(?:^|/)\s*[가-마]\s*:\s*[^/\n]+/\s*[가-마]\s*:")
 CHOICE_EMPHASIS_TOKENS = ("**", "==")
+EXPLANATION_SECTION_LABELS = {
+    "해설",
+    "전체해설",
+    "전체설명",
+    "배경설명",
+    "전체배경설명",
+    "배경지식",
+    "용어설명",
+}
+CHOICE_EXPLANATION_SECTION_LABELS = {
+    "보기해설",
+    "선지해설",
+    "선택지해설",
+    "오답정리",
+    "보기별해설",
+    "선지별해설",
+}
 
 
 def _strip_blank_edges(lines: list[str]) -> str:
@@ -53,6 +71,24 @@ def _answer_line_has_inline_slash_separator(line: str) -> bool:
     if ". / " in stripped:
         return True
     return bool(ANSWER_LABEL_ITEM_SEPARATOR_RE.search(stripped))
+
+
+def _normalized_section_label(label: str) -> str:
+    return re.sub(r"\s+", "", label).strip().lower()
+
+
+def _answer_subsection_for_line(line: str) -> tuple[str, str] | None:
+    match = ANSWER_SECTION_RE.match(line.strip())
+    if not match:
+        return None
+
+    label = _normalized_section_label(match.group("label"))
+    body = match.group("body").strip()
+    if label in EXPLANATION_SECTION_LABELS:
+        return ("explanation", body)
+    if label in CHOICE_EXPLANATION_SECTION_LABELS:
+        return ("choice_explanation", body)
+    return None
 
 
 def insert_missing_question_ids(markdown: str, *, studyset_id: str) -> str:
@@ -103,6 +139,8 @@ def parse_studyset_markdown(
 
         prompt_lines: list[str] = []
         answer_lines: list[str] = []
+        explanation_lines: list[str] = []
+        choice_explanation_lines: list[str] = []
         source_lines: list[str] = []
         has_answer = False
         section = "prompt"
@@ -132,7 +170,36 @@ def parse_studyset_markdown(
                 elif in_source:
                     source_lines.append(line)
                 else:
-                    answer_lines.append(line)
+                    subsection = _answer_subsection_for_line(line)
+                    if subsection:
+                        section, body = subsection
+                        if body:
+                            if section == "explanation":
+                                explanation_lines.append(body)
+                            else:
+                                choice_explanation_lines.append(body)
+                    else:
+                        answer_lines.append(line)
+            elif section in {"explanation", "choice_explanation"}:
+                if SOURCE_RE.match(line.strip()):
+                    section = "answer"
+                    in_source = True
+                    source_lines.append(line)
+                elif in_source:
+                    source_lines.append(line)
+                else:
+                    subsection = _answer_subsection_for_line(line)
+                    if subsection:
+                        section, body = subsection
+                        if body:
+                            if section == "explanation":
+                                explanation_lines.append(body)
+                            else:
+                                choice_explanation_lines.append(body)
+                    elif section == "explanation":
+                        explanation_lines.append(line)
+                    else:
+                        choice_explanation_lines.append(line)
             else:
                 prompt_lines.append(line)
 
@@ -146,12 +213,15 @@ def parse_studyset_markdown(
             title=title,
             prompt_markdown=_strip_blank_edges(prompt_lines),
             answer_markdown=_strip_blank_edges(answer_lines),
+            explanation_markdown=_strip_blank_edges(explanation_lines),
+            choice_explanation_markdown=_strip_blank_edges(choice_explanation_lines),
             source_markdown=_strip_blank_edges(source_lines),
             note_markdown="",
             asset_paths=_asset_paths("\n".join(parse_lines)),
         )
         _append_asset_issues(question, result, asset_root, line_number=start + 1)
-        _append_shuffle_label_issues(question, result, prompt_lines, answer_lines, line_number=start + 1)
+        answer_review_lines = [*answer_lines, *explanation_lines, *choice_explanation_lines]
+        _append_shuffle_label_issues(question, result, prompt_lines, answer_review_lines, line_number=start + 1)
 
         if not has_answer:
             issue = ValidationIssue(

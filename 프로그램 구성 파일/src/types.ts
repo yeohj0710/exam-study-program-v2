@@ -24,6 +24,8 @@ export type Question = {
   title: string
   prompt_markdown: string
   answer_markdown: string
+  explanation_markdown: string
+  choice_explanation_markdown: string
   source_markdown: string
   note_markdown: string
   asset_paths: string[]

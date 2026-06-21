@@ -13,6 +13,14 @@ def test_source_references_render_evidence_markdown_below_source_buttons():
     assert "<MarkdownContent markdown={evidenceMarkdown}" in source
 
 
+def test_plain_topic_lines_after_source_render_as_evidence_not_source_button_text():
+    source = QUESTION_VIEW.read_text(encoding="utf-8")
+
+    assert "SOURCE_CONTINUATION_RE" in source
+    assert "SOURCE_CONTINUATION_RE.test(line)" in source
+    assert "evidenceLines.push(line)" in source
+
+
 def test_relative_source_references_open_matching_evidence_image():
     source = QUESTION_VIEW.read_text(encoding="utf-8")
 

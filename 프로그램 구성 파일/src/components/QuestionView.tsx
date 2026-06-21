@@ -8,12 +8,14 @@ const IMAGE_LINE_RE = /^!\[[^\]]*]\([^)]+\)\s*$/
 const IMAGE_PATH_RE = /!\[[^\]]*]\(([^)]+)\)/g
 const SOURCE_PAGE_TOKEN_RE = /(?:p|page|쪽|페이지|slide|슬라이드)\.?\s*(\d+)/i
 const SOURCE_PAGE_IMAGE_RE = (page: string) => new RegExp(`source-p0*${page}(?:\\D|$)`, 'i')
+const NOTICE_LINE_RE = /^문제\s*출제\s*공지(?:\s*대응)?\s*[:：]/i
+const SOURCE_CONTINUATION_RE = /^\s+\S/
 const PROMPT_CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)、:：-]?|\(?\d{1,2}\)?\s*(?:번)?[.)、:：-]?)\s*/
 const ANSWER_LABEL_RE = /^(?:답|answer)\s*[:：]\s*/i
 const EXPLICIT_REVIEW_RE = /^([Oo0○Xx×✕])\s*[:.)、-]?\s*(.+)$/
 const REVIEW_ARROW_RE = /\s*(?:->|=>|→|⇒)\s*/
 const REVIEW_NOTE_RE = /\s+\/\/\s+/
-const NEGATIVE_QUESTION_RE = /(옳지\s*않|틀린|잘못된|바르지\s*않|해당하지\s*않)/
+const NEGATIVE_QUESTION_RE = /(옳지\s*않|틀린|잘못된|바르지\s*않|해당하지\s*않|아닌|거리가\s*먼|관련이\s*없는|무관한)/
 const TOKEN_RE = /[A-Za-z0-9가-힣]{2,}/g
 const STOP_TOKENS = new Set([
   '것은',
@@ -252,7 +254,11 @@ function RevealedChoiceSupplement({ status, supplement }: { status: ChoiceReview
   )
 }
 
-function classifyChoicesForReveal(promptMarkdown: string, answerMarkdown: string): ChoiceReview | null {
+function classifyChoicesForReveal(
+  promptMarkdown: string,
+  answerMarkdown: string,
+  options: { explicitOnly?: boolean } = {},
+): ChoiceReview | null {
   const { stemMarkdown, choices } = splitPromptChoices(promptMarkdown)
   if (choices.length < 2) return null
 
@@ -262,7 +268,13 @@ function classifyChoicesForReveal(promptMarkdown: string, answerMarkdown: string
   const hasSelectedChoice = choices.some((choice) => choiceMatchesSelectedAnswer(choice, selectedAnswers))
   if (!hasExplicitReview && !hasSelectedChoice) return null
 
-  const reviewedChoices = choices.map((choice) => {
+  const choicesToReview = options.explicitOnly && hasExplicitReview
+    ? choices.filter((choice) => explicitStatusForChoice(choice, explicitItems))
+    : choices
+
+  if (choicesToReview.length === 0) return null
+
+  const reviewedChoices = choicesToReview.map((choice) => {
     const explicitItem = explicitStatusForChoice(choice, explicitItems)
     const selected = choiceMatchesSelectedAnswer(choice, selectedAnswers)
     const status = explicitItem?.status ?? (negativeQuestion ? (selected ? 'incorrect' : 'correct') : selected ? 'correct' : 'incorrect')
@@ -331,6 +343,78 @@ function RevealedAnswer({ promptMarkdown, answerMarkdown }: { promptMarkdown: st
   return <RevealedChoiceReview review={review} showCorrections />
 }
 
+function hasExplicitChoiceReview(markdown: string) {
+  return markdown
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .some((line) => Boolean(parseExplicitReviewLine(line)))
+}
+
+function shouldPrioritizeChoiceExplanation(question: Question) {
+  return hasExplicitChoiceReview(question.choice_explanation_markdown)
+}
+
+function shouldShowPrimaryAnswerLabel(question: Question) {
+  return !shouldPrioritizeChoiceExplanation(question)
+}
+
+function StructuredChoiceExplanation({
+  promptMarkdown,
+  answerMarkdown,
+  choiceExplanationMarkdown,
+}: {
+  promptMarkdown: string
+  answerMarkdown: string
+  choiceExplanationMarkdown: string
+}) {
+  if (!choiceExplanationMarkdown.trim()) return null
+
+  const reviewMarkdown = [answerMarkdown, choiceExplanationMarkdown].filter(Boolean).join('\n')
+  const review = hasExplicitChoiceReview(choiceExplanationMarkdown)
+    ? classifyChoicesForReveal(promptMarkdown, reviewMarkdown, { explicitOnly: true })
+    : null
+
+  return (
+    <section className="choice-explanation-section">
+      <p className="markdown-answer-label">
+        <span>보기 해설</span>
+      </p>
+      {review ? <RevealedChoiceReview review={review} showCorrections /> : <MarkdownContent markdown={choiceExplanationMarkdown} answerMode />}
+    </section>
+  )
+}
+
+function StructuredAnswer({ question }: { question: Question }) {
+  const hasStructuredExplanation = Boolean(question.explanation_markdown.trim() || question.choice_explanation_markdown.trim())
+  if (!hasStructuredExplanation) {
+    return <RevealedAnswer promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />
+  }
+
+  const directAnswer = question.answer_markdown.trim() || '답 없음'
+  const shouldHideDirectAnswer = shouldPrioritizeChoiceExplanation(question)
+
+  return (
+    <>
+      <StructuredChoiceExplanation
+        promptMarkdown={question.prompt_markdown}
+        answerMarkdown={question.answer_markdown}
+        choiceExplanationMarkdown={question.choice_explanation_markdown}
+      />
+      {!shouldHideDirectAnswer && (
+        <MarkdownContent markdown={directAnswer} stripLeadingAnswerPrefix answerMode />
+      )}
+      {question.explanation_markdown.trim() && (
+        <section className="explanation-section">
+          <p className="markdown-answer-label">
+            <span>배경 설명</span>
+          </p>
+          <MarkdownContent markdown={question.explanation_markdown} answerMode />
+        </section>
+      )}
+    </>
+  )
+}
+
 function splitSourceMarkdown(markdown: string) {
   const references: string[] = []
   const evidenceLines: string[] = []
@@ -354,7 +438,13 @@ function splitSourceMarkdown(markdown: string) {
       continue
     }
 
-    if (currentReference && normalized && !IMAGE_LINE_RE.test(normalized)) {
+    if (NOTICE_LINE_RE.test(normalized)) {
+      flushReference()
+      evidenceLines.push(line)
+      continue
+    }
+
+    if (currentReference && SOURCE_CONTINUATION_RE.test(line) && normalized && !IMAGE_LINE_RE.test(normalized)) {
       currentReference = `${currentReference} ${normalized}`
       continue
     }
@@ -497,10 +587,12 @@ export function QuestionView({
       {showAnswer && (
         <>
           <section className="answer-section">
-            <p className="markdown-answer-label primary">
-              <span>답</span>
-            </p>
-            <RevealedAnswer promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />
+            {shouldShowPrimaryAnswerLabel(question) && (
+              <p className="markdown-answer-label primary">
+                <span>답</span>
+              </p>
+            )}
+            <StructuredAnswer question={question} />
           </section>
           {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}
         </>

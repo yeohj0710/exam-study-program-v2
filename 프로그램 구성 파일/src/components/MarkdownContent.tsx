@@ -5,6 +5,7 @@ const ANSWER_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(
 const ANSWER_CALLOUT_RE = /^\[(정답|해설|핵심|근거|오답정리)\]\s*(.*)$/
 const maxImageLoadRetries = 2
 const retryDelayMs = 650
+const ANSWER_BULLET_RE = /^(?:\u00b7|\u2022)\s+(.*)$/
 
 function imageUrl(path: string) {
   if (/^[a-zA-Z]:\\/.test(path)) return `/api/external-asset?path=${encodeURIComponent(path)}`
@@ -50,6 +51,14 @@ function isChoiceStart(line: string) {
   return line.startsWith('- ')
 }
 
+function isAnswerHeading(line: string) {
+  return line.trimStart().startsWith('### ')
+}
+
+function isAnswerBullet(line: string) {
+  return ANSWER_BULLET_RE.test(line.trimStart())
+}
+
 function shuffleBlocks(blocks: string[][], key: string | undefined) {
   if (!key || blocks.length < 2) return blocks
   return [...blocks].sort((a, b) => seededScore(`${key}:${a.join('\n')}`) - seededScore(`${key}:${b.join('\n')}`))
@@ -90,6 +99,15 @@ function renderLine(line: string, key: string, stripLeadingAnswerPrefix = false,
   if (normalized.startsWith('### ')) return <h3 key={key}>{renderInline(normalized.slice(4))}</h3>
   if (normalized.startsWith('## ')) return <h2 key={key}>{renderInline(normalized.slice(3))}</h2>
   if (normalized.startsWith('# ')) return <h1 key={key}>{renderInline(normalized.slice(2))}</h1>
+  const answerBullet = answerMode ? normalized.match(ANSWER_BULLET_RE) : null
+  if (answerBullet) {
+    return (
+      <p className="markdown-answer-bullet" key={key}>
+        <span aria-hidden="true">•</span>
+        <span>{renderInline(answerBullet[1])}</span>
+      </p>
+    )
+  }
   const text = stripLeadingAnswerPrefix ? stripAnswerPrefix(normalized) : normalized
   return <p key={key}>{renderInline(text)}</p>
 }
@@ -155,10 +173,36 @@ function renderChoiceBlock(block: string[], key: string) {
   )
 }
 
+function renderAnswerGroup(block: string[], key: string) {
+  return (
+    <div className="markdown-answer-group" key={key}>
+      {block.map((line, index) => renderLine(line, `${key}-${index}-${line}`, false, true))}
+    </div>
+  )
+}
+
 function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAnswerPrefix = false, answerMode = false) {
   const output = []
   let index = 0
   while (index < lines.length) {
+    if (answerMode && (isAnswerHeading(lines[index]) || isAnswerBullet(lines[index]))) {
+      const block = [lines[index]]
+      const startedWithHeading = isAnswerHeading(lines[index])
+      index += 1
+
+      while (index < lines.length) {
+        if (!lines[index].trim()) break
+        if (isAnswerHeading(lines[index])) break
+        if (startedWithHeading && !isAnswerBullet(lines[index])) break
+        if (!startedWithHeading && !isAnswerBullet(lines[index])) break
+        block.push(lines[index])
+        index += 1
+      }
+
+      output.push(renderAnswerGroup(block, `answer-group-${index}-${block[0]}`))
+      continue
+    }
+
     if (!isChoiceStart(lines[index])) {
       output.push(renderLine(lines[index], `${index}-${lines[index]}`, stripLeadingAnswerPrefix, answerMode))
       index += 1

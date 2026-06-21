@@ -619,6 +619,97 @@ function App() {
   const progressText = session.total ? `${session.safeCursor + 1} / ${session.total}` : '0 / 0'
   const issues = payload?.issues ?? []
   const brightnessPercent = Math.round(clamp(1 - glareLevel / maxGlareLevel, 0, 1) * 100)
+  const studyControls = (
+    <aside className="study-control-rail" aria-label="학습 조작">
+      <section className="study-set-summary">
+        <button
+          type="button"
+          className="progress-pill progress-button"
+          title="문제 목록 (L)"
+          onClick={() => setShowQuestionPicker(true)}
+          disabled={!session.total}
+        >
+          {progressText}
+        </button>
+        <button
+          type="button"
+          className="side-control-button"
+          title="PDF 내보내기 (P)"
+          onClick={() => void exportPdf()}
+          disabled={!selectedStudySetId || exportingPdf}
+        >
+          <Download size={18} />
+        </button>
+        <button
+          type="button"
+          className="side-control-button"
+          title="5분 문답 PDF"
+          onClick={() => void exportCramPdf()}
+          disabled={!selectedStudySetId || exportingCramPdf}
+        >
+          <FileText size={18} />
+        </button>
+        <button
+          type="button"
+          className="side-control-button"
+          title="문제 데이터 다시 읽기 (F5)"
+          onClick={() => void reloadStudySet()}
+          disabled={!selectedStudySetId || refreshingStudySet}
+        >
+          <RefreshCw size={18} />
+        </button>
+        <button
+          type="button"
+          className="side-control-button"
+          title="문제 섞기 (S)"
+          onClick={() => setConfirmShuffle(true)}
+          disabled={!session.total}
+        >
+          <Shuffle size={18} />
+        </button>
+      </section>
+
+      <footer className="study-composer">
+        <button
+          type="button"
+          className="composer-button"
+          title={session.showAnswer ? '정답 숨기기 (J)' : '정답 보기 (J)'}
+          onClick={() => void toggleAnswer()}
+          disabled={!session.currentQuestion}
+        >
+          {session.showAnswer ? <EyeOff size={18} /> : <Eye size={18} />}
+          <kbd>J</kbd>
+        </button>
+        <button
+          type="button"
+          className="composer-button"
+          title="다음 문제 (K)"
+          onClick={session.nextQuestion}
+          disabled={!session.currentQuestion}
+        >
+          <ChevronRight size={20} />
+          <kbd>K</kbd>
+        </button>
+        {session.currentQuestion?.progress.memorized ? (
+          <button type="button" className="composer-button restore" title="암기 완료 복구 (R)" onClick={() => void restoreCurrent()}>
+            <RotateCcw size={18} />
+            <kbd>R</kbd>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="composer-button memorize"
+            title="암기 완료 (1)"
+            onClick={() => void memorizeCurrent()}
+            disabled={!session.currentQuestion}
+          >
+            <Check size={18} />
+            <kbd>1</kbd>
+          </button>
+        )}
+      </footer>
+    </aside>
+  )
 
   return (
     <StudyWorkspace
@@ -726,6 +817,7 @@ function App() {
           onSelect={handleSelectStudySet}
         />
       }
+      studyControls={studyControls}
       sidePanel={
         showEditor ? (
           <MarkdownEditor
@@ -740,90 +832,6 @@ function App() {
         )
       }
     >
-      <aside className="study-control-rail" aria-label="학습 조작">
-        <section className="study-set-summary">
-          <button
-            type="button"
-            className="progress-pill progress-button"
-            title="문제 목록 (L)"
-            onClick={() => setShowQuestionPicker(true)}
-            disabled={!session.total}
-          >
-            {progressText}
-          </button>
-          <button
-            type="button"
-            className="side-control-button"
-            title="PDF 내보내기 (P)"
-            onClick={() => void exportPdf()}
-            disabled={!selectedStudySetId || exportingPdf}
-          >
-            <Download size={18} />
-          </button>
-          <button
-            type="button"
-            className="side-control-button"
-            title="5분 문답 PDF"
-            onClick={() => void exportCramPdf()}
-            disabled={!selectedStudySetId || exportingCramPdf}
-          >
-            <FileText size={18} />
-          </button>
-          <button
-            type="button"
-            className="side-control-button"
-            title="문제 데이터 다시 읽기 (F5)"
-            onClick={() => void reloadStudySet()}
-            disabled={!selectedStudySetId || refreshingStudySet}
-          >
-            <RefreshCw size={18} />
-          </button>
-          <button
-            type="button"
-            className="side-control-button"
-            title="문제 섞기 (S)"
-            onClick={() => setConfirmShuffle(true)}
-            disabled={!session.total}
-          >
-            <Shuffle size={18} />
-          </button>
-        </section>
-
-        <footer className="study-composer">
-          <button
-            type="button"
-            className="composer-button"
-            title={session.showAnswer ? '정답 숨기기 (J)' : '정답 보기 (J)'}
-            onClick={() => void toggleAnswer()}
-            disabled={!session.currentQuestion}
-          >
-            {session.showAnswer ? <EyeOff size={18} /> : <Eye size={18} />}
-            <kbd>J</kbd>
-          </button>
-          <button type="button" className="composer-button" title="다음 문제 (K)" onClick={session.nextQuestion} disabled={!session.currentQuestion}>
-            <ChevronRight size={20} />
-            <kbd>K</kbd>
-          </button>
-          {session.currentQuestion?.progress.memorized ? (
-            <button type="button" className="composer-button restore" title="암기 완료 복구 (R)" onClick={() => void restoreCurrent()}>
-              <RotateCcw size={18} />
-              <kbd>R</kbd>
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="composer-button memorize"
-              title="암기 완료 (1)"
-              onClick={() => void memorizeCurrent()}
-              disabled={!session.currentQuestion}
-            >
-              <Check size={18} />
-              <kbd>1</kbd>
-            </button>
-          )}
-        </footer>
-      </aside>
-
       {error && <p className="error-banner">{error}</p>}
 
       <QuestionView

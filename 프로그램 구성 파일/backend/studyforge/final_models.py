@@ -24,6 +24,8 @@ class Question:
     title: str
     prompt_markdown: str
     answer_markdown: str
+    explanation_markdown: str = ""
+    choice_explanation_markdown: str = ""
     source_markdown: str = ""
     note_markdown: str = ""
     asset_paths: list[str] = field(default_factory=list)

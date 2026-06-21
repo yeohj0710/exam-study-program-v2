@@ -1,46 +1,3966 @@
 {
   "schema_version": 1,
-  "updated_at": 1781446239.1757307,
+  "updated_at": 1782052216.7777002,
   "questions": [
     {
       "question_id": "기말 샘플 테스트-001",
       "memorized": false,
-      "seen_count": 39,
-      "reveal_count": 61,
-      "last_seen_at": 1781446236.8946652,
-      "updated_at": 1781446237.702859
+      "seen_count": 72,
+      "reveal_count": 92,
+      "last_seen_at": 1781465767.997674,
+      "updated_at": 1781465769.3226883
     },
     {
       "question_id": "기말 샘플 테스트-002",
       "memorized": false,
-      "seen_count": 42,
-      "reveal_count": 85,
-      "last_seen_at": 1781446234.9038627,
-      "updated_at": 1781446235.9742618
+      "seen_count": 97,
+      "reveal_count": 122,
+      "last_seen_at": 1781516813.383998,
+      "updated_at": 1781516813.383998
     },
     {
       "question_id": "기말 샘플 테스트-003",
       "memorized": false,
-      "seen_count": 48,
-      "reveal_count": 55,
-      "last_seen_at": 1781446237.9709153,
-      "updated_at": 1781446239.1753547
+      "seen_count": 82,
+      "reveal_count": 86,
+      "last_seen_at": 1781515873.756981,
+      "updated_at": 1781515873.756981
     },
     {
       "question_id": "기말 샘플 테스트-004",
       "memorized": false,
-      "seen_count": 40,
-      "reveal_count": 42,
-      "last_seen_at": 1781446093.9540298,
-      "updated_at": 1781446095.9228795
+      "seen_count": 65,
+      "reveal_count": 69,
+      "last_seen_at": 1781465807.1371465,
+      "updated_at": 1781465808.587418
     },
     {
       "question_id": "기말 샘플 테스트-005",
       "memorized": false,
+      "seen_count": 52,
+      "reveal_count": 55,
+      "last_seen_at": 1781519717.1496432,
+      "updated_at": 1781519717.1496432
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-001",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781702716.3944318,
+      "updated_at": 1781702716.4679496
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-002",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702719.2999632,
+      "updated_at": 1781702719.3718982
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-003",
+      "memorized": false,
+      "seen_count": 23,
+      "reveal_count": 11,
+      "last_seen_at": 1782052199.571984,
+      "updated_at": 1782052199.571984
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-004",
+      "memorized": false,
+      "seen_count": 17,
+      "reveal_count": 14,
+      "last_seen_at": 1781702619.1845837,
+      "updated_at": 1781702619.2954092
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-005",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781702616.7084863,
+      "updated_at": 1781702616.7466261
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-006",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781702699.8112965,
+      "updated_at": 1781702699.8819182
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-007",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781702611.4109337,
+      "updated_at": 1781702611.5545185
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-008",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702716.8522058,
+      "updated_at": 1781702716.9267683
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-009",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781702693.672387,
+      "updated_at": 1781702693.7070446
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-010",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 11,
+      "last_seen_at": 1781702706.7875948,
+      "updated_at": 1781702706.8641477
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-011",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702718.408114,
+      "updated_at": 1781702718.481958
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-012",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 11,
+      "last_seen_at": 1781702842.7572277,
+      "updated_at": 1781702842.7572277
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-013",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702719.0137143,
+      "updated_at": 1781702719.0880458
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-014",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702717.679066,
+      "updated_at": 1781702717.7501435
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-015",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702718.6587305,
+      "updated_at": 1781702718.7702734
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-016",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 11,
+      "last_seen_at": 1781702692.0988336,
+      "updated_at": 1781702692.1736128
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-017",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781702697.885896,
+      "updated_at": 1781702697.953783
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-018",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781702716.0777361,
+      "updated_at": 1781702716.1455884
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-019",
+      "memorized": false,
       "seen_count": 14,
+      "reveal_count": 11,
+      "last_seen_at": 1781702715.0151727,
+      "updated_at": 1781702715.0838785
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-020",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781702697.1634588,
+      "updated_at": 1781702697.2372527
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-021",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702717.9085202,
+      "updated_at": 1781702717.9805546
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-022",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781702702.4771743,
+      "updated_at": 1781702702.5395575
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-023",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702699.01813,
+      "updated_at": 1781702699.090463
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-024",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781702715.7249594,
+      "updated_at": 1781702715.7586195
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-025",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 12,
+      "last_seen_at": 1781702701.6828144,
+      "updated_at": 1781702701.7526994
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-026",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 12,
+      "last_seen_at": 1781702624.6494682,
+      "updated_at": 1781702625.2090776
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-027",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 11,
+      "last_seen_at": 1781702718.1499727,
+      "updated_at": 1781702718.2611501
+    },
+    {
+      "question_id": "바이오공정개론 기말고사-028",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781702706.35266,
+      "updated_at": 1781702706.4250674
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-001",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781754505.70898,
+      "updated_at": 1781754505.869083
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-002",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781754474.5581584,
+      "updated_at": 1781754475.1865273
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-003",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781754507.2767599,
+      "updated_at": 1781754507.4407136
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-004",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781754509.7876906,
+      "updated_at": 1781754509.906166
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-005",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 9,
+      "last_seen_at": 1781754508.4605815,
+      "updated_at": 1781754508.580117
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-006",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 12,
+      "last_seen_at": 1781754504.9294798,
+      "updated_at": 1781754505.135482
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-007",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 14,
+      "last_seen_at": 1781754507.891736,
+      "updated_at": 1781754508.0482354
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-008",
+      "memorized": false,
+      "seen_count": 12,
       "reveal_count": 19,
-      "last_seen_at": 1781446075.135965,
-      "updated_at": 1781446075.3137534
+      "last_seen_at": 1781754429.4640806,
+      "updated_at": 1781754429.725189
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-009",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 13,
+      "last_seen_at": 1781754459.8590708,
+      "updated_at": 1781754460.2055018
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-010",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 18,
+      "last_seen_at": 1781754509.1108587,
+      "updated_at": 1781754509.234418
+    },
+    {
+      "question_id": "바이오공정개론 기말고사_기출문제-011",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 20,
+      "last_seen_at": 1781753994.650224,
+      "updated_at": 1781754172.237612
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-001",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694130.2777855,
+      "updated_at": 1781694130.4385593
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-002",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695072.1691914,
+      "updated_at": 1781695072.2402496
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-003",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695066.4515657,
+      "updated_at": 1781695066.522359
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-004",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695014.3235443,
+      "updated_at": 1781695014.4442909
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-005",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695056.2232356,
+      "updated_at": 1781695056.3361409
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-006",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695039.9958847,
+      "updated_at": 1781695040.0678148
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-007",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695046.6672773,
+      "updated_at": 1781695046.7056012
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-008",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694141.4765587,
+      "updated_at": 1781694141.615262
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-009",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694145.906465,
+      "updated_at": 1781694145.978223
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-010",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695078.3615606,
+      "updated_at": 1781695078.4326022
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-011",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695076.3286133,
+      "updated_at": 1781695076.4037864
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-012",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 1,
+      "last_seen_at": 1781695002.3045335,
+      "updated_at": 1781695002.3045335
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-013",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694142.2523117,
+      "updated_at": 1781694142.4023097
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-014",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694145.0054018,
+      "updated_at": 1781694145.1234078
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-015",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694136.6179957,
+      "updated_at": 1781694136.7847703
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-016",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695047.753167,
+      "updated_at": 1781695047.7888813
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-017",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695036.6934712,
+      "updated_at": 1781695036.7648008
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-018",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695077.316914,
+      "updated_at": 1781695077.3916187
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-019",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695129.939265,
+      "updated_at": 1781695130.085428
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-020",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695048.4388468,
+      "updated_at": 1781695048.513256
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-021",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695048.1219654,
+      "updated_at": 1781695048.157845
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-022",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695338.1508508,
+      "updated_at": 1781695338.2217898
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-023",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695338.4857361,
+      "updated_at": 1781695338.5240278
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-024",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695051.5358462,
+      "updated_at": 1781695051.5707831
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-025",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 2,
+      "last_seen_at": 1781695172.8840744,
+      "updated_at": 1781695172.8840744
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-026",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695006.495583,
+      "updated_at": 1781695006.665321
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-027",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695049.8508546,
+      "updated_at": 1781695049.8856995
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-028",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695046.0342238,
+      "updated_at": 1781695046.0707157
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-029",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695047.2287128,
+      "updated_at": 1781695047.3016517
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-030",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695045.1409125,
+      "updated_at": 1781695045.1641884
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-031",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695029.7864192,
+      "updated_at": 1781695030.0220885
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-032",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694143.6240544,
+      "updated_at": 1781694143.7608242
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-033",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695069.701191,
+      "updated_at": 1781695069.7750652
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-034",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695067.8098998,
+      "updated_at": 1781695067.8854825
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-035",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695075.306076,
+      "updated_at": 1781695075.3803704
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-036",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695352.8009412,
+      "updated_at": 1781695352.9143436
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-037",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781695050.138651,
+      "updated_at": 1781695050.170769
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-038",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695066.9831197,
+      "updated_at": 1781695067.0177376
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-039",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781695068.8053088,
+      "updated_at": 1781695068.8799727
+    },
+    {
+      "question_id": "바이오공정개론_기말고사_문제-040",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781694138.3586946,
+      "updated_at": 1781694138.4941885
+    },
+    {
+      "question_id": "바이오의약품학 기말고사-041",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 0,
+      "last_seen_at": 1781702639.0238936,
+      "updated_at": 1781702639.0238936
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-001",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 8,
+      "last_seen_at": 1781574796.2693434,
+      "updated_at": 1781574796.4615388
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-002",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781574790.5730264,
+      "updated_at": 1781574790.8035712
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-003",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 9,
+      "last_seen_at": 1781574808.6215177,
+      "updated_at": 1781574808.8811133
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-004",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781571412.8024457,
+      "updated_at": 1781571709.2545147
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-005",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781572792.5759416,
+      "updated_at": 1781572792.9513218
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-006",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781573676.5450108,
+      "updated_at": 1781573677.0929017
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-007",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781574279.1810374,
+      "updated_at": 1781574280.7513635
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-008",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 9,
+      "last_seen_at": 1781573992.9036665,
+      "updated_at": 1781573993.1966252
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-009",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781574340.59533,
+      "updated_at": 1781574340.783613
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-010",
+      "memorized": false,
+      "seen_count": 15,
+      "reveal_count": 7,
+      "last_seen_at": 1781693055.7064106,
+      "updated_at": 1781693055.7064106
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-011",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 7,
+      "last_seen_at": 1781573884.823873,
+      "updated_at": 1781573885.1261556
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-012",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 11,
+      "last_seen_at": 1781573783.633589,
+      "updated_at": 1781573784.0668445
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-013",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 7,
+      "last_seen_at": 1781574781.0951927,
+      "updated_at": 1781574781.385073
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-014",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781573303.6593058,
+      "updated_at": 1781573303.9925988
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-015",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 7,
+      "last_seen_at": 1781571932.441591,
+      "updated_at": 1781571933.1513238
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-016",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 5,
+      "last_seen_at": 1781574816.128164,
+      "updated_at": 1781574816.2928262
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-017",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 8,
+      "last_seen_at": 1781574487.6546302,
+      "updated_at": 1781574487.8728268
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-018",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781573512.3667989,
+      "updated_at": 1781573512.7020907
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-019",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781573940.2799037,
+      "updated_at": 1781573940.472211
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-020",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781574706.857155,
+      "updated_at": 1781574707.147257
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-021",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 8,
+      "last_seen_at": 1781574709.0166893,
+      "updated_at": 1781574709.19034
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-022",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 8,
+      "last_seen_at": 1781574442.8926299,
+      "updated_at": 1781574443.1021347
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-023",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 8,
+      "last_seen_at": 1781571929.255684,
+      "updated_at": 1781571930.8266208
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-024",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 12,
+      "last_seen_at": 1781574830.0963466,
+      "updated_at": 1781574854.437219
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-025",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781573901.5608153,
+      "updated_at": 1781573901.8559887
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-026",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781570435.8591871,
+      "updated_at": 1781570436.0802903
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-027",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781573457.8690584,
+      "updated_at": 1781573458.2813144
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-028",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781574826.2736888,
+      "updated_at": 1781574827.499706
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-029",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 7,
+      "last_seen_at": 1781574876.1782234,
+      "updated_at": 1781574876.3534648
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-030",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 9,
+      "last_seen_at": 1781574293.1781914,
+      "updated_at": 1781574293.714755
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-031",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781573920.622402,
+      "updated_at": 1781573920.8516576
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-032",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781574418.8758578,
+      "updated_at": 1781574422.8865435
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-033",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781574887.1756852,
+      "updated_at": 1781574887.3397477
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-034",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781574484.1098378,
+      "updated_at": 1781574484.4272325
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-035",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781574104.7578747,
+      "updated_at": 1781574105.3648727
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-036",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 9,
+      "last_seen_at": 1781570535.2572186,
+      "updated_at": 1781570538.6652358
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-037",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 9,
+      "last_seen_at": 1781574712.7169087,
+      "updated_at": 1781574712.8969102
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-038",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 5,
+      "last_seen_at": 1781574764.5051184,
+      "updated_at": 1781574764.8071191
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-039",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 5,
+      "last_seen_at": 1781570118.728889,
+      "updated_at": 1781570170.9983425
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-040",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 4,
+      "last_seen_at": 1781574855.9008777,
+      "updated_at": 1781574856.0935414
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-041",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 4,
+      "last_seen_at": 1781574884.5511022,
+      "updated_at": 1781574884.7064586
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-042",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 3,
+      "last_seen_at": 1781538479.2949278,
+      "updated_at": 1781538480.7206047
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-043",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781536357.0736332,
+      "updated_at": 1781536357.3456817
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-044",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 3,
+      "last_seen_at": 1781536850.8473036,
+      "updated_at": 1781536851.1410284
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-045",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781536336.502312,
+      "updated_at": 1781536336.7294695
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-048",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781514537.2032058,
+      "updated_at": 1781514725.613024
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-049",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514775.785276,
+      "updated_at": 1781514775.9713573
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-050",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514862.4513195,
+      "updated_at": 1781514862.728278
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-051",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514829.5541227,
+      "updated_at": 1781514829.6293383
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-053",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514525.8513203,
+      "updated_at": 1781514526.0377536
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-054",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514766.487309,
+      "updated_at": 1781514766.681494
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-058",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781514791.1898365,
+      "updated_at": 1781514793.330918
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-059",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514786.9390326,
+      "updated_at": 1781514787.1491187
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-061",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514819.967292,
+      "updated_at": 1781514820.1312425
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-066",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514783.1807785,
+      "updated_at": 1781514783.380789
+    },
+    {
+      "question_id": "바이오의약품학_기말고사_문제-067",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781514763.1563854,
+      "updated_at": 1781514763.3965445
+    },
+    {
+      "question_id": "백신공정이론 기말고사-004",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052215.7714853,
+      "updated_at": 1782052215.808738
+    },
+    {
+      "question_id": "백신공정이론 기말고사-005",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052206.5879576,
+      "updated_at": 1782052208.2757847
+    },
+    {
+      "question_id": "백신공정이론 기말고사-012",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052216.0038283,
+      "updated_at": 1782052216.072407
+    },
+    {
+      "question_id": "백신공정이론 기말고사-019",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052216.220837,
+      "updated_at": 1782052216.2937114
+    },
+    {
+      "question_id": "백신공정이론 기말고사-020",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052215.2345467,
+      "updated_at": 1782052215.2671628
+    },
+    {
+      "question_id": "백신공정이론 기말고사-021",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052214.2779062,
+      "updated_at": 1782052214.3854976
+    },
+    {
+      "question_id": "백신공정이론 기말고사-029",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052216.7034018,
+      "updated_at": 1782052216.7777002
+    },
+    {
+      "question_id": "백신공정이론 기말고사-030",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052215.5013883,
+      "updated_at": 1782052215.5711448
+    },
+    {
+      "question_id": "백신공정이론 기말고사-036",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052216.4876971,
+      "updated_at": 1782052216.5619638
+    },
+    {
+      "question_id": "백신공정이론 기말고사-039",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782052214.916935,
+      "updated_at": 1782052214.9883368
+    },
+    {
+      "question_id": "예방약학 기말고사-001",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 5,
+      "last_seen_at": 1781457291.7772427,
+      "updated_at": 1781457291.918121
+    },
+    {
+      "question_id": "예방약학 기말고사-004",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 3,
+      "last_seen_at": 1781454833.6995323,
+      "updated_at": 1781454874.6698735
+    },
+    {
+      "question_id": "예방약학 기말고사-005",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456827.6731176,
+      "updated_at": 1781456827.8240163
+    },
+    {
+      "question_id": "예방약학 기말고사-006",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 3,
+      "last_seen_at": 1781457268.9721575,
+      "updated_at": 1781457269.0114124
+    },
+    {
+      "question_id": "예방약학 기말고사-007",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 3,
+      "last_seen_at": 1781458189.790491,
+      "updated_at": 1781458192.085703
+    },
+    {
+      "question_id": "예방약학 기말고사-008",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781456657.660075,
+      "updated_at": 1781456659.2133338
+    },
+    {
+      "question_id": "예방약학 기말고사-009",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 3,
+      "last_seen_at": 1781456623.1541173,
+      "updated_at": 1781456626.3158195
+    },
+    {
+      "question_id": "예방약학 기말고사-010",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457267.4202254,
+      "updated_at": 1781457267.4551492
+    },
+    {
+      "question_id": "예방약학 기말고사-012",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456827.9638815,
+      "updated_at": 1781456828.0750673
+    },
+    {
+      "question_id": "예방약학 기말고사-013",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781457268.3004892,
+      "updated_at": 1781457268.3715262
+    },
+    {
+      "question_id": "예방약학 기말고사-016",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 4,
+      "last_seen_at": 1781456620.203288,
+      "updated_at": 1781456622.1671958
+    },
+    {
+      "question_id": "예방약학 기말고사-017",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454889.3659878,
+      "updated_at": 1781454889.585788
+    },
+    {
+      "question_id": "예방약학 기말고사-018",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456709.6866426,
+      "updated_at": 1781456709.9382086
+    },
+    {
+      "question_id": "예방약학 기말고사-021",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456828.278656,
+      "updated_at": 1781456828.3907664
+    },
+    {
+      "question_id": "예방약학 기말고사-024",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781457266.7984397,
+      "updated_at": 1781457266.9037185
+    },
+    {
+      "question_id": "예방약학 기말고사-025",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 20,
+      "last_seen_at": 1781457272.2473803,
+      "updated_at": 1781457287.8689206
+    },
+    {
+      "question_id": "예방약학 기말고사-027",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781456703.9132755,
+      "updated_at": 1781456705.2143378
+    },
+    {
+      "question_id": "예방약학 기말고사-029",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456826.4360785,
+      "updated_at": 1781456826.8699696
+    },
+    {
+      "question_id": "예방약학 기말고사-032",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454831.3578968,
+      "updated_at": 1781454831.5443478
+    },
+    {
+      "question_id": "예방약학 기말고사-033",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457269.2206736,
+      "updated_at": 1781457269.258456
+    },
+    {
+      "question_id": "예방약학 기말고사-034",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 5,
+      "last_seen_at": 1781457002.5770807,
+      "updated_at": 1781457003.8711247
+    },
+    {
+      "question_id": "예방약학 기말고사-036",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781456705.5108356,
+      "updated_at": 1781456706.5543094
+    },
+    {
+      "question_id": "예방약학 기말고사-037",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781456823.0069451,
+      "updated_at": 1781456823.3707776
+    },
+    {
+      "question_id": "예방약학 기말고사-038",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781458193.0927312,
+      "updated_at": 1781458193.1636434
+    },
+    {
+      "question_id": "예방약학 기말고사-039",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781457269.4822042,
+      "updated_at": 1781457269.5185406
+    },
+    {
+      "question_id": "예방약학 기말고사-041",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456828.6533084,
+      "updated_at": 1781456828.7277956
+    },
+    {
+      "question_id": "예방약학 기말고사-042",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456632.9588203,
+      "updated_at": 1781456633.2152016
+    },
+    {
+      "question_id": "예방약학 기말고사-043",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456641.1386802,
+      "updated_at": 1781456641.3728101
+    },
+    {
+      "question_id": "예방약학 기말고사-044",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 1,
+      "last_seen_at": 1781702720.7195323,
+      "updated_at": 1781702720.7195323
+    },
+    {
+      "question_id": "예방약학 기말고사-046",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457268.579669,
+      "updated_at": 1781457268.6130552
+    },
+    {
+      "question_id": "예방약학 기말고사-050",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 3,
+      "last_seen_at": 1781456627.2838385,
+      "updated_at": 1781456630.6010857
+    },
+    {
+      "question_id": "예방약학 기말고사-051",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781458193.3651483,
+      "updated_at": 1781458193.4359093
+    },
+    {
+      "question_id": "예방약학 기말고사-052",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781457270.7137427,
+      "updated_at": 1781457270.7511177
+    },
+    {
+      "question_id": "예방약학 기말고사-053",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454882.8801866,
+      "updated_at": 1781454883.081416
+    },
+    {
+      "question_id": "예방약학 기말고사-054",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781457267.1393619,
+      "updated_at": 1781457267.2129345
+    },
+    {
+      "question_id": "예방약학 기말고사-055",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456829.0519912,
+      "updated_at": 1781456829.1627097
+    },
+    {
+      "question_id": "예방약학 기말고사-056",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456642.454756,
+      "updated_at": 1781456642.672304
+    },
+    {
+      "question_id": "예방약학 기말고사-058",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 3,
+      "last_seen_at": 1781456659.915435,
+      "updated_at": 1781456663.423998
+    },
+    {
+      "question_id": "예방약학 기말고사-059",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457271.3324363,
+      "updated_at": 1781457271.368965
+    },
+    {
+      "question_id": "예방약학 기말고사-063",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781456634.7378364,
+      "updated_at": 1781456635.8832479
+    },
+    {
+      "question_id": "예방약학 기말고사-064",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457268.0814269,
+      "updated_at": 1781457268.1154625
+    },
+    {
+      "question_id": "예방약학 기말고사-065",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781458192.5210857,
+      "updated_at": 1781458192.6982172
+    },
+    {
+      "question_id": "예방약학 기말고사-069",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454891.617987,
+      "updated_at": 1781454891.8313885
+    },
+    {
+      "question_id": "예방약학 기말고사-071",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454825.5679004,
+      "updated_at": 1781454825.7777677
+    },
+    {
+      "question_id": "예방약학 기말고사-072",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457267.8603764,
+      "updated_at": 1781457267.8968923
+    },
+    {
+      "question_id": "예방약학 기말고사-073",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457270.3889644,
+      "updated_at": 1781457270.4255219
+    },
+    {
+      "question_id": "예방약학 기말고사-076",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 4,
+      "last_seen_at": 1781457270.0963082,
+      "updated_at": 1781457270.1317098
+    },
+    {
+      "question_id": "예방약학 기말고사-078",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 0,
+      "last_seen_at": 1781455114.3315997,
+      "updated_at": 1781455114.3315997
+    },
+    {
+      "question_id": "예방약학 기말고사-079",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454806.6380343,
+      "updated_at": 1781454808.610207
+    },
+    {
+      "question_id": "예방약학 기말고사-080",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 6,
+      "last_seen_at": 1781457288.1432295,
+      "updated_at": 1781457291.4181297
+    },
+    {
+      "question_id": "예방약학 기말고사-082",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454981.8946972,
+      "updated_at": 1781454982.3741322
+    },
+    {
+      "question_id": "예방약학 기말고사-083",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454880.8731813,
+      "updated_at": 1781454881.1098852
+    },
+    {
+      "question_id": "예방약학 기말고사-084",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456827.1622295,
+      "updated_at": 1781456827.3188405
+    },
+    {
+      "question_id": "예방약학 기말고사-085",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454890.224857,
+      "updated_at": 1781454890.503861
+    },
+    {
+      "question_id": "예방약학 기말고사-086",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456823.6843293,
+      "updated_at": 1781456823.8304799
+    },
+    {
+      "question_id": "예방약학 기말고사-087",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781456708.3812733,
+      "updated_at": 1781456709.3907292
+    },
+    {
+      "question_id": "예방약학 기말고사-088",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457267.6412299,
+      "updated_at": 1781457267.6744478
+    },
+    {
+      "question_id": "예방약학 기말고사-089",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 1,
+      "last_seen_at": 1781456829.4960387,
+      "updated_at": 1781456829.5701253
+    },
+    {
+      "question_id": "예방약학 기말고사-090",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 3,
+      "last_seen_at": 1781457271.8974323,
+      "updated_at": 1781457271.972077
+    },
+    {
+      "question_id": "예방약학 기말고사-091",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457269.8053498,
+      "updated_at": 1781457269.8402596
+    },
+    {
+      "question_id": "예방약학 기말고사-092",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454815.7292838,
+      "updated_at": 1781454815.9540865
+    },
+    {
+      "question_id": "예방약학 기말고사-093",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781454829.6471431,
+      "updated_at": 1781454829.8308399
+    },
+    {
+      "question_id": "예방약학 기말고사-096",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781457271.600654,
+      "updated_at": 1781457271.6372237
+    },
+    {
+      "question_id": "예방약학 기말고사-097",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781457271.0317452,
+      "updated_at": 1781457271.0618243
+    },
+    {
+      "question_id": "예방약학 기말고사-098",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781456707.156335,
+      "updated_at": 1781456708.143286
+    },
+    {
+      "question_id": "예방약학 기말고사-100",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781456639.147726,
+      "updated_at": 1781456639.3669498
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-001",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 4,
+      "last_seen_at": 1781494426.5178878,
+      "updated_at": 1781494426.5178878
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-002",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781494740.8006518,
+      "updated_at": 1781494741.4026864
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-003",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781494762.1863587,
+      "updated_at": 1781494763.3222494
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-004",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 0,
+      "last_seen_at": 1781494434.1382985,
+      "updated_at": 1781494434.1382985
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-006",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 3,
+      "last_seen_at": 1781494604.7242177,
+      "updated_at": 1781494626.4044254
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-007",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781494694.4524503,
+      "updated_at": 1781494696.9972527
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-009",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 6,
+      "last_seen_at": 1781494429.4437668,
+      "updated_at": 1781494431.4811914
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-010",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493936.0603206,
+      "updated_at": 1781493936.48034
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-011",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781494727.6146572,
+      "updated_at": 1781494728.3292582
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-012",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493525.7853553,
+      "updated_at": 1781493526.3809218
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-013",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493663.8195853,
+      "updated_at": 1781493665.587234
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-014",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 4,
+      "last_seen_at": 1781494592.0927515,
+      "updated_at": 1781494601.4320154
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-015",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 4,
+      "last_seen_at": 1781494513.1154735,
+      "updated_at": 1781494515.0521615
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-016",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493840.0989342,
+      "updated_at": 1781493840.700418
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-017",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493958.4893947,
+      "updated_at": 1781493958.9530492
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-018",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781494683.428789,
+      "updated_at": 1781494683.9899116
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-020",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 4,
+      "last_seen_at": 1781494760.4413521,
+      "updated_at": 1781494761.9329262
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-021",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781492400.7176375,
+      "updated_at": 1781492401.1291695
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-022",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781494685.3599582,
+      "updated_at": 1781494688.0336158
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-023",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493998.338155,
+      "updated_at": 1781493999.0401814
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-024",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781493556.2607024,
+      "updated_at": 1781493566.5008538
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-025",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781494640.084803,
+      "updated_at": 1781494641.850103
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-026",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 2,
+      "last_seen_at": 1781494714.4677002,
+      "updated_at": 1781494718.7699242
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-027",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 1,
+      "last_seen_at": 1781494879.491824,
+      "updated_at": 1781494879.491824
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-028",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 4,
+      "last_seen_at": 1781494438.2095466,
+      "updated_at": 1781494465.1970818
+    },
+    {
+      "question_id": "예방약학_기말고사_기출문제만-029",
+      "memorized": false,
+      "seen_count": 3,
+      "reveal_count": 5,
+      "last_seen_at": 1781494491.2111094,
+      "updated_at": 1781494494.8419461
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-001",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 7,
+      "last_seen_at": 1781498905.3710296,
+      "updated_at": 1781498906.525407
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-002",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 13,
+      "last_seen_at": 1781498372.4391475,
+      "updated_at": 1781498377.9619265
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-003",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 13,
+      "last_seen_at": 1781497918.8302035,
+      "updated_at": 1781497918.836203
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-004",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 10,
+      "last_seen_at": 1781495094.5337949,
+      "updated_at": 1781495097.3849676
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-005",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781498131.082076,
+      "updated_at": 1781498131.697319
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-006",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 13,
+      "last_seen_at": 1781497068.308339,
+      "updated_at": 1781497069.6588264
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-007",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781497011.9673913,
+      "updated_at": 1781497013.2388766
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-008",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 10,
+      "last_seen_at": 1781498986.796614,
+      "updated_at": 1781498987.9557338
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-009",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 18,
+      "last_seen_at": 1781498754.604788,
+      "updated_at": 1781498755.5187435
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-010",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 10,
+      "last_seen_at": 1781494884.9110332,
+      "updated_at": 1781494893.943185
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-011",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 9,
+      "last_seen_at": 1781495165.7848735,
+      "updated_at": 1781495173.489478
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-012",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 5,
+      "last_seen_at": 1781497538.1726482,
+      "updated_at": 1781497539.5864964
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-013",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 6,
+      "last_seen_at": 1781497694.5820167,
+      "updated_at": 1781497696.3475363
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-014",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 8,
+      "last_seen_at": 1781492151.6418025,
+      "updated_at": 1781492152.6444855
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-015",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 6,
+      "last_seen_at": 1781497613.9030826,
+      "updated_at": 1781497651.1601205
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-016",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781498500.6348038,
+      "updated_at": 1781498504.0629237
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-017",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781497070.6122804,
+      "updated_at": 1781497074.6127234
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-018",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781499322.3758576,
+      "updated_at": 1781499322.4868588
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-019",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 9,
+      "last_seen_at": 1781499363.815903,
+      "updated_at": 1781499364.0121198
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-020",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 8,
+      "last_seen_at": 1781490868.0250738,
+      "updated_at": 1781490868.0616946
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-021",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 14,
+      "last_seen_at": 1781495010.6498156,
+      "updated_at": 1781495011.4241078
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-022",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 9,
+      "last_seen_at": 1781498579.9686446,
+      "updated_at": 1781498580.6445804
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-023",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 6,
+      "last_seen_at": 1781498490.2728443,
+      "updated_at": 1781498492.1831565
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-024",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 14,
+      "last_seen_at": 1781498513.3523312,
+      "updated_at": 1781498515.995996
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-025",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 12,
+      "last_seen_at": 1781498296.29037,
+      "updated_at": 1781498297.4469333
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-026",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781499409.410762,
+      "updated_at": 1781499409.8324702
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-027",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 6,
+      "last_seen_at": 1781499170.307595,
+      "updated_at": 1781499170.8149755
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-028",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 16,
+      "last_seen_at": 1781497701.51564,
+      "updated_at": 1781497708.0335286
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-029",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 12,
+      "last_seen_at": 1781497549.2988896,
+      "updated_at": 1781497552.477327
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-030",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 2,
+      "last_seen_at": 1781497917.5462785,
+      "updated_at": 1781497917.5462785
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-031",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 6,
+      "last_seen_at": 1781580782.710208,
+      "updated_at": 1781580782.710208
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-032",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 8,
+      "last_seen_at": 1781490824.2611377,
+      "updated_at": 1781490824.3309758
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-033",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 14,
+      "last_seen_at": 1781490816.9284956,
+      "updated_at": 1781490817.0025487
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-034",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 5,
+      "last_seen_at": 1781498806.3496401,
+      "updated_at": 1781498806.936021
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-035",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781497081.2270768,
+      "updated_at": 1781497083.645805
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-036",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781499177.3901567,
+      "updated_at": 1781499177.8731503
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-037",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 9,
+      "last_seen_at": 1781499412.9711368,
+      "updated_at": 1781499413.250693
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-038",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 6,
+      "last_seen_at": 1781498302.7361712,
+      "updated_at": 1781498315.6326253
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-039",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 5,
+      "last_seen_at": 1781498445.1640797,
+      "updated_at": 1781498446.0060444
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-040",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 8,
+      "last_seen_at": 1781498422.9219015,
+      "updated_at": 1781498423.7834907
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-041",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 7,
+      "last_seen_at": 1781498226.3439896,
+      "updated_at": 1781498233.7299995
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-042",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 7,
+      "last_seen_at": 1781498837.4860137,
+      "updated_at": 1781498837.9249468
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-043",
+      "memorized": false,
+      "seen_count": 15,
+      "reveal_count": 8,
+      "last_seen_at": 1781498657.6822517,
+      "updated_at": 1781498663.1695826
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-044",
+      "memorized": false,
+      "seen_count": 15,
+      "reveal_count": 25,
+      "last_seen_at": 1781497555.4713616,
+      "updated_at": 1781497557.4698725
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-045",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 6,
+      "last_seen_at": 1781495051.0150335,
+      "updated_at": 1781495083.264038
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-046",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781497238.6145408,
+      "updated_at": 1781497241.385686
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-047",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 6,
+      "last_seen_at": 1781499329.9823232,
+      "updated_at": 1781499330.7315469
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-048",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 7,
+      "last_seen_at": 1781497965.7029078,
+      "updated_at": 1781497966.612333
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-049",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 9,
+      "last_seen_at": 1781497800.626508,
+      "updated_at": 1781497806.6606615
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-050",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 7,
+      "last_seen_at": 1781498773.786078,
+      "updated_at": 1781498774.3520298
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-051",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 6,
+      "last_seen_at": 1781499145.0267754,
+      "updated_at": 1781499145.6293182
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-052",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 9,
+      "last_seen_at": 1781497195.0571942,
+      "updated_at": 1781497198.7366915
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-053",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781497358.609367,
+      "updated_at": 1781497359.8628619
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-054",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 8,
+      "last_seen_at": 1781497841.767186,
+      "updated_at": 1781497842.2413938
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-055",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 7,
+      "last_seen_at": 1781497986.3824306,
+      "updated_at": 1781498010.2822504
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-056",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 6,
+      "last_seen_at": 1781498873.9659119,
+      "updated_at": 1781498874.5399103
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-057",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 6,
+      "last_seen_at": 1781492071.507507,
+      "updated_at": 1781492151.307219
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-058",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781499115.3689976,
+      "updated_at": 1781499117.1120005
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-059",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 7,
+      "last_seen_at": 1781499309.4725459,
+      "updated_at": 1781499310.03449
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-060",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 4,
+      "last_seen_at": 1781497722.1937811,
+      "updated_at": 1781497728.846829
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-061",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 5,
+      "last_seen_at": 1781497437.4720256,
+      "updated_at": 1781497438.1106248
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-062",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781497136.1662083,
+      "updated_at": 1781497139.6709716
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-063",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781498599.327269,
+      "updated_at": 1781498611.0025585
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-064",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 3,
+      "last_seen_at": 1781496769.1705856,
+      "updated_at": 1781496771.9452128
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-065",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781497295.2363439,
+      "updated_at": 1781497296.0597403
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-066",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781497896.3420515,
+      "updated_at": 1781497897.1938093
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-067",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781497657.0411153,
+      "updated_at": 1781497658.641734
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-068",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781497509.8958387,
+      "updated_at": 1781497511.2488298
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-069",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781497406.3939357,
+      "updated_at": 1781497407.033354
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-070",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781498091.7191818,
+      "updated_at": 1781498100.8748014
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-071",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781497310.9398975,
+      "updated_at": 1781497311.663829
+    },
+    {
+      "question_id": "예방약학_기말고사_문제-072",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781498636.1035094,
+      "updated_at": 1781498638.3778605
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-001",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781723088.519181,
+      "updated_at": 1781723088.5477538
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-002",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 9,
+      "last_seen_at": 1781742908.3216803,
+      "updated_at": 1781742908.3550994
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-003",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 10,
+      "last_seen_at": 1781743054.4734004,
+      "updated_at": 1781743054.5073273
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-004",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781740833.1236293,
+      "updated_at": 1781740833.15839
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-005",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781743228.5671437,
+      "updated_at": 1781743228.6348412
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-006",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781742970.1047661,
+      "updated_at": 1781742970.1386623
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-007",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 12,
+      "last_seen_at": 1781723102.368645,
+      "updated_at": 1781723102.396795
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-008",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 11,
+      "last_seen_at": 1781740817.5689747,
+      "updated_at": 1781740818.5650787
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-009",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 10,
+      "last_seen_at": 1781743219.8825884,
+      "updated_at": 1781743219.9166381
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-010",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 10,
+      "last_seen_at": 1781717472.216051,
+      "updated_at": 1781717472.2474468
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-011",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781742843.354652,
+      "updated_at": 1781742843.3817568
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-012",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781742928.532434,
+      "updated_at": 1781742928.5678146
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-013",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781742923.9762125,
+      "updated_at": 1781742924.0066793
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-014",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 9,
+      "last_seen_at": 1781723095.768412,
+      "updated_at": 1781723095.8002942
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-015",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781717467.9183254,
+      "updated_at": 1781717467.9485772
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-016",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781740846.3523324,
+      "updated_at": 1781740846.3851347
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-017",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781743204.562335,
+      "updated_at": 1781743204.632846
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-018",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781734754.2082222,
+      "updated_at": 1781734754.2263877
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-019",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 9,
+      "last_seen_at": 1781743114.7522779,
+      "updated_at": 1781743114.8098414
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-020",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781743123.6122186,
+      "updated_at": 1781743123.6422284
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-021",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 10,
+      "last_seen_at": 1781735167.9784424,
+      "updated_at": 1781735168.1995435
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-022",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781743134.1943908,
+      "updated_at": 1781743134.2300694
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-023",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 13,
+      "last_seen_at": 1781743219.0497537,
+      "updated_at": 1781743219.0852683
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-024",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 13,
+      "last_seen_at": 1781743208.8488417,
+      "updated_at": 1781743208.919564
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-025",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 9,
+      "last_seen_at": 1781743222.9195879,
+      "updated_at": 1781743222.9891927
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-026",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 8,
+      "last_seen_at": 1781743217.9533446,
+      "updated_at": 1781743217.9830527
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-027",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 9,
+      "last_seen_at": 1781742869.5679295,
+      "updated_at": 1781742869.6014981
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-028",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781742905.215459,
+      "updated_at": 1781742905.2482667
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-029",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1781722309.554088,
+      "updated_at": 1781722309.664005
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-030",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 13,
+      "last_seen_at": 1781742776.228892,
+      "updated_at": 1781742776.301124
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-031",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1781740859.3585021,
+      "updated_at": 1781740859.4271672
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-032",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 13,
+      "last_seen_at": 1781734978.559478,
+      "updated_at": 1781734978.8157473
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-033",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781734288.1213133,
+      "updated_at": 1781734288.1896458
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-034",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 10,
+      "last_seen_at": 1781743152.8021827,
+      "updated_at": 1781743152.8740938
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-035",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781723058.024673,
+      "updated_at": 1781723058.25969
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-036",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781723187.822194,
+      "updated_at": 1781723187.8895738
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-037",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 14,
+      "last_seen_at": 1781743240.4194844,
+      "updated_at": 1781743240.4919922
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-038",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781743057.538922,
+      "updated_at": 1781743057.5751956
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-039",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781741282.401951,
+      "updated_at": 1781741282.6182082
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-040",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 9,
+      "last_seen_at": 1781741299.652597,
+      "updated_at": 1781741299.6873882
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-041",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781743119.7200675,
+      "updated_at": 1781743119.8278594
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-042",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1781741018.7880511,
+      "updated_at": 1781741018.8208387
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-043",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 10,
+      "last_seen_at": 1781717455.7976158,
+      "updated_at": 1781717455.8231177
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-044",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 14,
+      "last_seen_at": 1781741173.8960865,
+      "updated_at": 1781741174.680451
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-045",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 13,
+      "last_seen_at": 1781741278.886805,
+      "updated_at": 1781741278.953484
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-046",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 12,
+      "last_seen_at": 1781740831.562238,
+      "updated_at": 1781740831.5942926
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-047",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781743230.6228168,
+      "updated_at": 1781743230.655796
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-048",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 14,
+      "last_seen_at": 1781741013.3225884,
+      "updated_at": 1781741013.385641
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-049",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781743239.416351,
+      "updated_at": 1781743239.4881184
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-050",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 9,
+      "last_seen_at": 1781741259.9366093,
+      "updated_at": 1781741260.0038724
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-051",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1781743233.8460338,
+      "updated_at": 1781743233.9195917
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-052",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781722305.3429208,
+      "updated_at": 1781722305.3910627
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-053",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781741057.4161406,
+      "updated_at": 1781741057.9155033
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-054",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1781740868.7105894,
+      "updated_at": 1781740868.7438161
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-055",
+      "memorized": false,
+      "seen_count": 14,
+      "reveal_count": 11,
+      "last_seen_at": 1781735274.802715,
+      "updated_at": 1781735274.8698392
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-056",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781743221.4241781,
+      "updated_at": 1781743221.49428
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-057",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1781740832.232411,
+      "updated_at": 1781740832.3069277
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-058",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 11,
+      "last_seen_at": 1781734198.805977,
+      "updated_at": 1781734198.8376822
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-059",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 11,
+      "last_seen_at": 1781743041.9492066,
+      "updated_at": 1781743042.013423
+    },
+    {
+      "question_id": "의약품규제및규제과학개론 기말고사-060",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 10,
+      "last_seen_at": 1781741216.422538,
+      "updated_at": 1781741216.4522982
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-001",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693949.5970132,
+      "updated_at": 1781693949.6326756
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-002",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694657.8667228,
+      "updated_at": 1781694658.098639
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-003",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693934.7011554,
+      "updated_at": 1781693934.9048133
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-004",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693944.1968741,
+      "updated_at": 1781693944.2689788
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-005",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693943.3622825,
+      "updated_at": 1781693943.4368317
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-006",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694779.7100868,
+      "updated_at": 1781694779.7439904
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-007",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693134.3071132,
+      "updated_at": 1781693134.3806367
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-008",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 3,
+      "last_seen_at": 1781694771.1817806,
+      "updated_at": 1781694772.575329
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-009",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693945.3099527,
+      "updated_at": 1781693945.4218786
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-010",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694665.725041,
+      "updated_at": 1781694665.9388192
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-011",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694770.0345428,
+      "updated_at": 1781694770.0670044
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-012",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694692.2490437,
+      "updated_at": 1781694692.4673116
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-013",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694652.303136,
+      "updated_at": 1781694652.530299
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-014",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693950.1468487,
+      "updated_at": 1781693950.1832483
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-015",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693111.9943967,
+      "updated_at": 1781693112.1795647
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-016",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693945.1056018,
+      "updated_at": 1781693945.2217326
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-017",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693133.7790914,
+      "updated_at": 1781693133.815523
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-018",
+      "memorized": false,
+      "seen_count": 4,
+      "reveal_count": 2,
+      "last_seen_at": 1781694764.1112387,
+      "updated_at": 1781694764.2206466
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-019",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694663.610946,
+      "updated_at": 1781694663.821687
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-020",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693136.391445,
+      "updated_at": 1781693136.4241226
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-021",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693135.1126285,
+      "updated_at": 1781693135.1426363
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-022",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693944.542827,
+      "updated_at": 1781693944.6577923
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-023",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693943.8009868,
+      "updated_at": 1781693943.8764513
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-024",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694781.3906488,
+      "updated_at": 1781694781.4258914
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-025",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693119.7012553,
+      "updated_at": 1781693119.8084052
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-026",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694758.0828886,
+      "updated_at": 1781694758.2837727
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-027",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693950.594088,
+      "updated_at": 1781693950.6289344
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-028",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693952.053405,
+      "updated_at": 1781693952.091152
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-029",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694767.5068715,
+      "updated_at": 1781694767.5444045
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-030",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693951.5761914,
+      "updated_at": 1781693951.6136117
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-031",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694780.6894026,
+      "updated_at": 1781694780.7253928
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-032",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694722.8815231,
+      "updated_at": 1781694723.0065417
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-033",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693132.0338054,
+      "updated_at": 1781693132.108765
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-034",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694740.4552891,
+      "updated_at": 1781694740.6279974
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-035",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694758.9655411,
+      "updated_at": 1781694759.0831516
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-036",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693135.6102245,
+      "updated_at": 1781693135.6463525
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-037",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693136.9388592,
+      "updated_at": 1781693136.9689636
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-038",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693121.3081827,
+      "updated_at": 1781693121.3791616
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-039",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693126.7304747,
+      "updated_at": 1781693126.7665637
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-040",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693944.3676953,
+      "updated_at": 1781693944.481222
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-041",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694743.6021485,
+      "updated_at": 1781694743.678867
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-042",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693945.7251582,
+      "updated_at": 1781693945.838689
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-043",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693946.830203,
+      "updated_at": 1781693946.9416316
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-044",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694773.6057358,
+      "updated_at": 1781694773.6425238
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-045",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694774.8292549,
+      "updated_at": 1781694774.864234
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-046",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693128.2584383,
+      "updated_at": 1781693128.2941556
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-047",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693115.7717738,
+      "updated_at": 1781693115.9221637
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-048",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694742.38246,
+      "updated_at": 1781694742.4587808
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-049",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694759.8605266,
+      "updated_at": 1781694760.0355308
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-050",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693945.5177064,
+      "updated_at": 1781693945.6329713
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-051",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694781.7151392,
+      "updated_at": 1781694781.7530994
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-052",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693118.5605478,
+      "updated_at": 1781693118.7207935
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-053",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1781694743.2397401,
+      "updated_at": 1781694743.2726612
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-054",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693137.6884155,
+      "updated_at": 1781693137.7631652
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-055",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693936.4175105,
+      "updated_at": 1781693936.6347835
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-056",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693947.4692614,
+      "updated_at": 1781693947.5736558
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-057",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693948.4480867,
+      "updated_at": 1781693948.4828503
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-058",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693950.3675714,
+      "updated_at": 1781693950.4393055
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-059",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693108.6583104,
+      "updated_at": 1781693111.227117
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-060",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693114.6688826,
+      "updated_at": 1781693114.8411887
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-061",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693951.3346035,
+      "updated_at": 1781693951.3744054
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-062",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693134.604213,
+      "updated_at": 1781693134.6396813
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-063",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693946.1716642,
+      "updated_at": 1781693946.24433
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-064",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693943.6014574,
+      "updated_at": 1781693943.6763556
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-065",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693129.4951894,
+      "updated_at": 1781693129.5683403
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-066",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693138.792663,
+      "updated_at": 1781693138.8664513
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-067",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693138.250049,
+      "updated_at": 1781693138.3315568
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-068",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693949.1051512,
+      "updated_at": 1781693949.1429687
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-069",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693946.3720102,
+      "updated_at": 1781693946.4853578
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-070",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693139.2948964,
+      "updated_at": 1781693139.3629487
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-071",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693942.1303158,
+      "updated_at": 1781693942.2633452
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-072",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693132.5877066,
+      "updated_at": 1781693132.6635423
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-073",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693135.3715227,
+      "updated_at": 1781693135.4038208
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-074",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693946.564815,
+      "updated_at": 1781693946.6761112
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-075",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693947.8550096,
+      "updated_at": 1781693947.9275026
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-076",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693952.2965853,
+      "updated_at": 1781693952.3324327
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-077",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693950.8647928,
+      "updated_at": 1781693950.9008787
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-078",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693136.143862,
+      "updated_at": 1781693136.1764927
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-079",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693139.552783,
+      "updated_at": 1781693139.5865395
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-080",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693131.3431516,
+      "updated_at": 1781693131.4188547
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-081",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693139.0414941,
+      "updated_at": 1781693139.114453
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-082",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693947.1108227,
+      "updated_at": 1781693947.2875407
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-083",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693944.731616,
+      "updated_at": 1781693944.8422048
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-084",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693134.8603694,
+      "updated_at": 1781693134.8938282
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-085",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693134.020691,
+      "updated_at": 1781693134.0572045
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-086",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693113.3198712,
+      "updated_at": 1781693113.4721012
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-087",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693951.1021907,
+      "updated_at": 1781693951.1354032
+    },
+    {
+      "question_id": "의약품규제및규제과학개론_기말고사_문제-088",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1781693132.9337404,
+      "updated_at": 1781693132.9707482
+    },
+    {
+      "question_id": "의약화학 기말고사-018",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 0,
+      "last_seen_at": 1781700909.6806452,
+      "updated_at": 1781700909.6806452
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-001",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781588998.9470925,
+      "updated_at": 1781588999.1726089
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-002",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781586959.9667532,
+      "updated_at": 1781586960.1177187
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-003",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781584152.6749334,
+      "updated_at": 1781584152.8151388
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-004",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781588804.044037,
+      "updated_at": 1781588804.6546621
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-005",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 5,
+      "last_seen_at": 1781588548.302272,
+      "updated_at": 1781588548.5682733
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-006",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 9,
+      "last_seen_at": 1781585086.3066459,
+      "updated_at": 1781585086.4854639
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-007",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 10,
+      "last_seen_at": 1781588372.9207935,
+      "updated_at": 1781588373.2467623
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-008",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 8,
+      "last_seen_at": 1781588126.934247,
+      "updated_at": 1781588127.1803374
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-009",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781589097.2098193,
+      "updated_at": 1781589097.397874
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-010",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 7,
+      "last_seen_at": 1781584544.4057817,
+      "updated_at": 1781584544.8595712
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-011",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 12,
+      "last_seen_at": 1781588686.066528,
+      "updated_at": 1781588686.4383173
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-012",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781585172.1317284,
+      "updated_at": 1781585172.3931715
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-013",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 7,
+      "last_seen_at": 1781584372.6114697,
+      "updated_at": 1781584373.0063536
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-014",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 3,
+      "last_seen_at": 1781585991.498831,
+      "updated_at": 1781585991.6732557
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-015",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781588909.9544904,
+      "updated_at": 1781588910.3846896
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-016",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 8,
+      "last_seen_at": 1781586530.475648,
+      "updated_at": 1781586530.712838
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-017",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 11,
+      "last_seen_at": 1781693108.0667555,
+      "updated_at": 1781693108.0667555
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-018",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 10,
+      "last_seen_at": 1781589180.8575845,
+      "updated_at": 1781589181.116491
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-019",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 17,
+      "last_seen_at": 1781589197.5409248,
+      "updated_at": 1781589197.6886826
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-020",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 5,
+      "last_seen_at": 1781589187.0908446,
+      "updated_at": 1781589187.255496
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-021",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1781589048.3638866,
+      "updated_at": 1781589048.6382143
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-022",
+      "memorized": false,
+      "seen_count": 7,
+      "reveal_count": 8,
+      "last_seen_at": 1781587411.6367798,
+      "updated_at": 1781587411.845937
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-023",
+      "memorized": false,
+      "seen_count": 8,
+      "reveal_count": 8,
+      "last_seen_at": 1781589184.6292677,
+      "updated_at": 1781589184.8195982
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-024",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 9,
+      "last_seen_at": 1781585365.7431426,
+      "updated_at": 1781585366.0798113
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-025",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 5,
+      "last_seen_at": 1781589191.6578658,
+      "updated_at": 1781589191.9056885
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-026",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 11,
+      "last_seen_at": 1781586631.0766387,
+      "updated_at": 1781586631.4827387
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-027",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 6,
+      "last_seen_at": 1781584718.268859,
+      "updated_at": 1781584718.5495782
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-028",
+      "memorized": false,
+      "seen_count": 6,
+      "reveal_count": 7,
+      "last_seen_at": 1781588598.162844,
+      "updated_at": 1781588598.8321369
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-029",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 8,
+      "last_seen_at": 1781585698.094666,
+      "updated_at": 1781585700.9273658
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-030",
+      "memorized": false,
+      "seen_count": 9,
+      "reveal_count": 10,
+      "last_seen_at": 1781583843.0701532,
+      "updated_at": 1781583844.5809393
+    },
+    {
+      "question_id": "의약화학_기말고사_문제-031",
+      "memorized": false,
+      "seen_count": 5,
+      "reveal_count": 7,
+      "last_seen_at": 1781587890.7475846,
+      "updated_at": 1781587891.1402197
     }
   ]
 }

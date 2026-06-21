@@ -46,6 +46,16 @@ def test_answer_mode_has_dedicated_explanation_label_rendering():
     assert "stripLeadingAnswerPrefix={stripLeadingAnswerPrefix}" not in source
 
 
+def test_answer_mode_groups_hierarchy_without_using_choice_cards():
+    source = MARKDOWN_CONTENT.read_text(encoding="utf-8")
+
+    assert "isAnswerHeading" in source
+    assert "isAnswerBullet" in source
+    assert "renderAnswerGroup" in source
+    assert "markdown-answer-group" in source
+    assert "answerMode && (isAnswerHeading(lines[index]) || isAnswerBullet(lines[index]))" in source
+
+
 def test_question_view_has_dedicated_answer_label_before_answer_body():
     question_view = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "components" / "QuestionView.tsx"
     source = question_view.read_text(encoding="utf-8")

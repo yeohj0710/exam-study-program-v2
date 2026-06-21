@@ -71,6 +71,47 @@ def test_export_studyset_pdf_rejects_empty_question_sets(tmp_path):
         raise AssertionError("empty PDF export should fail")
 
 
+def test_export_studyset_pdf_puts_explicit_choice_explanations_before_background_without_duplicate_answer(tmp_path):
+    output_path = tmp_path / "exports" / "choice-explanation.pdf"
+    questions = [
+        Question(
+            id="sample-set-001",
+            studyset_id="sample-set",
+            ordinal=1,
+            title="Question 1",
+            prompt_markdown=(
+                "연결로 옳지 않은 것은?\n\n"
+                "- 보기 A\n"
+                "- 보기 B\n"
+                "- 보기 C"
+            ),
+            answer_markdown="DO NOT PRINT DIRECT ANSWER",
+            explanation_markdown="전체 배경 설명은 보기별 판단 뒤에 온다.",
+            choice_explanation_markdown=(
+                "O 보기 A // 맞는 연결이다.\n"
+                "X 보기 B -> 틀린 연결이다.\n"
+                "O 보기 C // 맞는 연결이다."
+            ),
+            source_markdown="출처: 강의자료.pdf p.1",
+        )
+    ]
+
+    export_studyset_pdf(
+        studyset_id="sample-set",
+        questions=questions,
+        output_path=output_path,
+        asset_root=tmp_path,
+    )
+
+    document = fitz.open(output_path)
+    text = "\n".join(page.get_text() for page in document)
+
+    assert "보기 해설" in text
+    assert "해설" in text
+    assert text.index("보기 해설") < text.index("해설")
+    assert "DO NOT PRINT DIRECT ANSWER" not in text
+
+
 def test_export_cram_studyset_pdf_keeps_only_last_minute_question_answer(tmp_path):
     output_path = tmp_path / "exports" / "cram.pdf"
     questions = [

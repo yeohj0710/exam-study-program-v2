@@ -22,6 +22,7 @@ INLINE_TOKEN_RE = re.compile(r"(\*\*|==)(.+?)\1")
 HEADING_RE = re.compile(r"^#{1,6}\s+")
 LIST_MARKER_RE = re.compile(r"^\s*[-*]\s+")
 ORDERED_MARKER_RE = re.compile(r"^\s*\d{1,2}[.)]\s+")
+EXPLICIT_CHOICE_REVIEW_RE = re.compile(r"^\s*[Oo0○Xx×]\s*(?:[:.)])?\s+\S")
 WINDOWS_SOURCE_PATH_RE = re.compile(
     r"[A-Za-z]:[\\/](?:[^+,\n\r\\/]+[\\/])*(?P<name>[^+,\n\r\\/]+\.(?:pdf|pptx?|docx?|hwp|hwpx|png|jpe?g|webp))",
     re.IGNORECASE,
@@ -101,6 +102,10 @@ def export_cram_studyset_pdf(
     return output_path
 
 
+def _has_explicit_choice_review(markdown: str) -> bool:
+    return any(EXPLICIT_CHOICE_REVIEW_RE.match(line.strip()) for line in markdown.splitlines())
+
+
 def _build_story(
     studyset_id: str,
     questions: list[Question],
@@ -119,9 +124,22 @@ def _build_story(
         story.append(Paragraph(f"Q{question.ordinal}", styles["question_label"]))
         story.extend(_render_markdown_block(question.prompt_markdown, asset_root, styles, style_name="body"))
         story.append(Spacer(1, 5))
-        story.append(Paragraph("답", styles["answer_label"]))
+        has_explicit_choice_review = _has_explicit_choice_review(question.choice_explanation_markdown)
         answer = question.answer_markdown.strip() or "답 없음"
-        story.extend(_render_markdown_block(answer, asset_root, styles, style_name="answer"))
+        if has_explicit_choice_review:
+            story.append(Paragraph("보기 해설", styles["answer_label"]))
+            story.extend(_render_markdown_block(question.choice_explanation_markdown, asset_root, styles, style_name="body"))
+        else:
+            story.append(Paragraph("답", styles["answer_label"]))
+            story.extend(_render_markdown_block(answer, asset_root, styles, style_name="answer"))
+        if question.explanation_markdown.strip():
+            story.append(Spacer(1, 5))
+            story.append(Paragraph("해설", styles["answer_label"]))
+            story.extend(_render_markdown_block(question.explanation_markdown, asset_root, styles, style_name="body"))
+        if question.choice_explanation_markdown.strip() and not has_explicit_choice_review:
+            story.append(Spacer(1, 5))
+            story.append(Paragraph("보기 해설", styles["answer_label"]))
+            story.extend(_render_markdown_block(question.choice_explanation_markdown, asset_root, styles, style_name="body"))
         if question.source_markdown.strip():
             story.append(Spacer(1, 5))
             story.append(Paragraph("출처", styles["source_label"]))

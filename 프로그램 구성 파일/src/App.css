@@ -327,7 +327,7 @@ button:disabled {
 }
 
 .study-control-rail {
-  position: fixed;
+  position: absolute;
   z-index: 25;
   top: 22px;
   right: 0;
@@ -347,7 +347,8 @@ button:disabled {
 
 .final-shell.with-side-panel .study-control-rail {
   top: 0;
-  right: calc(var(--side-panel-width) - var(--rail-space));
+  left: 0;
+  right: auto;
   bottom: 0;
   width: var(--rail-space);
   box-sizing: border-box;
@@ -716,6 +717,36 @@ button:disabled {
   margin-top: 0;
 }
 
+.explanation-section,
+.choice-explanation-section {
+  max-width: 820px;
+  margin: 24px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+}
+
+.answer-section > .choice-explanation-section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.explanation-section .markdown-content {
+  width: min(780px, 100%);
+  margin-inline: auto;
+}
+
+.explanation-section .markdown-content p {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.72;
+}
+
+.choice-explanation-section .revealed-choice-list {
+  margin-top: 0;
+}
+
 .markdown-space {
   height: 8px;
 }
@@ -797,6 +828,47 @@ button:disabled {
 .answer-section .markdown-content {
   color: var(--study-readable-text);
   font-weight: inherit;
+  text-align: center;
+}
+
+.answer-section .markdown-content h1,
+.answer-section .markdown-content h2,
+.answer-section .markdown-content h3 {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.answer-section .markdown-answer-group {
+  width: fit-content;
+  max-width: min(820px, 100%);
+  margin: 16px auto 10px;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  text-align: center;
+}
+
+.answer-section .markdown-answer-group h3 {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 5px;
+  padding: 0 10px 3px;
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 54%, var(--border));
+  font-size: calc(17px * var(--study-text-scale));
+  font-weight: 900;
+  text-align: center;
+}
+
+.answer-section .markdown-content .markdown-answer-bullet {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  justify-content: center;
+  margin: 5px auto;
+  padding-left: 0;
+  width: fit-content;
+  max-width: 100%;
+  text-align: center;
 }
 
 .answer-section .markdown-content * {
@@ -810,6 +882,17 @@ button:disabled {
 .answer-section .markdown-content .markdown-highlight {
   background: color-mix(in srgb, var(--danger) 18%, var(--surface-soft));
   color: var(--danger);
+}
+
+.answer-section .markdown-content .markdown-answer-bullet > span:first-child {
+  color: var(--accent);
+  font-weight: 950;
+  flex: 0 0 auto;
+}
+
+.answer-section .markdown-content .markdown-answer-bullet > span:last-child {
+  min-width: 0;
+  text-align: center;
 }
 
 .answer-section .markdown-answer-label {
@@ -832,6 +915,12 @@ button:disabled {
 .answer-section .markdown-answer-label.primary {
   margin-top: 0;
   margin-bottom: 16px;
+}
+
+.answer-section .markdown-content .markdown-answer-label {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .answer-section .markdown-content .markdown-source {

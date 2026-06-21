@@ -100,6 +100,39 @@ def test_source_page_image_after_source_stays_in_source_markdown():
     )
 
 
+def test_answer_background_and_choice_explanations_are_structured_sections():
+    markdown = """# 문제
+<!-- sf:id: structured-explanation -->
+
+옳은 것을 모두 고르시오.
+
+- 맞는 보기
+- 틀린 보기
+
+답: 맞는 보기
+
+[배경설명]
+처음 보는 사람도 이해할 수 있도록 용어와 전체 맥락을 설명한다.
+
+[보기해설]
+O 맞는 보기 // 왜 맞는지 쉽게 설명한다.
+X 틀린 보기 -> 고친 보기. 왜 틀렸는지 설명한다.
+
+출처: C:\\자료\\강의.pdf p.12
+"""
+
+    result = parse_studyset_markdown(markdown, studyset_id="sample-final", asset_root=None)
+
+    question = result.questions[0]
+    assert question.answer_markdown == "맞는 보기"
+    assert question.explanation_markdown == "처음 보는 사람도 이해할 수 있도록 용어와 전체 맥락을 설명한다."
+    assert question.choice_explanation_markdown == (
+        "O 맞는 보기 // 왜 맞는지 쉽게 설명한다.\n"
+        "X 틀린 보기 -> 고친 보기. 왜 틀렸는지 설명한다."
+    )
+    assert question.source_markdown == "출처: C:\\자료\\강의.pdf p.12"
+
+
 def test_insert_missing_question_ids_places_comment_after_hash_heading():
     markdown = """# First question
 
