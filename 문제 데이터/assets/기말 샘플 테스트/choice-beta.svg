@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="520" height="170" viewBox="0 0 520 170">
-  <rect width="520" height="170" rx="14" fill="#f7f7f4"/>
-  <text x="40" y="55" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="800" fill="#202326">Choice B</text>
-  <circle cx="106" cy="108" r="24" fill="#dcefeb" stroke="#00856f" stroke-width="6"/>
-  <circle cx="154" cy="108" r="24" fill="#dcefeb" stroke="#00856f" stroke-width="6"/>
-  <text x="210" y="118" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="#202326">two connected rings</text>
-</svg>

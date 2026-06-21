@@ -1,47 +1,7 @@
 {
   "schema_version": 1,
-  "updated_at": 1782052216.7777002,
+  "updated_at": 1782066669.8431168,
   "questions": [
-    {
-      "question_id": "기말 샘플 테스트-001",
-      "memorized": false,
-      "seen_count": 72,
-      "reveal_count": 92,
-      "last_seen_at": 1781465767.997674,
-      "updated_at": 1781465769.3226883
-    },
-    {
-      "question_id": "기말 샘플 테스트-002",
-      "memorized": false,
-      "seen_count": 97,
-      "reveal_count": 122,
-      "last_seen_at": 1781516813.383998,
-      "updated_at": 1781516813.383998
-    },
-    {
-      "question_id": "기말 샘플 테스트-003",
-      "memorized": false,
-      "seen_count": 82,
-      "reveal_count": 86,
-      "last_seen_at": 1781515873.756981,
-      "updated_at": 1781515873.756981
-    },
-    {
-      "question_id": "기말 샘플 테스트-004",
-      "memorized": false,
-      "seen_count": 65,
-      "reveal_count": 69,
-      "last_seen_at": 1781465807.1371465,
-      "updated_at": 1781465808.587418
-    },
-    {
-      "question_id": "기말 샘플 테스트-005",
-      "memorized": false,
-      "seen_count": 52,
-      "reveal_count": 55,
-      "last_seen_at": 1781519717.1496432,
-      "updated_at": 1781519717.1496432
-    },
     {
       "question_id": "바이오공정개론 기말고사-001",
       "memorized": false,
@@ -61,10 +21,10 @@
     {
       "question_id": "바이오공정개론 기말고사-003",
       "memorized": false,
-      "seen_count": 23,
+      "seen_count": 36,
       "reveal_count": 11,
-      "last_seen_at": 1782052199.571984,
-      "updated_at": 1782052199.571984
+      "last_seen_at": 1782066669.8431168,
+      "updated_at": 1782066669.8431168
     },
     {
       "question_id": "바이오공정개론 기말고사-004",
@@ -293,10 +253,10 @@
     {
       "question_id": "바이오공정개론 기말고사_기출문제-004",
       "memorized": false,
-      "seen_count": 9,
+      "seen_count": 10,
       "reveal_count": 9,
-      "last_seen_at": 1781754509.7876906,
-      "updated_at": 1781754509.906166
+      "last_seen_at": 1782059298.7276075,
+      "updated_at": 1782059298.7276075
     },
     {
       "question_id": "바이오공정개론 기말고사_기출문제-005",
@@ -1131,52 +1091,204 @@
       "updated_at": 1781514763.3965445
     },
     {
+      "question_id": "백신공정이론 기말고사-001",
+      "memorized": false,
+      "seen_count": 19,
+      "reveal_count": 18,
+      "last_seen_at": 1782064156.435609,
+      "updated_at": 1782064156.4735827
+    },
+    {
+      "question_id": "백신공정이론 기말고사-002",
+      "memorized": false,
+      "seen_count": 19,
+      "reveal_count": 19,
+      "last_seen_at": 1782066477.6816008,
+      "updated_at": 1782066477.7193105
+    },
+    {
+      "question_id": "백신공정이론 기말고사-003",
+      "memorized": false,
+      "seen_count": 19,
+      "reveal_count": 19,
+      "last_seen_at": 1782066477.124451,
+      "updated_at": 1782066477.1597648
+    },
+    {
       "question_id": "백신공정이론 기말고사-004",
       "memorized": false,
-      "seen_count": 1,
-      "reveal_count": 1,
-      "last_seen_at": 1782052215.7714853,
-      "updated_at": 1782052215.808738
+      "seen_count": 18,
+      "reveal_count": 18,
+      "last_seen_at": 1782066479.5379636,
+      "updated_at": 1782066479.5696955
     },
     {
       "question_id": "백신공정이론 기말고사-005",
       "memorized": false,
-      "seen_count": 1,
-      "reveal_count": 1,
-      "last_seen_at": 1782052206.5879576,
-      "updated_at": 1782052208.2757847
+      "seen_count": 16,
+      "reveal_count": 15,
+      "last_seen_at": 1782064164.170375,
+      "updated_at": 1782064164.2046487
+    },
+    {
+      "question_id": "백신공정이론 기말고사-006",
+      "memorized": false,
+      "seen_count": 15,
+      "reveal_count": 15,
+      "last_seen_at": 1782064119.3413107,
+      "updated_at": 1782064119.380681
+    },
+    {
+      "question_id": "백신공정이론 기말고사-007",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 17,
+      "last_seen_at": 1782066477.4417427,
+      "updated_at": 1782066477.480599
+    },
+    {
+      "question_id": "백신공정이론 기말고사-008",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1782066478.2461755,
+      "updated_at": 1782066478.2535496
+    },
+    {
+      "question_id": "백신공정이론 기말고사-009",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 14,
+      "last_seen_at": 1782064166.4534829,
+      "updated_at": 1782064166.489369
+    },
+    {
+      "question_id": "백신공정이론 기말고사-010",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1782064174.2118094,
+      "updated_at": 1782064174.2481942
+    },
+    {
+      "question_id": "백신공정이론 기말고사-011",
+      "memorized": false,
+      "seen_count": 17,
+      "reveal_count": 17,
+      "last_seen_at": 1782064114.6260943,
+      "updated_at": 1782064114.6623015
     },
     {
       "question_id": "백신공정이론 기말고사-012",
       "memorized": false,
-      "seen_count": 1,
-      "reveal_count": 1,
-      "last_seen_at": 1782052216.0038283,
-      "updated_at": 1782052216.072407
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1782064150.1330903,
+      "updated_at": 1782064150.1700077
+    },
+    {
+      "question_id": "백신공정이론 기말고사-013",
+      "memorized": false,
+      "seen_count": 17,
+      "reveal_count": 18,
+      "last_seen_at": 1782066393.6759024,
+      "updated_at": 1782066393.7485
+    },
+    {
+      "question_id": "백신공정이론 기말고사-014",
+      "memorized": false,
+      "seen_count": 17,
+      "reveal_count": 17,
+      "last_seen_at": 1782064158.5662577,
+      "updated_at": 1782064158.6392758
+    },
+    {
+      "question_id": "백신공정이론 기말고사-015",
+      "memorized": false,
+      "seen_count": 17,
+      "reveal_count": 17,
+      "last_seen_at": 1782064142.0825632,
+      "updated_at": 1782064142.1144876
+    },
+    {
+      "question_id": "백신공정이론 기말고사-016",
+      "memorized": false,
+      "seen_count": 18,
+      "reveal_count": 18,
+      "last_seen_at": 1782064108.4855433,
+      "updated_at": 1782064109.5121086
+    },
+    {
+      "question_id": "백신공정이론 기말고사-017",
+      "memorized": false,
+      "seen_count": 17,
+      "reveal_count": 16,
+      "last_seen_at": 1782064222.715613,
+      "updated_at": 1782064222.7898011
+    },
+    {
+      "question_id": "백신공정이론 기말고사-018",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1782064162.061633,
+      "updated_at": 1782064162.1015465
     },
     {
       "question_id": "백신공정이론 기말고사-019",
       "memorized": false,
-      "seen_count": 1,
-      "reveal_count": 1,
-      "last_seen_at": 1782052216.220837,
-      "updated_at": 1782052216.2937114
+      "seen_count": 17,
+      "reveal_count": 17,
+      "last_seen_at": 1782066478.490713,
+      "updated_at": 1782066478.5259724
     },
     {
       "question_id": "백신공정이론 기말고사-020",
       "memorized": false,
-      "seen_count": 1,
-      "reveal_count": 1,
-      "last_seen_at": 1782052215.2345467,
-      "updated_at": 1782052215.2671628
+      "seen_count": 23,
+      "reveal_count": 24,
+      "last_seen_at": 1782066628.5601892,
+      "updated_at": 1782066628.5601892
     },
     {
       "question_id": "백신공정이론 기말고사-021",
       "memorized": false,
-      "seen_count": 1,
-      "reveal_count": 1,
-      "last_seen_at": 1782052214.2779062,
-      "updated_at": 1782052214.3854976
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1782066479.9034622,
+      "updated_at": 1782066479.9203448
+    },
+    {
+      "question_id": "백신공정이론 기말고사-022",
+      "memorized": false,
+      "seen_count": 16,
+      "reveal_count": 16,
+      "last_seen_at": 1782066477.9152672,
+      "updated_at": 1782066477.9546618
+    },
+    {
+      "question_id": "백신공정이론 기말고사-023",
+      "memorized": false,
+      "seen_count": 18,
+      "reveal_count": 17,
+      "last_seen_at": 1782066625.248644,
+      "updated_at": 1782066625.4977317
+    },
+    {
+      "question_id": "백신공정이론 기말고사-024",
+      "memorized": false,
+      "seen_count": 18,
+      "reveal_count": 18,
+      "last_seen_at": 1782066476.6873145,
+      "updated_at": 1782066476.7562501
+    },
+    {
+      "question_id": "백신공정이론 기말고사-028",
+      "memorized": false,
+      "seen_count": 2,
+      "reveal_count": 2,
+      "last_seen_at": 1782053114.1440918,
+      "updated_at": 1782053115.5748663
     },
     {
       "question_id": "백신공정이론 기말고사-029",
@@ -1195,6 +1307,14 @@
       "updated_at": 1782052215.5711448
     },
     {
+      "question_id": "백신공정이론 기말고사-031",
+      "memorized": false,
+      "seen_count": 1,
+      "reveal_count": 1,
+      "last_seen_at": 1782053100.42695,
+      "updated_at": 1782053100.5002537
+    },
+    {
       "question_id": "백신공정이론 기말고사-036",
       "memorized": false,
       "seen_count": 1,
@@ -1209,6 +1329,70 @@
       "reveal_count": 1,
       "last_seen_at": 1782052214.916935,
       "updated_at": 1782052214.9883368
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-001",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1782066390.8261716,
+      "updated_at": 1782066390.8636374
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-002",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1782066390.5456774,
+      "updated_at": 1782066390.6211658
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-003",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1782066390.2594512,
+      "updated_at": 1782066390.3371148
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-004",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 10,
+      "last_seen_at": 1782065831.4475944,
+      "updated_at": 1782065831.4811864
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-005",
+      "memorized": false,
+      "seen_count": 10,
+      "reveal_count": 10,
+      "last_seen_at": 1782065828.518906,
+      "updated_at": 1782065828.5552688
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-006",
+      "memorized": false,
+      "seen_count": 12,
+      "reveal_count": 12,
+      "last_seen_at": 1782066389.5413964,
+      "updated_at": 1782066389.6162405
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-007",
+      "memorized": false,
+      "seen_count": 11,
+      "reveal_count": 11,
+      "last_seen_at": 1782065833.7457929,
+      "updated_at": 1782065833.7828193
+    },
+    {
+      "question_id": "백신공정이론 기말고사_출제예고-008",
+      "memorized": false,
+      "seen_count": 13,
+      "reveal_count": 12,
+      "last_seen_at": 1782066390.0056899,
+      "updated_at": 1782066390.040073
     },
     {
       "question_id": "예방약학 기말고사-001",
