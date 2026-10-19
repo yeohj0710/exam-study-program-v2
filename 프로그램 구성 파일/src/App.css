@@ -764,7 +764,9 @@ button:disabled {
   margin-inline: auto;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--surface-soft);
+  box-sizing: border-box;
+  padding-left: 14px;
+  background: #fff;
   filter: var(--study-image-filter);
 }
 
