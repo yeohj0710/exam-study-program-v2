@@ -776,6 +776,23 @@ button:disabled {
   max-height: 34vh;
 }
 
+.markdown-choice.image-choice {
+  width: calc(100% - 2px);
+  max-width: 900px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface-soft);
+}
+
+.markdown-choice.image-choice .markdown-image {
+  margin: 0;
+}
+
+.markdown-choice.image-choice .markdown-image img {
+  border: 0;
+  border-radius: 0;
+}
+
 .markdown-image.broken > div {
   display: grid;
   gap: 6px;

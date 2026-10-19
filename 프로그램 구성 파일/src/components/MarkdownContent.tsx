@@ -164,10 +164,12 @@ function MarkdownImage({ alt, path }: { alt: string; path: string }) {
 function renderChoiceBlock(block: string[], key: string) {
   const [firstLine, ...rest] = trimEmptyEdges(block)
   if (!firstLine) return null
+  const body = firstLine.slice(2).trim()
+  const image = body.match(/^!\[([^\]]*)]\(([^)]+)\)$/)
 
   return (
-    <div className="markdown-choice" key={key}>
-      <p>{renderInline(stripChoicePrefix(firstLine.slice(2).trim()))}</p>
+    <div className={image ? 'markdown-choice image-choice' : 'markdown-choice'} key={key}>
+      {image ? <MarkdownImage alt={image[1]} path={image[2]} /> : <p>{renderInline(stripChoicePrefix(body))}</p>}
       {rest.map((line, index) => renderLine(line, `${key}-${index}`))}
     </div>
   )
