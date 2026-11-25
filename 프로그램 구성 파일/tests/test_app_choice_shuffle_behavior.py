@@ -21,6 +21,13 @@ def test_choice_seed_changes_on_navigation_instead_of_answer_toggle():
     assert "setVisitKey((value) => value + 1)" in section_between(hook, "const commitOrder", "const nextQuestion")
 
 
+def test_previous_question_has_keyboard_and_pointer_controls():
+    source = APP_TSX.read_text(encoding="utf-8")
+    assert "key === 'h' || key === 'arrowleft'" in source
+    assert 'title="이전 문제 (H)"' in source
+    assert "onClick={session.previousQuestion}" in source
+
+
 def test_manual_reload_button_refetches_current_studyset_without_reshuffling():
     source = APP_TSX.read_text(encoding="utf-8")
 

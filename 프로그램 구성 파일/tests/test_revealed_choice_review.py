@@ -9,17 +9,18 @@ CSS_PATH = PROJECT_ROOT / "프로그램 구성 파일" / "src" / "App.css"
 def test_prompt_keeps_one_choice_order_and_answer_uses_review_cards():
     source = QUESTION_VIEW.read_text(encoding="utf-8")
 
-    assert "function QuestionPrompt" in source
+    assert "function QuestionContent" in source
     assert "function RevealedChoiceReview" in source
     assert "function RevealedAnswer" in source
     assert "classifyChoicesForReveal" in source
     assert "isNegativeQuestion" in source
-    assert "correctChoices" in source
-    assert "incorrectChoices" in source
-    assert "shuffleChoicesKey={choiceShuffleKey}" in source
+    assert "review.choices.map" in source
+    assert "shufflePromptChoices(question.prompt_markdown, choiceShuffleKey)" in source
+    assert '<MarkdownContent markdown={promptMarkdown} />' in source
+    assert '<StructuredAnswer question={question} promptMarkdown={promptMarkdown} />' in source
     assert 'key={`${question.id}:${visitKey}`}' in source
     assert "groupedPromptMarkdown" not in source
-    assert '<RevealedAnswer promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />' in source
+    assert '<RevealedAnswer promptMarkdown={promptMarkdown} answerMarkdown={question.answer_markdown} />' in source
 
 
 def test_revealed_choice_review_marks_correct_and_incorrect_without_dividers():

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { openSourceReference } from '../api'
 import type { Question } from '../types'
+import { shufflePromptChoices } from '../studyChoices'
 import { MarkdownContent } from './MarkdownContent'
 
 const SOURCE_LINE_RE = /^(?:출처|reference|source)\s*[:：]\s*/i
@@ -291,13 +292,9 @@ function classifyChoicesForReveal(
 }
 
 function RevealedChoiceReview({ review, showCorrections = false }: { review: ChoiceReview; showCorrections?: boolean }) {
-  const correctChoices = review.choices.filter((choice) => choice.status === 'correct')
-  const incorrectChoices = review.choices.filter((choice) => choice.status === 'incorrect')
-  const orderedChoices = [...correctChoices, ...incorrectChoices]
-
   return (
     <div className="revealed-choice-list">
-      {orderedChoices.map((choice) => (
+      {review.choices.map((choice) => (
         <div className={`revealed-choice ${choice.status}`} key={`${choice.status}-${choice.order}-${choice.text}`}>
           <span className="revealed-choice-badge" aria-label={choice.status === 'correct' ? '맞는 보기' : '틀린 보기'}>
             {choice.status === 'correct' ? 'O' : 'X'}
@@ -311,15 +308,6 @@ function RevealedChoiceReview({ review, showCorrections = false }: { review: Cho
           </div>
         </div>
       ))}
-    </div>
-  )
-}
-
-function QuestionPrompt({ markdown }: { markdown: string }) {
-  const [choiceShuffleKey] = useState(() => crypto.randomUUID())
-  return (
-    <div className="study-prompt">
-      <MarkdownContent markdown={markdown} shuffleChoicesKey={choiceShuffleKey} />
     </div>
   )
 }
@@ -372,10 +360,10 @@ function StructuredChoiceExplanation({
   )
 }
 
-function StructuredAnswer({ question }: { question: Question }) {
+function StructuredAnswer({ question, promptMarkdown }: { question: Question; promptMarkdown: string }) {
   const hasStructuredExplanation = Boolean(question.explanation_markdown.trim() || question.choice_explanation_markdown.trim())
   if (!hasStructuredExplanation) {
-    return <RevealedAnswer promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />
+    return <RevealedAnswer promptMarkdown={promptMarkdown} answerMarkdown={question.answer_markdown} />
   }
 
   const directAnswer = question.answer_markdown.trim() || '답 없음'
@@ -384,7 +372,7 @@ function StructuredAnswer({ question }: { question: Question }) {
   return (
     <>
       <StructuredChoiceExplanation
-        promptMarkdown={question.prompt_markdown}
+        promptMarkdown={promptMarkdown}
         answerMarkdown={question.answer_markdown}
         choiceExplanationMarkdown={question.choice_explanation_markdown}
       />
@@ -539,6 +527,37 @@ function SourceReferences({ markdown }: { markdown: string }) {
   )
 }
 
+function QuestionContent({ question, showAnswer }: { question: Question; showAnswer: boolean }) {
+  const [choiceShuffleKey] = useState(() => crypto.randomUUID())
+  const promptMarkdown = useMemo(
+    () => shufflePromptChoices(question.prompt_markdown, choiceShuffleKey),
+    [choiceShuffleKey, question.prompt_markdown],
+  )
+
+  return (
+    <>
+      {promptMarkdown && (
+        <div className="study-prompt">
+          <MarkdownContent markdown={promptMarkdown} />
+        </div>
+      )}
+      {showAnswer && (
+        <>
+          <section className="answer-section">
+            {shouldShowPrimaryAnswerLabel(question) && (
+              <p className="markdown-answer-label primary">
+                <span>답</span>
+              </p>
+            )}
+            <StructuredAnswer question={question} promptMarkdown={promptMarkdown} />
+          </section>
+          {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}
+        </>
+      )}
+    </>
+  )
+}
+
 export function QuestionView({
   question,
   showAnswer,
@@ -565,23 +584,7 @@ export function QuestionView({
       {question.progress.memorized && <div className="state-chip">암기 완료</div>}
       {question.issues.length > 0 && <div className="state-chip warn">{question.issues.length}개 확인 필요</div>}
 
-      {question.prompt_markdown && (
-        <QuestionPrompt key={`${question.id}:${visitKey}`} markdown={question.prompt_markdown} />
-      )}
-
-      {showAnswer && (
-        <>
-          <section className="answer-section">
-            {shouldShowPrimaryAnswerLabel(question) && (
-              <p className="markdown-answer-label primary">
-                <span>답</span>
-              </p>
-            )}
-            <StructuredAnswer question={question} />
-          </section>
-          {question.source_markdown && <SourceReferences markdown={question.source_markdown} />}
-        </>
-      )}
+      <QuestionContent key={`${question.id}:${visitKey}`} question={question} showAnswer={showAnswer} />
     </article>
   )
 }

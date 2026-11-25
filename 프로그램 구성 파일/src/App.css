@@ -801,8 +801,14 @@ button:disabled {
   max-height: none;
   padding-left: 0;
   border: 0;
-  outline: 1px solid var(--border);
-  outline-offset: -1px;
+  outline: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.study-prompt .markdown-choice.image-choice {
+  border: 0;
+  background: transparent;
 }
 
 .markdown-image.broken > div {

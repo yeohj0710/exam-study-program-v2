@@ -200,14 +200,19 @@ export function useStudySession(studysetId: string, questions: Question[]) {
   }, [order, orderedQuestions.length, questions, studysetId, visit])
 
   const previousQuestion = useCallback(() => {
-    const previous = history.current.at(-1)
-    if (previous?.studysetId === studysetId && previous.signature === order.signature) {
-      history.current.pop()
-      commitOrder(previous)
-    } else if (order.cursor > 0) {
+    while (history.current.at(-1)?.studysetId === studysetId) {
+      const previous = history.current.pop()!
+      const previousQuestionId = previous.orderIds[previous.cursor]
+      if (previousQuestionId === currentQuestion?.id && previous.round === order.round) continue
+      if (!questionsById.has(previousQuestionId)) continue
+
+      commitOrder(previous.signature === order.signature ? previous : reconcileOrder(previous, studysetId, questions))
+      return
+    }
+    if (order.cursor > 0) {
       commitOrder({ ...order, cursor: order.cursor - 1 })
     }
-  }, [commitOrder, order, studysetId])
+  }, [commitOrder, currentQuestion, order, questions, questionsById, studysetId])
 
   const reshuffle = useCallback(() => {
     const nextOrder = {

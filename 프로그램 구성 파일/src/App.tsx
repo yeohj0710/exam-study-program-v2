@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { MouseEvent as ReactMouseEvent } from 'react'
 import {
   Check,
+  ChevronLeft,
   ChevronRight,
   Download,
   Edit3,
@@ -710,6 +711,16 @@ function App() {
         >
           {session.showAnswer ? <EyeOff size={18} /> : <Eye size={18} />}
           <kbd>J</kbd>
+        </button>
+        <button
+          type="button"
+          className="composer-button"
+          title="이전 문제 (H)"
+          onClick={session.previousQuestion}
+          disabled={!session.currentQuestion}
+        >
+          <ChevronLeft size={20} />
+          <kbd>H</kbd>
         </button>
         <button
           type="button"

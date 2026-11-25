@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { isChoiceStart, readChoiceBlocks } from '../studyChoices'
 
 const CHOICE_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：])|\d{1,2}\s+)\s*/
 const ANSWER_PREFIX_RE = /^(?:[\u2460-\u2473\u3251-\u325F]\s*[.)．、,:：]?|\(?\d{1,2}\)?\s*(?:번|[.)．、,:：]))\s*/
@@ -38,30 +39,12 @@ function renderInline(text: string) {
   })
 }
 
-function seededScore(value: string) {
-  let hash = 2166136261
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index)
-    hash = Math.imul(hash, 16777619)
-  }
-  return hash >>> 0
-}
-
-function isChoiceStart(line: string) {
-  return line.startsWith('- ')
-}
-
 function isAnswerHeading(line: string) {
   return line.trimStart().startsWith('### ')
 }
 
 function isAnswerBullet(line: string) {
   return ANSWER_BULLET_RE.test(line.trimStart())
-}
-
-function shuffleBlocks(blocks: string[][], key: string | undefined) {
-  if (!key || blocks.length < 2) return blocks
-  return [...blocks].sort((a, b) => seededScore(`${key}:${a.join('\n')}`) - seededScore(`${key}:${b.join('\n')}`))
 }
 
 function trimEmptyEdges(block: string[]) {
@@ -191,7 +174,7 @@ function renderAnswerGroup(block: string[], key: string) {
   )
 }
 
-function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAnswerPrefix = false, answerMode = false) {
+function renderLines(lines: string[], stripLeadingAnswerPrefix = false, answerMode = false) {
   const output = []
   let index = 0
   while (index < lines.length) {
@@ -219,18 +202,9 @@ function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAn
       continue
     }
 
-    const group: string[][] = []
-    while (index < lines.length && isChoiceStart(lines[index])) {
-      const block = [lines[index]]
-      index += 1
-      while (index < lines.length && !isChoiceStart(lines[index])) {
-        block.push(lines[index])
-        index += 1
-      }
-      group.push(block)
-    }
-
-    shuffleBlocks(group, shuffleChoicesKey).forEach((block, blockIndex) => {
+    const { blocks, end } = readChoiceBlocks(lines, index)
+    index = end
+    blocks.forEach((block, blockIndex) => {
       output.push(renderChoiceBlock(block, `choice-${index}-${blockIndex}-${block[0]}`))
     })
   }
@@ -239,15 +213,13 @@ function renderLines(lines: string[], shuffleChoicesKey?: string, stripLeadingAn
 
 export function MarkdownContent({
   markdown,
-  shuffleChoicesKey,
   stripLeadingAnswerPrefix,
   answerMode,
 }: {
   markdown: string
-  shuffleChoicesKey?: string
   stripLeadingAnswerPrefix?: boolean
   answerMode?: boolean
 }) {
   const lines = markdown.split(/\r?\n/)
-  return <div className="markdown-content">{renderLines(lines, shuffleChoicesKey, stripLeadingAnswerPrefix, answerMode)}</div>
+  return <div className="markdown-content">{renderLines(lines, stripLeadingAnswerPrefix, answerMode)}</div>
 }

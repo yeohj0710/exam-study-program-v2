@@ -112,6 +112,16 @@ def test_source_evidence_images_are_large_enough_to_read():
     assert "max-height: none;" in image_block
 
 
+def test_study_images_and_image_choice_wrappers_have_no_frame():
+    css = CSS_PATH.read_text(encoding="utf-8")
+    images = optional_block(css, ":is(.study-prompt, .answer-section) .markdown-image img {")
+    choices = optional_block(css, ".study-prompt .markdown-choice.image-choice {")
+    assert "border: 0;" in images
+    assert "outline: none;" in images
+    assert "border: 0;" in choices
+    assert "background: transparent;" in choices
+
+
 def test_markdown_text_wraps_by_words_before_breaking_long_tokens():
     css = CSS_PATH.read_text(encoding="utf-8")
     selector = ".markdown-content p"
