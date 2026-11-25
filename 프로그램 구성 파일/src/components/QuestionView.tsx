@@ -527,11 +527,15 @@ function SourceReferences({ markdown }: { markdown: string }) {
   )
 }
 
-function QuestionContent({ question, showAnswer }: { question: Question; showAnswer: boolean }) {
+function QuestionContent({ question, showAnswer, choiceShuffleRevision }: {
+  question: Question
+  showAnswer: boolean
+  choiceShuffleRevision: number
+}) {
   const [choiceShuffleKey] = useState(() => crypto.randomUUID())
   const promptMarkdown = useMemo(
-    () => shufflePromptChoices(question.prompt_markdown, choiceShuffleKey),
-    [choiceShuffleKey, question.prompt_markdown],
+    () => shufflePromptChoices(question.prompt_markdown, `${choiceShuffleKey}:${choiceShuffleRevision}`),
+    [choiceShuffleKey, choiceShuffleRevision, question.prompt_markdown],
   )
 
   return (
@@ -562,10 +566,12 @@ export function QuestionView({
   question,
   showAnswer,
   visitKey,
+  choiceShuffleRevision,
 }: {
   question: Question | null
   showAnswer: boolean
   visitKey: number
+  choiceShuffleRevision: number
 }) {
   if (!question) {
     return (
@@ -584,7 +590,12 @@ export function QuestionView({
       {question.progress.memorized && <div className="state-chip">암기 완료</div>}
       {question.issues.length > 0 && <div className="state-chip warn">{question.issues.length}개 확인 필요</div>}
 
-      <QuestionContent key={`${question.id}:${visitKey}`} question={question} showAnswer={showAnswer} />
+      <QuestionContent
+        key={`${question.id}:${visitKey}`}
+        question={question}
+        showAnswer={showAnswer}
+        choiceShuffleRevision={choiceShuffleRevision}
+      />
     </article>
   )
 }

@@ -226,11 +226,12 @@ def external_asset(path: str) -> FileResponse:
 
 
 @app.get("/")
+@app.get("/index.html")
 def app_index() -> FileResponse:
     index_path = DIST_ROOT / "index.html"
     if not index_path.exists():
         raise HTTPException(status_code=404, detail="Frontend has not been built yet.")
-    return FileResponse(index_path)
+    return FileResponse(index_path, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/{path:path}")

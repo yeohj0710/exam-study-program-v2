@@ -12,6 +12,18 @@ from studyforge import api, final_api
 from studyforge.final_progress import load_final_progress
 
 
+@pytest.mark.parametrize("path", ["/", "/index.html", "/study/reopen"])
+def test_app_html_does_not_cache_old_bundle_references(path, tmp_path, monkeypatch):
+    (tmp_path / "index.html").write_text('<script src="/app-assets/index-current.js"></script>', encoding="utf-8")
+    monkeypatch.setattr(api, "DIST_ROOT", tmp_path)
+
+    response = TestClient(api.app).get(path)
+
+    assert response.status_code == 200
+    assert "index-current.js" in response.text
+    assert response.headers.get("cache-control") == "no-store"
+
+
 @pytest.fixture
 def rename_studysets(tmp_path, monkeypatch):
     root = tmp_path / "문제 데이터"

@@ -118,6 +118,8 @@ def test_study_images_and_image_choice_wrappers_have_no_frame():
     choices = optional_block(css, ".study-prompt .markdown-choice.image-choice {")
     assert "border: 0;" in images
     assert "outline: none;" in images
+    assert "border-radius: 10px;" in images
+    assert "overflow: hidden;" in images
     assert "border: 0;" in choices
     assert "background: transparent;" in choices
 

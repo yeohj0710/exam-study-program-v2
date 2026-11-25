@@ -12,12 +12,16 @@ def section_between(source: str, start_marker: str, end_marker: str) -> str:
     return source[start:end]
 
 
-def test_choice_seed_changes_on_navigation_instead_of_answer_toggle():
+def test_choice_seed_changes_on_navigation_and_when_hiding_but_not_revealing():
     source = APP_TSX.read_text(encoding="utf-8")
     hook = SESSION_HOOK.read_text(encoding="utf-8")
     toggle = section_between(source, "const toggleAnswer", "const memorizeCurrent")
     assert "visitKey={session.visitKey}" in source
-    assert "setChoiceShuffleSeed" not in toggle
+    assert "if (question && !nextShowAnswer)" in toggle
+    assert "setChoiceShuffleRevision((value) => value + 1)" in toggle
+    assert "choiceShuffleRevision={choiceShuffleRevision}" in source
+    assert "onClick={() => void toggleAnswer()}" in source
+    assert "void toggleAnswer()" in section_between(source, "if (key === 'j'", "if (key === 'k'")
     assert "setVisitKey((value) => value + 1)" in section_between(hook, "const commitOrder", "const nextQuestion")
 
 

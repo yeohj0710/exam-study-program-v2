@@ -170,6 +170,7 @@ function App() {
   )
   const [textScale, setTextScale] = useState(initialSession.textScale ?? defaultTextScale)
   const [glareLevel, setGlareLevel] = useState(initialSession.glareLevel ?? defaultGlareLevel)
+  const [choiceShuffleRevision, setChoiceShuffleRevision] = useState(0)
   const [refreshingStudySet, setRefreshingStudySet] = useState(false)
   const [exportingPdf, setExportingPdf] = useState(false)
   const [exportingCramPdf, setExportingCramPdf] = useState(false)
@@ -443,6 +444,9 @@ function App() {
     const question = session.currentQuestion
     const nextShowAnswer = !session.showAnswer
     session.setShowAnswer(nextShowAnswer)
+    if (question && !nextShowAnswer) {
+      setChoiceShuffleRevision((value) => value + 1)
+    }
     if (question && nextShowAnswer) {
       const progress = await patchQuestionProgress(question.id, 'reveal')
       setPayload((current) => applyProgress(current, question.id, progress))
@@ -881,6 +885,7 @@ function App() {
         question={session.currentQuestion}
         showAnswer={session.showAnswer}
         visitKey={session.visitKey}
+        choiceShuffleRevision={choiceShuffleRevision}
       />
 
       {showQuestionPicker && (

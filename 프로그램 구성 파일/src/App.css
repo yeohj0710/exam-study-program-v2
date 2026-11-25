@@ -790,7 +790,7 @@ button:disabled {
   margin: 0;
 }
 
-.markdown-choice.image-choice .markdown-image img {
+.markdown-choice:where(.image-choice) .markdown-image img {
   border: 0;
   border-radius: 0;
 }
@@ -802,7 +802,8 @@ button:disabled {
   padding-left: 0;
   border: 0;
   outline: none;
-  border-radius: 0;
+  border-radius: 10px;
+  overflow: hidden;
   background: transparent;
 }
 

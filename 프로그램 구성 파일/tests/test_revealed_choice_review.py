@@ -15,7 +15,7 @@ def test_prompt_keeps_one_choice_order_and_answer_uses_review_cards():
     assert "classifyChoicesForReveal" in source
     assert "isNegativeQuestion" in source
     assert "review.choices.map" in source
-    assert "shufflePromptChoices(question.prompt_markdown, choiceShuffleKey)" in source
+    assert "shufflePromptChoices(question.prompt_markdown, `${choiceShuffleKey}:${choiceShuffleRevision}`)" in source
     assert '<MarkdownContent markdown={promptMarkdown} />' in source
     assert '<StructuredAnswer question={question} promptMarkdown={promptMarkdown} />' in source
     assert 'key={`${question.id}:${visitKey}`}' in source
