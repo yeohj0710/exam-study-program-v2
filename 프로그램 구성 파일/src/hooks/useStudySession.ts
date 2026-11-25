@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { Question } from '../types'
 
 type StoredOrder = {
@@ -144,9 +144,22 @@ function saveOrder(order: StoredOrder) {
   window.localStorage.setItem(storageKey(order.studysetId), JSON.stringify(order))
 }
 
+export function renameStoredStudyOrder(previousId: string, studysetId: string) {
+  try {
+    const raw = window.localStorage.getItem(storageKey(previousId))
+    if (!raw) return
+    saveOrder({ ...(JSON.parse(raw) as StoredOrder), studysetId })
+    window.localStorage.removeItem(storageKey(previousId))
+  } catch {
+    // The file rename still succeeds when localStorage is unavailable.
+  }
+}
+
 export function useStudySession(studysetId: string, questions: Question[]) {
   const [storedOrder, setStoredOrder] = useState<StoredOrder>(emptyOrder)
   const [showAnswer, setShowAnswer] = useState(false)
+  const [visitKey, setVisitKey] = useState(0)
+  const history = useRef<StoredOrder[]>([])
 
   const order = useMemo(() => normalizeOrder(storedOrder, studysetId, questions), [questions, storedOrder, studysetId])
   const questionsById = useMemo(() => new Map(questions.map((question) => [question.id, question])), [questions])
@@ -159,7 +172,15 @@ export function useStudySession(studysetId: string, questions: Question[]) {
   const commitOrder = useCallback((nextOrder: StoredOrder) => {
     saveOrder(nextOrder)
     setStoredOrder(nextOrder)
+    setVisitKey((value) => value + 1)
+    setShowAnswer(false)
   }, [])
+
+  const visit = useCallback((nextOrder: StoredOrder) => {
+    if (history.current.at(-1)?.studysetId !== order.studysetId) history.current = []
+    history.current.push(order)
+    commitOrder(nextOrder)
+  }, [commitOrder, order])
 
   const nextQuestion = useCallback(() => {
     if (!orderedQuestions.length) return
@@ -172,12 +193,21 @@ export function useStudySession(studysetId: string, questions: Question[]) {
         cursor: 0,
         round: order.round + 1,
       }
-      commitOrder(nextOrder)
+      visit(nextOrder)
     } else {
-      commitOrder({ ...order, cursor: order.cursor + 1 })
+      visit({ ...order, cursor: order.cursor + 1 })
     }
-    setShowAnswer(false)
-  }, [commitOrder, order, orderedQuestions.length, questions, studysetId])
+  }, [order, orderedQuestions.length, questions, studysetId, visit])
+
+  const previousQuestion = useCallback(() => {
+    const previous = history.current.at(-1)
+    if (previous?.studysetId === studysetId && previous.signature === order.signature) {
+      history.current.pop()
+      commitOrder(previous)
+    } else if (order.cursor > 0) {
+      commitOrder({ ...order, cursor: order.cursor - 1 })
+    }
+  }, [commitOrder, order, studysetId])
 
   const reshuffle = useCallback(() => {
     const nextOrder = {
@@ -187,29 +217,29 @@ export function useStudySession(studysetId: string, questions: Question[]) {
       cursor: 0,
       round: order.round + 1,
     }
-    commitOrder(nextOrder)
-    setShowAnswer(false)
-  }, [commitOrder, order.orderIds, order.round, questions, studysetId])
+    visit(nextOrder)
+  }, [order.orderIds, order.round, questions, studysetId, visit])
 
   const goToQuestion = useCallback(
     (questionId: string) => {
       const index = orderedQuestions.findIndex((question) => question.id === questionId)
       if (index >= 0) {
-        commitOrder({ ...order, cursor: index })
-        setShowAnswer(false)
+        visit({ ...order, cursor: index })
       }
     },
-    [commitOrder, order, orderedQuestions],
+    [order, orderedQuestions, visit],
   )
 
   return {
     showAnswer,
     setShowAnswer,
+    visitKey,
     currentQuestion,
     orderedQuestions,
     safeCursor: order.cursor,
     total: orderedQuestions.length,
     nextQuestion,
+    previousQuestion,
     reshuffle,
     goToQuestion,
   }

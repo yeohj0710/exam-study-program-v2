@@ -114,6 +114,7 @@ def parse_studyset_markdown(
     *,
     studyset_id: str,
     asset_root: Path | None,
+    question_id_prefix: str | None = None,
 ) -> MarkdownParseResult:
     lines = markdown.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     result = MarkdownParseResult(studyset_id=studyset_id, title=studyset_id, questions=[])
@@ -204,7 +205,7 @@ def parse_studyset_markdown(
                 prompt_lines.append(line)
 
         if not question_id:
-            question_id = f"{studyset_id}-{ordinal:03d}"
+            question_id = f"{question_id_prefix or studyset_id}-{ordinal:03d}"
 
         question = Question(
             id=question_id,

@@ -315,23 +315,11 @@ function RevealedChoiceReview({ review, showCorrections = false }: { review: Cho
   )
 }
 
-function RevealedPrompt({ promptMarkdown, answerMarkdown }: { promptMarkdown: string; answerMarkdown: string }) {
-  const review = classifyChoicesForReveal(promptMarkdown, answerMarkdown)
-  if (!review) return <MarkdownContent markdown={promptMarkdown} />
-
-  const correctChoices = review.choices.filter((choice) => choice.status === 'correct')
-  const incorrectChoices = review.choices.filter((choice) => choice.status === 'incorrect')
-  const orderedChoices = [...correctChoices, ...incorrectChoices]
-  const groupedPromptMarkdown = [
-    review.stemMarkdown,
-    ...orderedChoices.map((choice) => `- ${choice.text}`),
-  ]
-    .filter(Boolean)
-    .join('\n')
-
+function QuestionPrompt({ markdown }: { markdown: string }) {
+  const [choiceShuffleKey] = useState(() => crypto.randomUUID())
   return (
-    <div className="revealed-prompt">
-      <MarkdownContent markdown={groupedPromptMarkdown} />
+    <div className="study-prompt">
+      <MarkdownContent markdown={markdown} shuffleChoicesKey={choiceShuffleKey} />
     </div>
   )
 }
@@ -554,11 +542,11 @@ function SourceReferences({ markdown }: { markdown: string }) {
 export function QuestionView({
   question,
   showAnswer,
-  choiceShuffleKey,
+  visitKey,
 }: {
   question: Question | null
   showAnswer: boolean
-  choiceShuffleKey: string
+  visitKey: number
 }) {
   if (!question) {
     return (
@@ -577,12 +565,9 @@ export function QuestionView({
       {question.progress.memorized && <div className="state-chip">암기 완료</div>}
       {question.issues.length > 0 && <div className="state-chip warn">{question.issues.length}개 확인 필요</div>}
 
-      {question.prompt_markdown &&
-        (showAnswer ? (
-          <RevealedPrompt promptMarkdown={question.prompt_markdown} answerMarkdown={question.answer_markdown} />
-        ) : (
-          <MarkdownContent markdown={question.prompt_markdown} shuffleChoicesKey={choiceShuffleKey} />
-        ))}
+      {question.prompt_markdown && (
+        <QuestionPrompt key={`${question.id}:${visitKey}`} markdown={question.prompt_markdown} />
+      )}
 
       {showAnswer && (
         <>

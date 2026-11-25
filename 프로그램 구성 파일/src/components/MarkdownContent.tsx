@@ -156,7 +156,15 @@ function MarkdownImage({ alt, path }: { alt: string; path: string }) {
 
   return (
     <figure className="markdown-image" title={title}>
-      <img src={retrySrc} alt={alt} loading="lazy" onError={handleImageError} />
+      <img
+        src={retrySrc}
+        alt={alt}
+        loading="lazy"
+        onLoad={({ currentTarget: image }) => {
+          image.style.setProperty('--study-image-width', `${image.naturalWidth / 2}px`)
+        }}
+        onError={handleImageError}
+      />
     </figure>
   )
 }

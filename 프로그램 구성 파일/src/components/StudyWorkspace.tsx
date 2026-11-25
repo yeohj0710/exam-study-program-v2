@@ -57,7 +57,7 @@ export function StudyWorkspace({
             themeMode === 'dark' ? `rgb(${readableText}, ${readableText}, ${readableText})` : 'var(--text)',
           '--study-image-filter':
             themeMode === 'dark'
-              ? `brightness(${imageBrightness}) contrast(${imageContrast}) saturate(${imageSaturate})`
+              ? `invert(1) hue-rotate(180deg) brightness(${imageBrightness}) contrast(${imageContrast}) saturate(${imageSaturate})`
               : 'none',
         } as CSSProperties
       }

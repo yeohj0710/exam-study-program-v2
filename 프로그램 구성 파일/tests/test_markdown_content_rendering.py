@@ -12,7 +12,8 @@ def test_choice_prefixes_are_stripped_before_rendering():
     assert "ANSWER_PREFIX_RE" in source
     assert "stripChoicePrefix" in source
     assert "stripAnswerPrefix" in source
-    assert "stripChoicePrefix(firstLine.slice(2).trim())" in source
+    assert "const body = firstLine.slice(2).trim()" in source
+    assert "stripChoicePrefix(body)" in source
     assert "stripLeadingAnswerPrefix" in source
     assert "\\u2460-\\u2473" in source
     assert "\\d{1,2}" in source

@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from .asset_manager import save_image_asset
-from .final_models import QuestionProgress
+from .final_models import MarkdownParseResult, QuestionProgress
 from .final_progress import (
     load_final_progress,
     mark_memorized,
@@ -27,7 +27,7 @@ from .final_progress import (
 )
 from .markdown_parser import parse_studyset_markdown
 from .studyset_pdf import export_cram_studyset_pdf, export_studyset_pdf
-from .studysets import create_studyset, list_studysets, read_studyset, save_studyset
+from .studysets import create_studyset, list_studysets, read_studyset_with_namespace, rename_studyset, save_studyset
 
 PROJECT_ROOT = Path(os.environ.get("STUDYFORGE_APP_ROOT", Path(__file__).resolve().parents[2]))
 
@@ -54,6 +54,10 @@ class StudySetCreateRequest(BaseModel):
 
 class StudySetSaveRequest(BaseModel):
     markdown: str
+
+
+class StudySetRenameRequest(BaseModel):
+    title: str
 
 
 class AssetUploadRequest(BaseModel):
@@ -89,20 +93,36 @@ def post_studyset(request: StudySetCreateRequest) -> dict[str, object]:
 
 @router.get("/api/studysets/{studyset_id}")
 def get_studyset(studyset_id: str) -> dict[str, object]:
-    markdown = _read_or_404(studyset_id)
-    return _studyset_payload(studyset_id, markdown)
+    return _studyset_payload(studyset_id)
 
 
 @router.put("/api/studysets/{studyset_id}")
 def put_studyset(studyset_id: str, request: StudySetSaveRequest) -> dict[str, object]:
-    markdown = request.markdown
-    save_studyset(STUDYSETS_ROOT, studyset_id, markdown)
-    return _studyset_payload(studyset_id, markdown)
+    try:
+        save_studyset(STUDYSETS_ROOT, studyset_id, request.markdown, require_existing=True)
+    except (FileNotFoundError, ValueError) as exc:
+        raise HTTPException(status_code=404, detail="문제 데이터를 찾을 수 없습니다.") from exc
+    return _studyset_payload(studyset_id)
+
+
+@router.patch("/api/studysets/{studyset_id}")
+def patch_studyset(studyset_id: str, request: StudySetRenameRequest) -> dict[str, object]:
+    try:
+        renamed_id = rename_studyset(STUDYSETS_ROOT, studyset_id, title=request.title)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="파일 이름에 사용할 수 있는 이름을 입력하세요.") from exc
+    except FileExistsError as exc:
+        raise HTTPException(status_code=409, detail="같은 이름의 문제 데이터가 있습니다.") from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="문제 데이터를 찾을 수 없습니다.") from exc
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail="이름을 바꾸지 못했습니다. 파일을 닫고 다시 시도하세요.") from exc
+    return _studyset_payload(renamed_id)
 
 
 @router.post("/api/studysets/{studyset_id}/assets")
 def post_studyset_asset(studyset_id: str, request: AssetUploadRequest) -> dict[str, object]:
-    _read_or_404(studyset_id)
+    _, namespace = _read_or_404(studyset_id)
     try:
         content = b64decode(request.content_base64, validate=True)
     except Base64Error as exc:
@@ -110,7 +130,7 @@ def post_studyset_asset(studyset_id: str, request: AssetUploadRequest) -> dict[s
     try:
         saved = save_image_asset(
             ASSET_ROOT,
-            studyset_slug=studyset_id,
+            studyset_slug=namespace,
             content=content,
             content_type=request.content_type,
             alt_text=request.alt_text,
@@ -122,8 +142,7 @@ def post_studyset_asset(studyset_id: str, request: AssetUploadRequest) -> dict[s
 
 @router.get("/api/studysets/{studyset_id}/questions")
 def get_studyset_questions(studyset_id: str) -> dict[str, object]:
-    markdown = _read_or_404(studyset_id)
-    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+    _, parsed = _parse_studyset(studyset_id)
     return {
         "studyset_id": studyset_id,
         "questions": _questions_payload(parsed.questions),
@@ -133,8 +152,7 @@ def get_studyset_questions(studyset_id: str) -> dict[str, object]:
 
 @router.get("/api/studysets/{studyset_id}/pdf")
 def get_studyset_pdf(studyset_id: str) -> FileResponse:
-    markdown = _read_or_404(studyset_id)
-    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+    _, parsed = _parse_studyset(studyset_id)
     try:
         output_path = export_studyset_pdf(
             studyset_id=studyset_id,
@@ -153,8 +171,7 @@ def get_studyset_pdf(studyset_id: str) -> FileResponse:
 
 @router.get("/api/studysets/{studyset_id}/cram-pdf")
 def get_studyset_cram_pdf(studyset_id: str) -> FileResponse:
-    markdown = _read_or_404(studyset_id)
-    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+    _, parsed = _parse_studyset(studyset_id)
     try:
         output_path = export_cram_studyset_pdf(
             studyset_id=studyset_id,
@@ -199,8 +216,12 @@ def validation_report(studyset_id: str | None = None) -> dict[str, object]:
     issues = []
     question_count = 0
     for studyset in studysets:
-        markdown = read_studyset(STUDYSETS_ROOT, studyset.id)
-        parsed = parse_studyset_markdown(markdown, studyset_id=studyset.id, asset_root=_data_root())
+        try:
+            _, parsed = _parse_studyset(studyset.id)
+        except HTTPException as exc:
+            if exc.status_code == 404 and studyset_id is None:
+                continue
+            raise
         question_count += len(parsed.questions)
         issues.extend(asdict(issue) for issue in parsed.issues)
     return {
@@ -243,15 +264,23 @@ def delete_question_progress(question_id: str) -> dict[str, object]:
     return {"progress": asdict(entry)}
 
 
-def _read_or_404(studyset_id: str) -> str:
+def _read_or_404(studyset_id: str) -> tuple[str, str]:
     try:
-        return read_studyset(STUDYSETS_ROOT, studyset_id)
+        return read_studyset_with_namespace(STUDYSETS_ROOT, studyset_id)
     except (FileNotFoundError, ValueError) as exc:
         raise HTTPException(status_code=404, detail="Studyset not found.") from exc
 
 
-def _studyset_payload(studyset_id: str, markdown: str) -> dict[str, object]:
-    parsed = parse_studyset_markdown(markdown, studyset_id=studyset_id, asset_root=_data_root())
+def _parse_studyset(studyset_id: str) -> tuple[str, MarkdownParseResult]:
+    markdown, namespace = _read_or_404(studyset_id)
+    parsed = parse_studyset_markdown(
+        markdown, studyset_id=studyset_id, asset_root=_data_root(), question_id_prefix=namespace,
+    )
+    return markdown, parsed
+
+
+def _studyset_payload(studyset_id: str) -> dict[str, object]:
+    markdown, parsed = _parse_studyset(studyset_id)
     return {
         "id": studyset_id,
         "title": parsed.title,
@@ -262,7 +291,8 @@ def _studyset_payload(studyset_id: str, markdown: str) -> dict[str, object]:
 
 
 def _questions_payload(questions) -> list[dict[str, object]]:
-    progress = load_final_progress(FINAL_PROGRESS_PATH)
+    with _progress_lock:
+        progress = load_final_progress(FINAL_PROGRESS_PATH)
     payload = []
     for question in questions:
         item = asdict(question)

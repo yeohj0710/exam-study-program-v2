@@ -1,13 +1,104 @@
 from base64 import b64encode
+import json
 import threading
 import time
 from urllib.parse import unquote
 
 from fastapi.testclient import TestClient
 import fitz
+import pytest
 
 from studyforge import api, final_api
 from studyforge.final_progress import load_final_progress
+
+
+@pytest.fixture
+def rename_studysets(tmp_path, monkeypatch):
+    root = tmp_path / "문제 데이터"
+    root.mkdir()
+    monkeypatch.setattr(final_api, "STUDYSETS_ROOT", root)
+    monkeypatch.setattr(final_api, "ASSET_ROOT", root / "assets")
+    monkeypatch.setattr(final_api, "FINAL_PROGRESS_PATH", root / "progress.json")
+    return root, TestClient(api.app)
+
+
+def test_rename_studyset_keeps_markdown_assets_and_progress(rename_studysets):
+    root, client = rename_studysets
+    image = root / "assets" / "old-set" / "card.png"
+    image.parent.mkdir(parents=True)
+    image.write_bytes(b"image bytes")
+    markdown = "# Legacy question\r\n![card](assets/old-set/card.png)\r\n답: A\r\n# Tagged question\r\n<!-- sf:id: stable-id -->\r\n답: B\r\n"
+    (root / "old-set.md").write_bytes(markdown.encode())
+    (root / "related-set.md").write_text("# Shared image\n![card](assets/old-set/card.png)\n답: B\n", encoding="utf-8")
+    for question_id in ("old-set-001", "stable-id"):
+        assert client.patch(f"/api/questions/{question_id}/progress", json={"action": "memorized"}).is_success
+    progress = (root / "progress.json").read_bytes()
+
+    response = client.patch("/api/studysets/old-set", json={"title": "새 세트 이름"})
+
+    assert response.status_code == 200
+    assert response.json()["title"] == "새 세트 이름"
+    assert not (root / "old-set.md").exists()
+    assert (root / "새 세트 이름.md").read_bytes() == markdown.encode()
+    assert not response.json()["issues"]
+    assert image.read_bytes() == b"image bytes"
+    assert not client.get("/api/studysets/related-set").json()["issues"]
+    assert client.get("/api/studysets/old-set").status_code == 404
+    assert client.put("/api/studysets/old-set", json={"markdown": "stale edit"}).status_code == 404
+    for path in ("/api/studysets/새 세트 이름", "/api/studysets/새 세트 이름/questions"):
+        questions = client.get(path).json()["questions"]
+        assert [item["id"] for item in questions] == ["old-set-001", "stable-id"]
+        assert all(item["progress"]["memorized"] for item in questions)
+        assert all(item["studyset_id"] == "새 세트 이름" for item in questions)
+    assert (root / "progress.json").read_bytes() == progress
+    assert client.patch("/api/studysets/새 세트 이름", json={"title": "old-set"}).is_success
+    assert (root / "old-set.md").read_bytes() == markdown.encode()
+
+
+def test_rename_rejects_invalid_existing_names_and_missing_source(rename_studysets):
+    root, client = rename_studysets
+    (root / "old.md").write_text("old", encoding="utf-8")
+    (root / "existing.md").write_text("existing", encoding="utf-8")
+    for title in ("", "  ", "a/b", "a\\b", "..", "a.", "NUL", "test\x00line"):
+        assert client.patch("/api/studysets/old", json={"title": title}).status_code == 400
+    assert client.patch("/api/studysets/old", json={"title": "existing"}).status_code == 409
+    assert client.patch("/api/studysets/missing", json={"title": "new"}).status_code == 404
+    assert {name.name: name.read_text(encoding="utf-8") for name in root.iterdir()} == {
+        "old.md": "old",
+        "existing.md": "existing",
+    }
+
+
+def test_reusing_a_renamed_filename_does_not_share_fallback_progress(rename_studysets):
+    root, client = rename_studysets
+    markdown = "# Problem\n답: A\n"
+    (root / "first.md").write_text(markdown, encoding="utf-8")
+    assert client.patch("/api/questions/first-001/progress", json={"action": "memorized"}).is_success
+    assert client.patch("/api/studysets/first", json={"title": "second"}).is_success
+
+    (root / "first.md").write_text(markdown, encoding="utf-8")
+    first = client.get("/api/studysets/first").json()["questions"][0]
+    assert first["id"] != "first-001"
+    assert not first["progress"]["memorized"]
+    assert client.get("/api/studysets/first").json()["questions"][0]["id"] == first["id"]
+    assert client.get("/api/studysets/second").json()["questions"][0]["progress"]["memorized"]
+
+
+@pytest.mark.parametrize("already_renamed", [False, True])
+def test_rename_recovers_after_interruption_on_either_side_of_file_move(rename_studysets, already_renamed):
+    root, client = rename_studysets
+    manifest = root / ".studyset-namespaces.json"
+    manifest.write_text(json.dumps({
+        "names": {"current": "original"},
+        "pending": {"source": "current", "target": "new", "namespace": "original"},
+    }), encoding="utf-8")
+    visible_name = "new" if already_renamed else "current"
+    (root / f"{visible_name}.md").write_text("# Problem\n답: A\n", encoding="utf-8")
+
+    response = client.get(f"/api/studysets/{visible_name}")
+
+    assert response.json()["questions"][0]["id"] == "original-001"
+    assert json.loads(manifest.read_text(encoding="utf-8")) == {"names": {visible_name: "original"}, "pending": None}
 
 
 def test_studyset_api_creates_saves_and_returns_simple_questions(tmp_path, monkeypatch):
@@ -202,10 +293,10 @@ def test_validation_endpoint_can_scope_final_report_to_selected_studyset(tmp_pat
     )
     original_parse = final_api.parse_studyset_markdown
 
-    def parse_selected_only(markdown, *, studyset_id, asset_root):
+    def parse_selected_only(markdown, *, studyset_id, asset_root, question_id_prefix=None):
         if studyset_id == "unselected":
             raise AssertionError("selected validation should not parse unselected studysets")
-        return original_parse(markdown, studyset_id=studyset_id, asset_root=asset_root)
+        return original_parse(markdown, studyset_id=studyset_id, asset_root=asset_root, question_id_prefix=question_id_prefix)
 
     monkeypatch.setattr(api, "LIBRARY_PATH", tmp_path / "missing-library.json")
     monkeypatch.setattr(api, "REVIEWS_PATH", tmp_path / "reviews.json")

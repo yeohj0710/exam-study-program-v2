@@ -41,6 +41,19 @@ export async function saveStudySet(studysetId: string, markdown: string): Promis
   })
 }
 
+export async function renameStudySet(studysetId: string, title: string): Promise<StudySetPayload> {
+  const response = await fetch(`/api/studysets/${encodeURIComponent(studysetId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title }),
+  })
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null)
+    throw new Error(typeof payload?.detail === 'string' ? payload.detail : '이름을 바꾸지 못했습니다. 다시 시도하세요.')
+  }
+  return response.json()
+}
+
 export async function exportStudySetPdf(studysetId: string): Promise<{ blob: Blob; filename: string }> {
   const response = await fetch(`/api/studysets/${encodeURIComponent(studysetId)}/pdf`)
   if (!response.ok) {

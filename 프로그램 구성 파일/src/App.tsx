@@ -27,6 +27,7 @@ import {
   exportStudySetCramPdf,
   exportStudySetPdf,
   patchQuestionProgress,
+  renameStudySet,
   restoreQuestionProgress,
   saveStudySet,
   uploadStudySetAsset,
@@ -37,7 +38,7 @@ import { QuestionView } from './components/QuestionView'
 import { StudySetPanel } from './components/StudySetPanel'
 import { StudyWorkspace } from './components/StudyWorkspace'
 import { ValidationPanel } from './components/ValidationPanel'
-import { useStudySession } from './hooks/useStudySession'
+import { renameStoredStudyOrder, useStudySession } from './hooks/useStudySession'
 import type { QuestionProgress, StudySet, StudySetPayload, ThemeMode, ValidationReport } from './types'
 
 const sessionKey = 'exam-study.session.v1'
@@ -168,7 +169,6 @@ function App() {
   )
   const [textScale, setTextScale] = useState(initialSession.textScale ?? defaultTextScale)
   const [glareLevel, setGlareLevel] = useState(initialSession.glareLevel ?? defaultGlareLevel)
-  const [choiceShuffleSeed, setChoiceShuffleSeed] = useState(0)
   const [refreshingStudySet, setRefreshingStudySet] = useState(false)
   const [exportingPdf, setExportingPdf] = useState(false)
   const [exportingCramPdf, setExportingCramPdf] = useState(false)
@@ -248,6 +248,7 @@ function App() {
       selectedStudySetIdRef.current = studysetId
       const cachedPayload = preloadedPayloadsRef.current.get(studysetId)
       const nextPayload = cachedPayload ?? (await fetchStudySet(studysetId))
+      if (selectedStudySetIdRef.current !== studysetId) return
       preloadedPayloadsRef.current.set(studysetId, nextPayload)
       setPayload(nextPayload)
       setMarkdownDraft(nextPayload.markdown)
@@ -325,7 +326,7 @@ function App() {
   const handleSelectStudySet = useCallback(
     (studysetId: string) => {
       if (dirty && !window.confirm('저장하지 않은 수정이 있습니다. 이동할까요?')) return
-      void loadStudySet(studysetId)
+      void loadStudySet(studysetId).catch(() => setError('문제 데이터를 열지 못했습니다. 다시 시도하세요.'))
     },
     [dirty, loadStudySet],
   )
@@ -362,6 +363,34 @@ function App() {
     setStudysets(mergeStudySetPayloadMetadata(await fetchStudySets(), nextPayload))
     await refreshValidation(selectedStudySetId)
   }, [markdownDraft, refreshValidation, selectedStudySetId])
+
+  const handleRenameStudySet = useCallback(async (studysetId: string, title: string) => {
+    const nextPayload = await renameStudySet(studysetId, title)
+    if (nextPayload.id === studysetId) return
+
+    preloadRunRef.current += 1
+    renameStoredStudyOrder(studysetId, nextPayload.id)
+    preloadedPayloadsRef.current.delete(studysetId)
+    preloadedPayloadsRef.current.set(nextPayload.id, nextPayload)
+    setStudysets((current) => {
+      const renamed = current.map((item) => item.id === studysetId
+        ? { ...item, id: nextPayload.id, title: nextPayload.title, slug: nextPayload.id }
+        : item)
+      return mergeStudySetPayloadMetadata(renamed, nextPayload)
+    })
+    if (selectedStudySetIdRef.current === studysetId) {
+      selectedStudySetIdRef.current = nextPayload.id
+      setSelectedStudySetId(nextPayload.id)
+      setPayload(nextPayload)
+      if (!dirtyRef.current) setMarkdownDraft(nextPayload.markdown)
+      setSavedMarkdown(nextPayload.markdown)
+      void refreshValidation(nextPayload.id)
+    }
+    const remaining = studysets.filter((item) =>
+      item.id !== studysetId && !preloadedPayloadsRef.current.has(item.id),
+    )
+    if (remaining.length) void preloadStudySets(remaining)
+  }, [preloadStudySets, refreshValidation, studysets])
 
   const exportPdf = useCallback(async () => {
     if (!selectedStudySetId || exportingPdf) return
@@ -413,9 +442,6 @@ function App() {
     const question = session.currentQuestion
     const nextShowAnswer = !session.showAnswer
     session.setShowAnswer(nextShowAnswer)
-    if (question && !nextShowAnswer) {
-      setChoiceShuffleSeed((value) => value + 1)
-    }
     if (question && nextShowAnswer) {
       const progress = await patchQuestionProgress(question.id, 'reveal')
       setPayload((current) => applyProgress(current, question.id, progress))
@@ -583,6 +609,11 @@ function App() {
       if (key === 'k' || key === 'arrowright') {
         event.preventDefault()
         session.nextQuestion()
+        return
+      }
+      if (key === 'h' || key === 'arrowleft') {
+        event.preventDefault()
+        session.previousQuestion()
         return
       }
       if (key === '1') {
@@ -815,6 +846,7 @@ function App() {
           search={search}
           onSearch={setSearch}
           onSelect={handleSelectStudySet}
+          onRename={handleRenameStudySet}
         />
       }
       studyControls={studyControls}
@@ -837,7 +869,7 @@ function App() {
       <QuestionView
         question={session.currentQuestion}
         showAnswer={session.showAnswer}
-        choiceShuffleKey={session.currentQuestion ? `${session.currentQuestion.id}:${choiceShuffleSeed}` : ''}
+        visitKey={session.visitKey}
       />
 
       {showQuestionPicker && (
